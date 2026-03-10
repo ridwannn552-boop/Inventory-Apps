@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Consumable Inventory System</title>
+
 <link rel="stylesheet" href="style.css">
-</head>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
 <body>
+
+<div class="container">
 
 <div class="sidebar">
 
@@ -24,9 +31,12 @@
 
 </div>
 
+
 <div class="content">
 
-<div id="dashboard" class="page">
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="page active">
 
 <h1>Dashboard Inventory</h1>
 
@@ -47,6 +57,10 @@
 <p id="totalKeluar">210</p>
 </div>
 
+</div>
+
+<div class="chart-grid">
+
 <div class="chart-container">
 <h3>Grafik Barang Masuk per Hari</h3>
 <canvas id="grafikMasuk"></canvas>
@@ -57,36 +71,60 @@
 <canvas id="grafikKeluar"></canvas>
 </div>
 
+</div>
+
+</div>
+
+
+<!-- PRODUK -->
+
 <div id="produk" class="page">
 <h1>Data Produk</h1>
 <p>Master data barang consumable.</p>
 </div>
+
+
+<!-- BARANG MASUK -->
 
 <div id="masuk" class="page">
 <h1>Barang Masuk</h1>
 <p>Input data penerimaan barang.</p>
 </div>
 
+
+<!-- BARANG KELUAR -->
+
 <div id="keluar" class="page">
 <h1>Barang Keluar</h1>
 <p>Input data pengeluaran barang.</p>
 </div>
+
+
+<!-- STOK OPNAME -->
 
 <div id="opname" class="page">
 <h1>Stok Opname</h1>
 <p>Scan barcode dan cek stok barang.</p>
 </div>
 
+
+<!-- LAPORAN -->
+
 <div id="laporan" class="page">
 <h1>Laporan Opname</h1>
 <p>Download laporan stok opname.</p>
 </div>
+
+
+<!-- TAG NAME -->
 
 <div id="tagname" class="page">
 <h1>Tag Name</h1>
 <p>Generate dan print barcode label.</p>
 </div>
 
+
+</div>
 </div>
 
 <script src="script.js"></script>
