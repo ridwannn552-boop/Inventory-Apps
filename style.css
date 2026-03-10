@@ -86,3 +86,71 @@ margin-top:20px;
 border-radius:10px;
 box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
+/* STAT CARD */
+
+.stats{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+margin-bottom:30px;
+}
+
+.card{
+background:white;
+padding:20px;
+flex:1;
+min-width:200px;
+border-radius:10px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.card p{
+font-size:28px;
+font-weight:bold;
+margin-top:10px;
+}
+
+/* GRAFIK */
+
+.chart-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+.chart-container{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+.chart-container canvas{
+width:100% !important;
+height:320px !important;
+}
+
+/* TABLET */
+
+@media (max-width:900px){
+
+.chart-grid{
+grid-template-columns:1fr;
+}
+
+}
+
+/* HP */
+
+@media (max-width:600px){
+
+.stats{
+flex-direction:column;
+}
+
+.chart-container canvas{
+height:250px !important;
+}
+
+}
