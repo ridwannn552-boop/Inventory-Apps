@@ -15,6 +15,8 @@
 
 <div class="container">
 
+<!-- SIDEBAR -->
+
 <div class="sidebar">
 
 <h2>Inventory</h2>
@@ -26,11 +28,13 @@
 <li onclick="showPage('keluar')">Barang Keluar</li>
 <li onclick="showPage('opname')">Stok Opname</li>
 <li onclick="showPage('laporan')">Laporan Opname</li>
-<li onclick="showPage('barcode')">Tag Name</li>
+<li onclick="showPage('tagname')">Tag Name</li>
 </ul>
 
 </div>
 
+
+<!-- CONTENT -->
 
 <div class="content">
 
@@ -59,8 +63,6 @@
 
 </div>
 
-<!-- GRAFIK -->
-
 <div class="chart-grid">
 
 <div class="chart-container">
@@ -71,10 +73,6 @@
 <div class="chart-container">
 <h3>Grafik Barang Keluar per Hari</h3>
 <canvas id="grafikKeluar"></canvas>
-</div>
-
-</div>
-
 </div>
 
 </div>
@@ -129,8 +127,8 @@
 <p>Generate dan print barcode label.</p>
 </div>
 
-
 </div>
+
 </div>
 
 <script src="script.js"></script>
