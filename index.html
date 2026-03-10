@@ -27,12 +27,39 @@
 <div class="content">
 
 <div id="dashboard" class="page">
-<h1>Dashboard</h1>
 
-<div class="card">Total Produk : 120</div>
-<div class="card">Total Stok : 3500</div>
-<div class="card">Barang Masuk Hari Ini : 25</div>
-<div class="card">Barang Keluar Hari Ini : 10</div>
+<h1>Dashboard Inventory</h1>
+
+<div class="stats">
+
+<div class="card">
+<h3>Total Produk</h3>
+<p id="totalProduk">120</p>
+</div>
+
+<div class="card">
+<h3>Total Barang Masuk</h3>
+<p id="totalMasuk">350</p>
+</div>
+
+<div class="card">
+<h3>Total Barang Keluar</h3>
+<p id="totalKeluar">210</p>
+</div>
+
+</div>
+
+<div class="chart-container">
+<h3>Grafik Barang Masuk per Hari</h3>
+<canvas id="grafikMasuk"></canvas>
+</div>
+
+<div class="chart-container">
+<h3>Grafik Barang Keluar per Hari</h3>
+<canvas id="grafikKeluar"></canvas>
+</div>
+
+</div>
 
 </div>
 
