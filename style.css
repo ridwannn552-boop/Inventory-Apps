@@ -1,0 +1,55 @@
+body{
+margin:0;
+font-family:Arial;
+display:flex;
+background:#f1f5f9;
+}
+
+.sidebar{
+width:220px;
+background:#1e293b;
+color:white;
+height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+text-align:center;
+}
+
+.sidebar ul{
+list-style:none;
+padding:0;
+}
+
+.sidebar li{
+padding:12px;
+margin:5px 0;
+cursor:pointer;
+border-radius:5px;
+}
+
+.sidebar li:hover{
+background:#334155;
+}
+
+.content{
+flex:1;
+padding:30px;
+}
+
+.page{
+display:none;
+}
+
+.page.active{
+display:block;
+}
+
+.card{
+background:white;
+padding:20px;
+margin:10px 0;
+border-radius:8px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
