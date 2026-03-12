@@ -22,10 +22,6 @@ position:sticky;
 top:0;
 }
 
-.sidebar h2{
-margin-bottom:20px;
-}
-
 .sidebar ul{
 list-style:none;
 padding:0;
@@ -42,13 +38,12 @@ margin-bottom:5px;
 background:#333;
 }
 
-/* AREA CONTENT */
+/* CONTENT */
 .content{
 flex:1;
 padding:30px;
 }
 
-/* PAGE */
 .page{
 display:none;
 }
@@ -57,15 +52,13 @@ display:none;
 display:block;
 }
 
-/* AREA CARD */
+/* CARD */
 .stats{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:20px;
-margin-top:20px;
 }
 
-/* CARD */
 .card{
 background:white;
 padding:25px;
@@ -74,36 +67,28 @@ box-shadow:0 3px 10px rgba(0,0,0,0.1);
 text-align:center;
 }
 
-.card h3{
-font-size:16px;
-color:#666;
-margin-bottom:10px;
-}
+/* TABEL PRODUK */
 
-.card p{
-font-size:28px;
-font-weight:bold;
-color:#2c3e50;
-}
-
-/* AREA GRAFIK */
-.chart-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-margin-top:30px;
-}
-
-/* CONTAINER GRAFIK */
-.chart-container{
+.produk-table{
+width:100%;
+border-collapse:collapse;
 background:white;
-padding:25px;
-border-radius:10px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
+margin-top:20px;
 }
 
-/* GRAFIK */
-.chart-container canvas{
-width:100% !important;
-height:300px !important;
+.produk-table th{
+background:#f2f2f2;
+padding:10px;
+border:1px solid #ccc;
+text-align:center;
+}
+
+.produk-table td{
+padding:8px;
+border:1px solid #ccc;
+text-align:center;
+}
+
+.produk-table tr:hover{
+background:#f9f9f9;
 }
