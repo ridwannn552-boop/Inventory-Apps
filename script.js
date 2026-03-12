@@ -1,3 +1,7 @@
+// =========================
+// NAVIGASI HALAMAN
+// =========================
+
 function showPage(pageId){
 
 let pages=document.querySelectorAll(".page");
@@ -11,7 +15,12 @@ document.getElementById(pageId).classList.add("active");
 }
 
 document.getElementById("dashboard").classList.add("active");
-// DATA CONTOH
+
+
+
+// =========================
+// DATA GRAFIK DASHBOARD
+// =========================
 
 let hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
 
@@ -49,35 +58,82 @@ data:barangKeluar
 }]
 }
 });
+
+
+
+// =========================
 // DATABASE PRODUK
+// =========================
 
 let produk = [
+
 {
 kode:"N401-292",
-nama:"3M Soft Sanding Sponge ( Amplas Micro Fine 114x139 )",
+nama:"3M Soft Sanding Sponge",
 uom:"BOX",
 stok:0
 },
 
 {
 kode:"N826-139",
-nama:"Aerox 800 T/U Sld Black SG AX-800-2237",
+nama:"Aerox 800 T/U Sld Black",
 uom:"KLG",
 stok:0
 },
 
 {
 kode:"N826-140",
-nama:"Aerox 800 T/U Deep Black AX-800-2230",
+nama:"Aerox 800 T/U Deep Black",
 uom:"KLG",
 stok:0
 },
 
 {
 kode:"N653-989",
-nama:"Air Hose Kinki Special Urethan UH-7010-10",
+nama:"Air Hose Kinki Special",
 uom:"MTR",
 stok:0
 }
 
 ];
+
+
+
+// =========================
+// TAMPILKAN DATA PRODUK
+// =========================
+
+function tampilProduk(){
+
+let table = document.getElementById("produkTable");
+
+if(!table) return;
+
+table.innerHTML="";
+
+produk.forEach(function(item){
+
+table.innerHTML += `
+<tr>
+<td>${item.kode}</td>
+<td>${item.nama}</td>
+<td>${item.uom}</td>
+<td>${item.stok}</td>
+</tr>
+`;
+
+});
+
+}
+
+
+
+// =========================
+// JALANKAN SAAT SISTEM DIBUKA
+// =========================
+
+window.onload=function(){
+
+tampilProduk();
+
+};
