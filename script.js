@@ -1,4 +1,6 @@
+// =========================
 // NAVIGASI PAGE
+// =========================
 
 function showPage(pageId){
 
@@ -13,41 +15,49 @@ document.getElementById(pageId).classList.add("active");
 }
 
 
-// MASTER DATA PRODUK
+// =========================
+// DATA PRODUK
+// =========================
 
-let produk=[
+let produk=[];
 
-{
-kode:"N401-292",
-nama:"3M Soft Sanding Sponge",
-uom:"BOX",
-awal:10,
-masuk:0,
-keluar:0
-},
 
-{
-kode:"N826-139",
-nama:"Aerox 800 T/U Sld Black",
-uom:"KLG",
-awal:20,
-masuk:0,
-keluar:0
-},
+// =========================
+// LOAD DATA SPREADSHEET
+// =========================
 
-{
-kode:"N826-140",
-nama:"Aerox 800 T/U Deep Black",
-uom:"KLG",
-awal:15,
-masuk:0,
-keluar:0
+async function loadSpreadsheet(){
+
+let url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&single=true&output=csv";
+
+let response=await fetch(url);
+let data=await response.text();
+
+let rows=data.split("\n").slice(1);
+
+produk=rows.map(row=>{
+
+let col=row.split(",");
+
+return{
+kode:col[0],
+nama:col[1],
+uom:col[2],
+awal:parseInt(col[3])||0,
+masuk:parseInt(col[4])||0,
+keluar:parseInt(col[5])||0
+};
+
+});
+
+tampilProduk();
+
 }
 
-];
 
-
+// =========================
 // TAMPILKAN DATA PRODUK
+// =========================
 
 function tampilProduk(){
 
@@ -81,44 +91,9 @@ updateDashboard();
 }
 
 
-// PROSES BARCODE
-
-function prosesBarcode(tipe){
-
-let kode=document.getElementById("scanBarcode").value;
-let qty=parseInt(document.getElementById("qty").value);
-
-let item=produk.find(p => p.kode===kode);
-
-if(!item){
-
-document.getElementById("info").innerText="Produk tidak ditemukan";
-return;
-
-}
-
-if(tipe==="masuk"){
-item.masuk += qty;
-}
-
-if(tipe==="keluar"){
-item.keluar += qty;
-}
-
-if(tipe==="so"){
-item.awal = qty;
-item.masuk = 0;
-item.keluar = 0;
-}
-
-tampilProduk();
-
-document.getElementById("info").innerText="Transaksi berhasil";
-
-}
-
-
+// =========================
 // DASHBOARD
+// =========================
 
 function updateDashboard(){
 
@@ -128,10 +103,8 @@ let totalMasuk=0;
 let totalKeluar=0;
 
 produk.forEach(p=>{
-
 totalMasuk += p.masuk;
 totalKeluar += p.keluar;
-
 });
 
 document.getElementById("totalMasuk").innerText=totalMasuk;
@@ -140,6 +113,8 @@ document.getElementById("totalKeluar").innerText=totalKeluar;
 }
 
 
+// =========================
 // LOAD DATA
+// =========================
 
-tampilProduk();
+loadSpreadsheet();
