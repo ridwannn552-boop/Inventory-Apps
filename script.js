@@ -30,30 +30,35 @@ async function loadSpreadsheet(){
 
 let url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&single=true&output=csv";
 
-let response=await fetch(url);
-let data=await response.text();
+let response = await fetch(url);
+let data = await response.text();
 
-let rows=data.split("\n").slice(1);
+let rows = data.split("\n");
 
-produk=rows.map(row=>{
+produk = [];
 
-let col=row.split(",");
+for(let i=1;i<rows.length;i++){
 
-return{
-kode:col[0],
-nama:col[1],
-uom:col[2],
-awal:parseInt(col[3])||0,
-masuk:parseInt(col[4])||0,
-keluar:parseInt(col[5])||0
-};
+let col = rows[i].split(",");
+
+if(col.length < 7) continue;
+
+produk.push({
+
+kode: col[1],       // REFF NO
+nama: col[2],       // NAMA BARANG
+uom: col[3],        // UOM
+awal: parseInt(col[4]) || 0,   // STOCK AWAL
+masuk: parseInt(col[5]) || 0,  // IN
+keluar: parseInt(col[6]) || 0  // OUT
 
 });
+
+}
 
 tampilProduk();
 
 }
-
 
 // =========================
 // TAMPILKAN DATA PRODUK
