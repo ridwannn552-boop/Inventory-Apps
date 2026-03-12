@@ -1,25 +1,19 @@
-/* RESET DASAR */
 body{
 margin:0;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial;
 background:#f4f6f9;
 }
 
-/* LAYOUT UTAMA */
 .container{
 display:flex;
 min-height:100vh;
 }
 
-/* SIDEBAR */
 .sidebar{
 width:220px;
 background:#111;
 color:white;
 padding:20px;
-height:100vh;
-position:sticky;
-top:0;
 }
 
 .sidebar ul{
@@ -28,17 +22,14 @@ padding:0;
 }
 
 .sidebar ul li{
-padding:12px;
+padding:10px;
 cursor:pointer;
-border-radius:5px;
-margin-bottom:5px;
 }
 
 .sidebar ul li:hover{
 background:#333;
 }
 
-/* CONTENT */
 .content{
 flex:1;
 padding:30px;
@@ -52,7 +43,6 @@ display:none;
 display:block;
 }
 
-/* CARD */
 .stats{
 display:grid;
 grid-template-columns:repeat(3,1fr);
@@ -61,13 +51,10 @@ gap:20px;
 
 .card{
 background:white;
-padding:25px;
+padding:20px;
 border-radius:10px;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
 text-align:center;
 }
-
-/* TABEL PRODUK */
 
 .produk-table{
 width:100%;
@@ -76,19 +63,13 @@ background:white;
 margin-top:20px;
 }
 
-.produk-table th{
-background:#f2f2f2;
-padding:10px;
-border:1px solid #ccc;
-text-align:center;
-}
-
+.produk-table th,
 .produk-table td{
-padding:8px;
 border:1px solid #ccc;
+padding:10px;
 text-align:center;
 }
 
-.produk-table tr:hover{
-background:#f9f9f9;
+.produk-table th{
+background:#eee;
 }
