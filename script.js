@@ -125,3 +125,22 @@ tampilProduk();
 }
 
 }
+function scanBarang(){
+
+let kode = document.getElementById("scanBarcode").value;
+
+let item = produk.find(p=>p.kode===kode);
+
+if(item){
+
+document.getElementById("hasilScan").innerHTML =
+item.nama + " | Stock : " + item.stok;
+
+}else{
+
+document.getElementById("hasilScan").innerHTML =
+"Barang tidak ditemukan";
+
+}
+
+}
