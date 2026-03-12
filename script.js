@@ -97,3 +97,31 @@ table.innerHTML += `
 }
 
 tampilProduk();
+// barang masuk
+function barangMasuk(kode,qty){
+
+let item = produk.find(p=>p.kode===kode);
+
+if(item){
+
+item.stok += qty;
+
+tampilProduk();
+
+}
+
+}
+// barang keluar
+function barangKeluar(kode,qty){
+
+let item = produk.find(p=>p.kode===kode);
+
+if(item){
+
+item.stok -= qty;
+
+tampilProduk();
+
+}
+
+}
