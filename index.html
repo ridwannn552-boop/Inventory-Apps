@@ -23,18 +23,11 @@
 
 <ul>
 <li onclick="showPage('dashboard')">Dashboard</li>
-<li onclick="showPage('produk')">Produk</li>
-<li onclick="showPage('masuk')">Barang Masuk</li>
-<li onclick="showPage('keluar')">Barang Keluar</li>
-<li onclick="showPage('opname')">Stok Opname</li>
-<li onclick="showPage('laporan')">Laporan Opname</li>
-<li onclick="showPage('barcode')">Barcode</li>
+<li onclick="showPage('produk')">Data Produk</li>
+<li onclick="showPage('barcode')">Barcode Transaksi</li>
 </ul>
 
 </div>
-
-
-<!-- CONTENT -->
 
 <div class="content">
 
@@ -48,31 +41,17 @@
 
 <div class="card">
 <h3>Total Produk</h3>
-<p id="totalProduk">120</p>
+<p id="totalProduk">0</p>
 </div>
 
 <div class="card">
 <h3>Total Barang Masuk</h3>
-<p id="totalMasuk">350</p>
+<p id="totalMasuk">0</p>
 </div>
 
 <div class="card">
 <h3>Total Barang Keluar</h3>
-<p id="totalKeluar">210</p>
-</div>
-
-</div>
-
-<div class="chart-grid">
-
-<div class="chart-container">
-<h3>Grafik Barang Masuk per Hari</h3>
-<canvas id="grafikMasuk"></canvas>
-</div>
-
-<div class="chart-container">
-<h3>Grafik Barang Keluar per Hari</h3>
-<canvas id="grafikKeluar"></canvas>
+<p id="totalKeluar">0</p>
 </div>
 
 </div>
@@ -80,18 +59,18 @@
 </div>
 
 
-<!-- PRODUK -->
+<!-- DATA PRODUK -->
 
-<div class="page" id="produk">
+<div id="produk" class="page">
 
-<h2>Data Produk</h2>
+<h2>Master Data Produk</h2>
 
 <table class="produk-table">
 
 <thead>
 <tr>
 <th>No</th>
-<th>Reff No</th>
+<th>Barcode</th>
 <th>Nama Barang</th>
 <th>UOM</th>
 <th>Stock Awal</th>
@@ -107,6 +86,27 @@
 
 </div>
 
+
+<!-- BARCODE -->
+
+<div id="barcode" class="page">
+
+<h2>Transaksi Barcode</h2>
+
+<input type="text" id="scanBarcode" placeholder="Scan Barcode">
+<input type="number" id="qty" placeholder="Qty">
+
+<br><br>
+
+<button onclick="prosesBarcode('masuk')">Barang Masuk</button>
+
+<button onclick="prosesBarcode('keluar')">Barang Keluar</button>
+
+<button onclick="prosesBarcode('so')">Stock Opname</button>
+
+<p id="info"></p>
+
+</div>
 
 </div>
 
