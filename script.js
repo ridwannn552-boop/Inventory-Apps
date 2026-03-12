@@ -1,19 +1,40 @@
+// =========================
+// JALANKAN SAAT HALAMAN SIAP
+// =========================
+
+document.addEventListener("DOMContentLoaded", function(){
+
+showPage("dashboard");
+tampilProduk();
+buatGrafik();
+
+});
+
+
+// =========================
 // NAVIGASI HALAMAN
+// =========================
 
 function showPage(pageId){
 
-let pages=document.querySelectorAll(".page");
+let pages = document.querySelectorAll(".page");
 
 pages.forEach(function(page){
 page.classList.remove("active");
 });
 
-document.getElementById(pageId).classList.add("active");
+let target = document.getElementById(pageId);
+
+if(target){
+target.classList.add("active");
+}
 
 }
 
 
+// =========================
 // DATA PRODUK
+// =========================
 
 let produk = [
 
@@ -55,18 +76,19 @@ keluar:0
 
 ];
 
-
 function tampilProduk(){
 
-let tabel=document.getElementById("dataProduk");
+let tabel = document.getElementById("dataProduk");
+
+if(!tabel) return;
 
 tabel.innerHTML="";
 
 produk.forEach(function(item,index){
 
-let akhir=item.awal + item.masuk - item.keluar;
+let akhir = item.awal + item.masuk - item.keluar;
 
-let row=`
+let row = `
 <tr>
 <td>${index+1}</td>
 <td>${item.kode}</td>
@@ -85,4 +107,46 @@ tabel.innerHTML += row;
 
 }
 
-tampilProduk();
+
+// =========================
+// GRAFIK DASHBOARD
+// =========================
+
+function buatGrafik(){
+
+let hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+
+let barangMasuk = [12,19,8,15,10,7];
+let barangKeluar = [10,14,6,11,9,5];
+
+let ctx1 = document.getElementById("grafikMasuk");
+
+if(ctx1){
+new Chart(ctx1,{
+type:'bar',
+data:{
+labels:hari,
+datasets:[{
+label:'Barang Masuk',
+data:barangMasuk
+}]
+}
+});
+}
+
+let ctx2 = document.getElementById("grafikKeluar");
+
+if(ctx2){
+new Chart(ctx2,{
+type:'line',
+data:{
+labels:hari,
+datasets:[{
+label:'Barang Keluar',
+data:barangKeluar
+}]
+}
+});
+}
+
+}
