@@ -1,6 +1,4 @@
-// =========================
 // NAVIGASI HALAMAN
-// =========================
 
 function showPage(pageId){
 
@@ -14,72 +12,77 @@ document.getElementById(pageId).classList.add("active");
 
 }
 
-document.getElementById("dashboard").classList.add("active");
 
+// DATA PRODUK
 
+let produk = [
 
-// =========================
-// DATA GRAFIK DASHBOARD
-// =========================
+{
+kode:"N401-292",
+nama:"3M Soft Sanding Sponge",
+uom:"BOX",
+awal:0,
+masuk:0,
+keluar:0
+},
 
-let hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+{
+kode:"N826-139",
+nama:"Aerox 800 T/U Sld Black",
+uom:"KLG",
+awal:0,
+masuk:0,
+keluar:0
+},
 
-let barangMasuk = [12,19,8,15,10,7];
-let barangKeluar = [10,14,6,11,9,5];
+{
+kode:"N826-140",
+nama:"Aerox 800 T/U Deep Black",
+uom:"KLG",
+awal:0,
+masuk:0,
+keluar:0
+},
 
-
-// GRAFIK BARANG MASUK
-
-let ctx1 = document.getElementById('grafikMasuk');
-
-new Chart(ctx1,{
-type:'bar',
-data:{
-labels:hari,
-datasets:[{
-label:'Barang Masuk',
-data:barangMasuk
-}]
+{
+kode:"N653-989",
+nama:"Air Hose Kinki Special",
+uom:"MTR",
+awal:0,
+masuk:0,
+keluar:0
 }
+
+];
+
+
+function tampilProduk(){
+
+let tabel=document.getElementById("dataProduk");
+
+tabel.innerHTML="";
+
+produk.forEach(function(item,index){
+
+let akhir=item.awal + item.masuk - item.keluar;
+
+let row=`
+<tr>
+<td>${index+1}</td>
+<td>${item.kode}</td>
+<td>${item.nama}</td>
+<td>${item.uom}</td>
+<td>${item.awal}</td>
+<td>${item.masuk}</td>
+<td>${item.keluar}</td>
+<td>${akhir}</td>
+</tr>
+`;
+
+tabel.innerHTML += row;
+
 });
 
-
-// GRAFIK BARANG KELUAR
-
-let ctx2 = document.getElementById('grafikKeluar');
-
-new Chart(ctx2,{
-type:'line',
-data:{
-labels:hari,
-datasets:[{
-label:'Barang Keluar',
-data:barangKeluar
-}]
-}
-});
-
-
-
-.produk-table{
-width:100%;
-border-collapse:collapse;
-background:white;
 }
 
-.produk-table th{
-background:#f2f2f2;
-padding:10px;
-border:1px solid #ccc;
-text-align:center;
-}
-
-.produk-table td{
-padding:8px;
-border:1px solid #ccc;
-text-align:center;
-}
-
-.produk-table tr:hover{
-background:#f9f9f9;
-}
+tampilProduk();
