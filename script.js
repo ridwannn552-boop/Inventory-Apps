@@ -39,18 +39,20 @@ produk = [];
 
 for(let i=1;i<rows.length;i++){
 
-let col = rows[i].split(",");
+let row = rows[i].trim();
 
-if(col.length < 7) continue;
+if(row === "") continue;
+
+let col = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
 produk.push({
 
-kode: col[1],       // REFF NO
-nama: col[2],       // NAMA BARANG
-uom: col[3],        // UOM
-awal: parseInt(col[4]) || 0,   // STOCK AWAL
-masuk: parseInt(col[5]) || 0,  // IN
-keluar: parseInt(col[6]) || 0  // OUT
+kode: col[1] || "",
+nama: col[2] || "",
+uom: col[3] || "",
+awal: parseInt(col[4]) || 0,
+masuk: parseInt(col[5]) || 0,
+keluar: parseInt(col[6]) || 0
 
 });
 
