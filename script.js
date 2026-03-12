@@ -49,3 +49,29 @@ data:barangKeluar
 }]
 }
 });
+let produk = [
+{
+kode:"N401-292",
+nama:"3M Soft Sanding Sponge",
+uom:"BOX",
+stok:0
+},
+{
+kode:"N826-139",
+nama:"Aerox 800 T/U Sld Black",
+uom:"KLG",
+stok:0
+},
+{
+kode:"N826-140",
+nama:"Aerox 800 Deep Black",
+uom:"KLG",
+stok:0
+},
+{
+kode:"N653-989",
+nama:"Air Hose Kinki Special",
+uom:"MTR",
+stok:0
+}
+];
