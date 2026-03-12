@@ -49,98 +49,35 @@ data:barangKeluar
 }]
 }
 });
+// DATABASE PRODUK
+
 let produk = [
 {
 kode:"N401-292",
-nama:"3M Soft Sanding Sponge",
+nama:"3M Soft Sanding Sponge ( Amplas Micro Fine 114x139 )",
 uom:"BOX",
 stok:0
 },
+
 {
 kode:"N826-139",
-nama:"Aerox 800 T/U Sld Black",
+nama:"Aerox 800 T/U Sld Black SG AX-800-2237",
 uom:"KLG",
 stok:0
 },
+
 {
 kode:"N826-140",
-nama:"Aerox 800 Deep Black",
+nama:"Aerox 800 T/U Deep Black AX-800-2230",
 uom:"KLG",
 stok:0
 },
+
 {
 kode:"N653-989",
-nama:"Air Hose Kinki Special",
+nama:"Air Hose Kinki Special Urethan UH-7010-10",
 uom:"MTR",
 stok:0
 }
+
 ];
-function tampilProduk(){
-
-let table = document.getElementById("produkTable");
-
-table.innerHTML="";
-
-produk.forEach(p=>{
-
-table.innerHTML += `
-<tr>
-<td>${p.kode}</td>
-<td>${p.nama}</td>
-<td>${p.uom}</td>
-<td>${p.stok}</td>
-</tr>
-`;
-
-});
-
-}
-
-tampilProduk();
-// barang masuk
-function barangMasuk(kode,qty){
-
-let item = produk.find(p=>p.kode===kode);
-
-if(item){
-
-item.stok += qty;
-
-tampilProduk();
-
-}
-
-}
-// barang keluar
-function barangKeluar(kode,qty){
-
-let item = produk.find(p=>p.kode===kode);
-
-if(item){
-
-item.stok -= qty;
-
-tampilProduk();
-
-}
-
-}
-function scanBarang(){
-
-let kode = document.getElementById("scanBarcode").value;
-
-let item = produk.find(p=>p.kode===kode);
-
-if(item){
-
-document.getElementById("hasilScan").innerHTML =
-item.nama + " | Stock : " + item.stok;
-
-}else{
-
-document.getElementById("hasilScan").innerHTML =
-"Barang tidak ditemukan";
-
-}
-
-}
