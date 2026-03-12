@@ -1,48 +1,27 @@
-// =========================
-// JALANKAN SAAT HALAMAN SIAP
-// =========================
-
-document.addEventListener("DOMContentLoaded", function(){
-
-showPage("dashboard");
-tampilProduk();
-buatGrafik();
-
-});
-
-
-// =========================
-// NAVIGASI HALAMAN
-// =========================
+// NAVIGASI PAGE
 
 function showPage(pageId){
 
-let pages = document.querySelectorAll(".page");
+let pages=document.querySelectorAll(".page");
 
 pages.forEach(function(page){
 page.classList.remove("active");
 });
 
-let target = document.getElementById(pageId);
-
-if(target){
-target.classList.add("active");
-}
+document.getElementById(pageId).classList.add("active");
 
 }
 
 
-// =========================
-// DATA PRODUK
-// =========================
+// MASTER DATA PRODUK
 
-let produk = [
+let produk=[
 
 {
 kode:"N401-292",
 nama:"3M Soft Sanding Sponge",
 uom:"BOX",
-awal:0,
+awal:10,
 masuk:0,
 keluar:0
 },
@@ -51,7 +30,7 @@ keluar:0
 kode:"N826-139",
 nama:"Aerox 800 T/U Sld Black",
 uom:"KLG",
-awal:0,
+awal:20,
 masuk:0,
 keluar:0
 },
@@ -60,35 +39,27 @@ keluar:0
 kode:"N826-140",
 nama:"Aerox 800 T/U Deep Black",
 uom:"KLG",
-awal:0,
-masuk:0,
-keluar:0
-},
-
-{
-kode:"N653-989",
-nama:"Air Hose Kinki Special",
-uom:"MTR",
-awal:0,
+awal:15,
 masuk:0,
 keluar:0
 }
 
 ];
 
+
+// TAMPILKAN DATA PRODUK
+
 function tampilProduk(){
 
-let tabel = document.getElementById("dataProduk");
-
-if(!tabel) return;
+let tabel=document.getElementById("dataProduk");
 
 tabel.innerHTML="";
 
 produk.forEach(function(item,index){
 
-let akhir = item.awal + item.masuk - item.keluar;
+let akhir=item.awal + item.masuk - item.keluar;
 
-let row = `
+let row=`
 <tr>
 <td>${index+1}</td>
 <td>${item.kode}</td>
@@ -105,48 +76,70 @@ tabel.innerHTML += row;
 
 });
 
+updateDashboard();
+
 }
 
 
-// =========================
-// GRAFIK DASHBOARD
-// =========================
+// PROSES BARCODE
 
-function buatGrafik(){
+function prosesBarcode(tipe){
 
-let hari = ["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+let kode=document.getElementById("scanBarcode").value;
+let qty=parseInt(document.getElementById("qty").value);
 
-let barangMasuk = [12,19,8,15,10,7];
-let barangKeluar = [10,14,6,11,9,5];
+let item=produk.find(p => p.kode===kode);
 
-let ctx1 = document.getElementById("grafikMasuk");
+if(!item){
 
-if(ctx1){
-new Chart(ctx1,{
-type:'bar',
-data:{
-labels:hari,
-datasets:[{
-label:'Barang Masuk',
-data:barangMasuk
-}]
+document.getElementById("info").innerText="Produk tidak ditemukan";
+return;
+
 }
+
+if(tipe==="masuk"){
+item.masuk += qty;
+}
+
+if(tipe==="keluar"){
+item.keluar += qty;
+}
+
+if(tipe==="so"){
+item.awal = qty;
+item.masuk = 0;
+item.keluar = 0;
+}
+
+tampilProduk();
+
+document.getElementById("info").innerText="Transaksi berhasil";
+
+}
+
+
+// DASHBOARD
+
+function updateDashboard(){
+
+document.getElementById("totalProduk").innerText=produk.length;
+
+let totalMasuk=0;
+let totalKeluar=0;
+
+produk.forEach(p=>{
+
+totalMasuk += p.masuk;
+totalKeluar += p.keluar;
+
 });
-}
 
-let ctx2 = document.getElementById("grafikKeluar");
-
-if(ctx2){
-new Chart(ctx2,{
-type:'line',
-data:{
-labels:hari,
-datasets:[{
-label:'Barang Keluar',
-data:barangKeluar
-}]
-}
-});
-}
+document.getElementById("totalMasuk").innerText=totalMasuk;
+document.getElementById("totalKeluar").innerText=totalKeluar;
 
 }
+
+
+// LOAD DATA
+
+tampilProduk();
