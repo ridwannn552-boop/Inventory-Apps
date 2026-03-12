@@ -61,79 +61,25 @@ data:barangKeluar
 
 
 
-// =========================
-// DATABASE PRODUK
-// =========================
-
-let produk = [
-
-{
-kode:"N401-292",
-nama:"3M Soft Sanding Sponge",
-uom:"BOX",
-stok:0
-},
-
-{
-kode:"N826-139",
-nama:"Aerox 800 T/U Sld Black",
-uom:"KLG",
-stok:0
-},
-
-{
-kode:"N826-140",
-nama:"Aerox 800 T/U Deep Black",
-uom:"KLG",
-stok:0
-},
-
-{
-kode:"N653-989",
-nama:"Air Hose Kinki Special",
-uom:"MTR",
-stok:0
+.produk-table{
+width:100%;
+border-collapse:collapse;
+background:white;
 }
 
-];
-
-
-
-// =========================
-// TAMPILKAN DATA PRODUK
-// =========================
-
-function tampilProduk(){
-
-let table = document.getElementById("produkTable");
-
-if(!table) return;
-
-table.innerHTML="";
-
-produk.forEach(function(item){
-
-table.innerHTML += `
-<tr>
-<td>${item.kode}</td>
-<td>${item.nama}</td>
-<td>${item.uom}</td>
-<td>${item.stok}</td>
-</tr>
-`;
-
-});
-
+.produk-table th{
+background:#f2f2f2;
+padding:10px;
+border:1px solid #ccc;
+text-align:center;
 }
 
+.produk-table td{
+padding:8px;
+border:1px solid #ccc;
+text-align:center;
+}
 
-
-// =========================
-// JALANKAN SAAT SISTEM DIBUKA
-// =========================
-
-window.onload=function(){
-
-tampilProduk();
-
-};
+.produk-table tr:hover{
+background:#f9f9f9;
+}
