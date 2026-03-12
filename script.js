@@ -75,3 +75,25 @@ uom:"MTR",
 stok:0
 }
 ];
+function tampilProduk(){
+
+let table = document.getElementById("produkTable");
+
+table.innerHTML="";
+
+produk.forEach(p=>{
+
+table.innerHTML += `
+<tr>
+<td>${p.kode}</td>
+<td>${p.nama}</td>
+<td>${p.uom}</td>
+<td>${p.stok}</td>
+</tr>
+`;
+
+});
+
+}
+
+tampilProduk();
