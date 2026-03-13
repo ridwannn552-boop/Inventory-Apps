@@ -164,7 +164,6 @@ buatPagination();
 
 updateDashboard();
 
-}
 function buatPagination(){
 
 let pagination=document.getElementById("pagination");
@@ -182,10 +181,12 @@ if(currentPage>1){
 
 let prev=document.createElement("button");
 prev.innerText="<<";
+
 prev.onclick=function(){
 currentPage--;
 tampilProduk();
 };
+
 pagination.appendChild(prev);
 
 }
@@ -212,7 +213,9 @@ pagination.appendChild(btn);
 if(currentPage<pageCount){
 
 let next=document.createElement("button");
+
 next.innerText=">>";
+
 next.onclick=function(){
 currentPage++;
 tampilProduk();
