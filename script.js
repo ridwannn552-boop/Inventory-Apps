@@ -126,7 +126,7 @@ document.getElementById("totalKeluar").innerText=totalKeluar;
 
 loadSpreadsheet();
 let currentPage = 1;
-let rowsPerPage = 10;
+let rowsPerPage = 50;
 
 function tampilProduk(){
 
