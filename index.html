@@ -31,6 +31,7 @@
 <li onclick="showPage('dashboard')">Dashboard</li>
 <li onclick="showPage('produk')">Data Produk</li>
 <li onclick="showPage('barcode')">Barcode Transaksi</li>
+<li onclick="showPage('history')">History Transaksi</li>
 </ul>
 
 </div>
@@ -152,6 +153,33 @@ Stock Opname
 <p id="hasilScan"></p>
 
 </div>
+
+</div>
+
+
+
+<!-- HISTORY TRANSAKSI -->
+
+<div id="history" class="page">
+
+<h2>History Transaksi</h2>
+
+<table class="produk-table">
+
+<thead>
+<tr>
+<th>No</th>
+<th>Tanggal</th>
+<th>Barcode</th>
+<th>Nama Barang</th>
+<th>Transaksi</th>
+<th>Qty</th>
+</tr>
+</thead>
+
+<tbody id="dataHistory"></tbody>
+
+</table>
 
 </div>
 
