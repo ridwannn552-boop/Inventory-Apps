@@ -204,3 +204,44 @@ document.getElementById("totalKeluar").innerText=totalKeluar;
 // =========================
 
 loadSpreadsheet();
+function searchProduk(){
+
+let keyword=document.getElementById("searchInput").value.toLowerCase();
+
+let filtered=produk.filter(item =>
+item.kode.toLowerCase().includes(keyword) ||
+item.nama.toLowerCase().includes(keyword)
+);
+
+tampilProdukSearch(filtered);
+
+}
+
+function tampilProdukSearch(data){
+
+let tabel=document.getElementById("dataProduk");
+
+tabel.innerHTML="";
+
+data.forEach(function(item,index){
+
+let akhir=item.awal + item.masuk - item.keluar;
+
+let row=`
+<tr>
+<td>${index+1}</td>
+<td>${item.kode}</td>
+<td>${item.nama}</td>
+<td>${item.uom}</td>
+<td>${item.awal}</td>
+<td>${item.masuk}</td>
+<td>${item.keluar}</td>
+<td>${akhir}</td>
+</tr>
+`;
+
+tabel.innerHTML += row;
+
+});
+
+}
