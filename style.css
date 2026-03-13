@@ -4,10 +4,14 @@ font-family:Arial;
 background:#f4f6f9;
 }
 
+/* LAYOUT */
+
 .container{
 display:flex;
 min-height:100vh;
 }
+
+
 
 /* SIDEBAR */
 
@@ -18,19 +22,27 @@ color:white;
 padding:20px;
 }
 
+.sidebar h2{
+margin-top:0;
+}
+
 .sidebar ul{
 list-style:none;
 padding:0;
+margin:0;
 }
 
 .sidebar ul li{
 padding:10px;
 cursor:pointer;
+border-radius:4px;
 }
 
 .sidebar ul li:hover{
 background:#333;
 }
+
+
 
 /* CONTENT */
 
@@ -47,12 +59,15 @@ display:none;
 display:block;
 }
 
+
+
 /* DASHBOARD */
 
 .stats{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:20px;
+margin-top:20px;
 }
 
 .card{
@@ -62,6 +77,20 @@ border-radius:10px;
 text-align:center;
 box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
+
+.card h3{
+margin-top:0;
+font-size:16px;
+color:#555;
+}
+
+.card p{
+font-size:24px;
+font-weight:bold;
+margin:5px 0 0;
+}
+
+
 
 /* SEARCH BAR */
 
@@ -93,6 +122,8 @@ font-size:18px;
 color:#777;
 }
 
+
+
 /* TABLE */
 
 .produk-table{
@@ -105,15 +136,21 @@ box-shadow:0 2px 8px rgba(0,0,0,0.1);
 
 .produk-table th,
 .produk-table td{
-border:1px solid #ccc;
+border:1px solid #ddd;
 padding:10px;
 text-align:center;
 }
 
 .produk-table th{
-background:#eee;
+background:#f1f1f1;
 cursor:pointer;
 }
+
+.produk-table tr:hover{
+background:#fafafa;
+}
+
+
 
 /* PAGINATION */
 
@@ -131,11 +168,14 @@ background:#2c3e50;
 color:white;
 cursor:pointer;
 border-radius:4px;
+font-size:13px;
 }
 
 #pagination button:hover{
 background:#34495e;
 }
+
+
 
 /* BARCODE SCANNER */
 
@@ -158,9 +198,12 @@ padding:10px;
 border:1px solid #ccc;
 border-radius:5px;
 margin-bottom:10px;
+font-size:14px;
 }
 
-/* BUTTON */
+
+
+/* BUTTON TRANSAKSI */
 
 .btn-masuk{
 background:#27ae60;
@@ -201,4 +244,32 @@ background:#c0392b;
 
 .btn-so:hover{
 background:#1f6690;
+}
+
+
+
+/* HISTORY TABLE */
+
+#history table{
+margin-top:20px;
+}
+
+
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.stats{
+grid-template-columns:1fr;
+}
+
+.search-bar{
+width:100%;
+}
+
+.scanner-box{
+width:100%;
+}
+
 }
