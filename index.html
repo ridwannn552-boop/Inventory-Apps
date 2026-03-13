@@ -74,14 +74,19 @@
 <h2>Master Data Produk</h2>
 
 <!-- SEARCH -->
-<input
+<div class="search-container">
+
+<span class="search-icon">🔎</span>
+
+<input 
 type="text"
 id="searchInput"
 placeholder="Cari Barcode atau Nama Barang..."
 onkeyup="searchProduk()"
-class="search-box"
+class="search-input"
 >
 
+</div>
 <table class="produk-table">
 
 <thead>
