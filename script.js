@@ -21,6 +21,9 @@ document.getElementById(pageId).classList.add("active");
 
 let produk=[];
 
+let currentPage = 1;
+let rowsPerPage = 50;
+
 
 // =========================
 // LOAD DATA SPREADSHEET
@@ -62,71 +65,10 @@ tampilProduk();
 
 }
 
+
 // =========================
 // TAMPILKAN DATA PRODUK
 // =========================
-
-function tampilProduk(){
-
-let tabel=document.getElementById("dataProduk");
-
-tabel.innerHTML="";
-
-produk.forEach(function(item,index){
-
-let akhir=item.awal + item.masuk - item.keluar;
-
-let row=`
-<tr>
-<td>${index+1}</td>
-<td>${item.kode}</td>
-<td>${item.nama}</td>
-<td>${item.uom}</td>
-<td>${item.awal}</td>
-<td>${item.masuk}</td>
-<td>${item.keluar}</td>
-<td>${akhir}</td>
-</tr>
-`;
-
-tabel.innerHTML += row;
-
-});
-
-updateDashboard();
-
-}
-
-
-// =========================
-// DASHBOARD
-// =========================
-
-function updateDashboard(){
-
-document.getElementById("totalProduk").innerText=produk.length;
-
-let totalMasuk=0;
-let totalKeluar=0;
-
-produk.forEach(p=>{
-totalMasuk += p.masuk;
-totalKeluar += p.keluar;
-});
-
-document.getElementById("totalMasuk").innerText=totalMasuk;
-document.getElementById("totalKeluar").innerText=totalKeluar;
-
-}
-
-
-// =========================
-// LOAD DATA
-// =========================
-
-loadSpreadsheet();
-let currentPage = 1;
-let rowsPerPage = 50;
 
 function tampilProduk(){
 
@@ -163,6 +105,13 @@ tabel.innerHTML += row;
 buatPagination();
 
 updateDashboard();
+
+}
+
+
+// =========================
+// PAGINATION
+// =========================
 
 function buatPagination(){
 
@@ -226,3 +175,32 @@ pagination.appendChild(next);
 }
 
 }
+
+
+// =========================
+// DASHBOARD
+// =========================
+
+function updateDashboard(){
+
+document.getElementById("totalProduk").innerText=produk.length;
+
+let totalMasuk=0;
+let totalKeluar=0;
+
+produk.forEach(p=>{
+totalMasuk += p.masuk;
+totalKeluar += p.keluar;
+});
+
+document.getElementById("totalMasuk").innerText=totalMasuk;
+document.getElementById("totalKeluar").innerText=totalKeluar;
+
+}
+
+
+// =========================
+// LOAD DATA
+// =========================
+
+loadSpreadsheet();
