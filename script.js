@@ -89,7 +89,7 @@ let dataPage=produk.slice(start,end);
 
 dataPage.forEach((item,index)=>{
 
-let akhir=item.awal+item.masuk-item.keluar;
+let akhir=item.awal + item.masuk - item.keluar;
 
 let row=`
 <tr>
@@ -169,7 +169,7 @@ tabel.innerHTML="";
 
 filtered.forEach((item,index)=>{
 
-let akhir=item.awal+item.masuk-item.keluar;
+let akhir=item.awal + item.masuk - item.keluar;
 
 let row=`
 <tr>
@@ -222,7 +222,6 @@ document.getElementById("totalKeluar").innerText=totalKeluar;
 function setMode(mode){
 
 modeTransaksi=mode;
-
 document.getElementById("hasilScan").innerText="Mode : "+mode;
 
 }
@@ -238,35 +237,33 @@ function prosesScanBarcode(kode){
 let qty=parseInt(document.getElementById("qty").value);
 
 if(!qty){
-
 document.getElementById("hasilScan").innerText="Isi Qty terlebih dahulu";
 return;
-
 }
 
 let item=produk.find(p=>p.kode===kode);
 
 if(!item){
-
 document.getElementById("hasilScan").innerText="Produk tidak ditemukan";
 return;
-
 }
 
 
 
+// UPDATE DATA PRODUK
+
 if(modeTransaksi==="masuk"){
-item.masuk+=qty;
+item.masuk += qty;
 }
 
 if(modeTransaksi==="keluar"){
-item.keluar+=qty;
+item.keluar += qty;
 }
 
 if(modeTransaksi==="so"){
-item.awal=qty;
-item.masuk=0;
-item.keluar=0;
+item.awal = qty;
+item.masuk = 0;
+item.keluar = 0;
 }
 
 
@@ -279,12 +276,15 @@ historyTransaksi.push({
 
 tanggal:now.toISOString(),
 bulan:now.getMonth()+1,
+tahun:now.getFullYear(),
 jenis:modeTransaksi,
 kode:item.kode,
 nama:item.nama,
 qty:qty
 
 });
+
+
 
 tampilHistory();
 tampilProduk();
