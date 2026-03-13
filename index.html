@@ -12,6 +12,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<!-- LIBRARY SCANNER -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
 </head>
 
 <body>
@@ -73,7 +76,7 @@
 
 <h2>Master Data Produk</h2>
 
-<!-- SEARCH MODERN -->
+<!-- SEARCH -->
 
 <div class="search-wrapper">
 
@@ -112,34 +115,41 @@ onkeyup="searchProduk()"
 
 </table>
 
-<!-- PAGINATION -->
 <div id="pagination" class="pagination"></div>
 
 </div>
 
 
 
-<!-- BARCODE TRANSAKSI -->
+<!-- BARCODE SCANNER -->
 
 <div id="barcode" class="page">
 
-<h2>Transaksi Barcode</h2>
+<h2>Barcode Scanner</h2>
 
-<div class="barcode-form">
+<div class="scanner-box">
 
-<input type="text" id="scanBarcode" placeholder="Scan Barcode">
+<div id="reader"></div>
+
+<br>
 
 <input type="number" id="qty" placeholder="Qty">
 
 <br><br>
 
-<button onclick="prosesBarcode('masuk')">Barang Masuk</button>
+<button onclick="setMode('masuk')" class="btn-masuk">
+Barang Masuk
+</button>
 
-<button onclick="prosesBarcode('keluar')">Barang Keluar</button>
+<button onclick="setMode('keluar')" class="btn-keluar">
+Barang Keluar
+</button>
 
-<button onclick="prosesBarcode('so')">Stock Opname</button>
+<button onclick="setMode('so')" class="btn-so">
+Stock Opname
+</button>
 
-<p id="info"></p>
+<p id="hasilScan"></p>
 
 </div>
 
