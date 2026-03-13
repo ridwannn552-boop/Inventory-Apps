@@ -106,3 +106,22 @@ border-radius:4px;
 .pagination button:hover{
 background:#34495e;
 }
+#pagination{
+margin-top:20px;
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+}
+
+#pagination button{
+padding:6px 10px;
+border:none;
+background:#2c3e50;
+color:white;
+cursor:pointer;
+border-radius:4px;
+}
+
+#pagination button:hover{
+background:#34495e;
+}
