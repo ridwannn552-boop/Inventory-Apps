@@ -1,12 +1,12 @@
-// =========================
-// NAVIGASI PAGE
-// =========================
+// ==========================
+// NAVIGASI HALAMAN
+// ==========================
 
 function showPage(pageId){
 
 let pages=document.querySelectorAll(".page");
 
-pages.forEach(function(page){
+pages.forEach(page=>{
 page.classList.remove("active");
 });
 
@@ -16,9 +16,9 @@ document.getElementById(pageId).classList.add("active");
 
 
 
-// =========================
+// ==========================
 // DATA PRODUK
-// =========================
+// ==========================
 
 let produk=[];
 let historyTransaksi=[];
@@ -26,11 +26,13 @@ let historyTransaksi=[];
 let currentPage=1;
 let rowsPerPage=50;
 
+let modeTransaksi="masuk";
 
 
-// =========================
-// LOAD DATA SPREADSHEET
-// =========================
+
+// ==========================
+// LOAD DATA GOOGLE SHEET
+// ==========================
 
 async function loadSpreadsheet(){
 
@@ -52,12 +54,12 @@ let col=row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
 produk.push({
 
-kode: col[1] || "",
-nama: col[2] || "",
-uom: col[3] || "",
-awal: parseInt(col[4]) || 0,
-masuk: parseInt(col[5]) || 0,
-keluar: parseInt(col[6]) || 0
+kode:col[1]||"",
+nama:col[2]||"",
+uom:col[3]||"",
+awal:parseInt(col[4])||0,
+masuk:parseInt(col[5])||0,
+keluar:parseInt(col[6])||0
 
 });
 
@@ -69,14 +71,13 @@ tampilProduk();
 
 
 
-// =========================
+// ==========================
 // TAMPILKAN DATA PRODUK
-// =========================
+// ==========================
 
 function tampilProduk(){
 
 let tabel=document.getElementById("dataProduk");
-
 if(!tabel) return;
 
 tabel.innerHTML="";
@@ -84,11 +85,11 @@ tabel.innerHTML="";
 let start=(currentPage-1)*rowsPerPage;
 let end=start+rowsPerPage;
 
-let pageData=produk.slice(start,end);
+let dataPage=produk.slice(start,end);
 
-pageData.forEach(function(item,index){
+dataPage.forEach((item,index)=>{
 
-let akhir=item.awal + item.masuk - item.keluar;
+let akhir=item.awal+item.masuk-item.keluar;
 
 let row=`
 <tr>
@@ -114,40 +115,20 @@ updateDashboard();
 
 
 
-// =========================
+// ==========================
 // PAGINATION
-// =========================
+// ==========================
 
 function buatPagination(){
 
 let pagination=document.getElementById("pagination");
-
 if(!pagination) return;
 
 pagination.innerHTML="";
 
 let pageCount=Math.ceil(produk.length/rowsPerPage);
 
-let maxVisible=5;
-
-let start=Math.max(1,currentPage-2);
-let end=Math.min(pageCount,start+maxVisible-1);
-
-if(currentPage>1){
-
-let prev=document.createElement("button");
-prev.innerText="<<";
-
-prev.onclick=function(){
-currentPage--;
-tampilProduk();
-};
-
-pagination.appendChild(prev);
-
-}
-
-for(let i=start;i<=end;i++){
+for(let i=1;i<=pageCount;i++){
 
 let btn=document.createElement("button");
 btn.innerText=i;
@@ -156,7 +137,7 @@ if(i===currentPage){
 btn.style.background="#1abc9c";
 }
 
-btn.onclick=function(){
+btn.onclick=()=>{
 currentPage=i;
 tampilProduk();
 };
@@ -165,50 +146,30 @@ pagination.appendChild(btn);
 
 }
 
-if(currentPage<pageCount){
-
-let next=document.createElement("button");
-next.innerText=">>";
-
-next.onclick=function(){
-currentPage++;
-tampilProduk();
-};
-
-pagination.appendChild(next);
-
-}
-
 }
 
 
 
-// =========================
+// ==========================
 // SEARCH PRODUK
-// =========================
+// ==========================
 
 function searchProduk(){
 
 let keyword=document.getElementById("searchInput").value.toLowerCase();
 
-let filtered=produk.filter(item =>
-item.kode.toLowerCase().includes(keyword) ||
+let filtered=produk.filter(item=>
+item.kode.toLowerCase().includes(keyword)||
 item.nama.toLowerCase().includes(keyword)
 );
-
-tampilProdukSearch(filtered);
-
-}
-
-function tampilProdukSearch(data){
 
 let tabel=document.getElementById("dataProduk");
 
 tabel.innerHTML="";
 
-data.forEach(function(item,index){
+filtered.forEach((item,index)=>{
 
-let akhir=item.awal + item.masuk - item.keluar;
+let akhir=item.awal+item.masuk-item.keluar;
 
 let row=`
 <tr>
@@ -231,9 +192,9 @@ tabel.innerHTML+=row;
 
 
 
-// =========================
+// ==========================
 // DASHBOARD
-// =========================
+// ==========================
 
 function updateDashboard(){
 
@@ -254,25 +215,23 @@ document.getElementById("totalKeluar").innerText=totalKeluar;
 
 
 
-// =========================
-// BARCODE MODE
-// =========================
-
-let modeTransaksi="masuk";
+// ==========================
+// MODE TRANSAKSI
+// ==========================
 
 function setMode(mode){
 
 modeTransaksi=mode;
 
-document.getElementById("hasilScan").innerText="Mode: "+mode;
+document.getElementById("hasilScan").innerText="Mode : "+mode;
 
 }
 
 
 
-// =========================
-// PROSES SCAN BARCODE
-// =========================
+// ==========================
+// PROSES BARCODE
+// ==========================
 
 function prosesScanBarcode(kode){
 
@@ -281,7 +240,6 @@ let qty=parseInt(document.getElementById("qty").value);
 if(!qty){
 
 document.getElementById("hasilScan").innerText="Isi Qty terlebih dahulu";
-
 return;
 
 }
@@ -291,14 +249,11 @@ let item=produk.find(p=>p.kode===kode);
 if(!item){
 
 document.getElementById("hasilScan").innerText="Produk tidak ditemukan";
-
 return;
 
 }
 
 
-
-// UPDATE STOCK
 
 if(modeTransaksi==="masuk"){
 item.masuk+=qty;
@@ -318,49 +273,69 @@ item.keluar=0;
 
 // SIMPAN HISTORY
 
-let tanggal=new Date().toLocaleString();
+let now=new Date();
 
 historyTransaksi.push({
 
-tanggal:tanggal,
+tanggal:now.toISOString(),
+bulan:now.getMonth()+1,
+jenis:modeTransaksi,
 kode:item.kode,
 nama:item.nama,
-tipe:modeTransaksi,
 qty:qty
 
 });
 
 tampilHistory();
-
 tampilProduk();
 
-document.getElementById("hasilScan").innerText="Scan berhasil: "+kode;
+document.getElementById("hasilScan").innerText="Scan berhasil : "+kode;
 
 }
 
 
 
-// =========================
-// HISTORY TRANSAKSI
-// =========================
+// ==========================
+// SCANNER
+// ==========================
 
-function tampilHistory(){
+function startScanner(){
+
+let scanner=new Html5QrcodeScanner(
+"reader",
+{fps:10,qrbox:250}
+);
+
+scanner.render((decodedText)=>{
+prosesScanBarcode(decodedText);
+});
+
+}
+
+
+
+// ==========================
+// HISTORY TRANSAKSI
+// ==========================
+
+function tampilHistory(data=historyTransaksi){
 
 let tabel=document.getElementById("dataHistory");
-
 if(!tabel) return;
 
 tabel.innerHTML="";
 
-historyTransaksi.forEach(function(item,index){
+data.forEach((item,index)=>{
+
+let tanggal=new Date(item.tanggal).toLocaleString();
 
 let row=`
 <tr>
 <td>${index+1}</td>
-<td>${item.tanggal}</td>
+<td>${tanggal}</td>
 <td>${item.kode}</td>
 <td>${item.nama}</td>
-<td>${item.tipe}</td>
+<td>${item.jenis}</td>
 <td>${item.qty}</td>
 </tr>
 `;
@@ -373,41 +348,69 @@ tabel.innerHTML+=row;
 
 
 
-// =========================
-// AKTIFKAN SCANNER
-// =========================
+// ==========================
+// FILTER HISTORY
+// ==========================
 
-function startScanner(){
+function filterHistory(){
 
-let scanner=new Html5QrcodeScanner(
-"reader",
-{ fps:10, qrbox:250 }
-);
+let bulan=document.getElementById("filterBulan").value;
+let jenis=document.getElementById("filterJenis").value;
 
-scanner.render((decodedText)=>{
-prosesScanBarcode(decodedText);
+let hasil=historyTransaksi.filter(item=>{
+
+let cocok=true;
+
+if(bulan && item.bulan!=bulan) cocok=false;
+if(jenis && item.jenis!=jenis) cocok=false;
+
+return cocok;
+
 });
+
+tampilHistory(hasil);
 
 }
 
 
 
-// =========================
-// LOAD DATA
-// =========================
+// ==========================
+// DOWNLOAD EXCEL
+// ==========================
+
+function downloadExcel(){
+
+let bulan=document.getElementById("filterBulan").value;
+let jenis=document.getElementById("filterJenis").value;
+
+let data=historyTransaksi.filter(item=>{
+
+let cocok=true;
+
+if(bulan && item.bulan!=bulan) cocok=false;
+if(jenis && item.jenis!=jenis) cocok=false;
+
+return cocok;
+
+});
+
+let worksheet=XLSX.utils.json_to_sheet(data);
+let workbook=XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(workbook,worksheet,"History");
+
+XLSX.writeFile(workbook,"History_Transaksi.xlsx");
+
+}
+
+
+
+// ==========================
+// LOAD
+// ==========================
 
 loadSpreadsheet();
 
-
-
-// =========================
-// START SCANNER SAAT PAGE LOAD
-// =========================
-
-window.onload=function(){
-
-if(document.getElementById("reader")){
+window.onload=()=>{
 startScanner();
-}
-
 };
