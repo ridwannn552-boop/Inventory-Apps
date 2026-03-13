@@ -12,8 +12,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- LIBRARY SCANNER -->
+<!-- SCANNER -->
 <script src="https://unpkg.com/html5-qrcode"></script>
+
+<!-- EXCEL DOWNLOAD -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 </head>
 
@@ -76,8 +79,6 @@
 <div id="produk" class="page">
 
 <h2>Master Data Produk</h2>
-
-<!-- SEARCH -->
 
 <div class="search-wrapper">
 
@@ -163,6 +164,44 @@ Stock Opname
 <div id="history" class="page">
 
 <h2>History Transaksi</h2>
+
+<!-- FILTER -->
+
+<div style="margin-bottom:20px">
+
+<select id="filterBulan">
+
+<option value="">Semua Bulan</option>
+<option value="1">Jan</option>
+<option value="2">Feb</option>
+<option value="3">Mar</option>
+<option value="4">Apr</option>
+<option value="5">Mei</option>
+<option value="6">Jun</option>
+<option value="7">Jul</option>
+<option value="8">Agu</option>
+<option value="9">Sep</option>
+<option value="10">Okt</option>
+<option value="11">Nov</option>
+<option value="12">Des</option>
+
+</select>
+
+<select id="filterJenis">
+
+<option value="">Semua Transaksi</option>
+<option value="masuk">Barang Masuk</option>
+<option value="keluar">Barang Keluar</option>
+<option value="so">Stock Opname</option>
+
+</select>
+
+<button onclick="filterHistory()">Filter</button>
+
+<button onclick="downloadExcel()">Download Excel</button>
+
+</div>
+
 
 <table class="produk-table">
 
