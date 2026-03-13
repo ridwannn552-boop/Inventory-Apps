@@ -167,27 +167,58 @@ updateDashboard();
 }
 function buatPagination(){
 
-let pageCount=Math.ceil(produk.length/rowsPerPage);
-
 let pagination=document.getElementById("pagination");
 
 pagination.innerHTML="";
 
-for(let i=1;i<=pageCount;i++){
+let pageCount=Math.ceil(produk.length/rowsPerPage);
+
+let maxVisible=5;
+
+let start=Math.max(1,currentPage-2);
+let end=Math.min(pageCount,start+maxVisible-1);
+
+if(currentPage>1){
+
+let prev=document.createElement("button");
+prev.innerText="<<";
+prev.onclick=function(){
+currentPage--;
+tampilProduk();
+};
+pagination.appendChild(prev);
+
+}
+
+for(let i=start;i<=end;i++){
 
 let btn=document.createElement("button");
 
 btn.innerText=i;
 
+if(i===currentPage){
+btn.style.background="#1abc9c";
+}
+
 btn.onclick=function(){
-
 currentPage=i;
-
 tampilProduk();
-
 };
 
 pagination.appendChild(btn);
+
+}
+
+if(currentPage<pageCount){
+
+let next=document.createElement("button");
+next.innerText=">>";
+next.onclick=function(){
+currentPage++;
+tampilProduk();
+};
+
+pagination.appendChild(next);
 
 }
 
