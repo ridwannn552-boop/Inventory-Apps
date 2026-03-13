@@ -125,3 +125,70 @@ document.getElementById("totalKeluar").innerText=totalKeluar;
 // =========================
 
 loadSpreadsheet();
+let currentPage = 1;
+let rowsPerPage = 10;
+
+function tampilProduk(){
+
+let tabel=document.getElementById("dataProduk");
+
+tabel.innerHTML="";
+
+let start=(currentPage-1)*rowsPerPage;
+let end=start+rowsPerPage;
+
+let pageData=produk.slice(start,end);
+
+pageData.forEach(function(item,index){
+
+let akhir=item.awal + item.masuk - item.keluar;
+
+let row=`
+<tr>
+<td>${start+index+1}</td>
+<td>${item.kode}</td>
+<td>${item.nama}</td>
+<td>${item.uom}</td>
+<td>${item.awal}</td>
+<td>${item.masuk}</td>
+<td>${item.keluar}</td>
+<td>${akhir}</td>
+</tr>
+`;
+
+tabel.innerHTML += row;
+
+});
+
+buatPagination();
+
+updateDashboard();
+
+}
+function buatPagination(){
+
+let pageCount=Math.ceil(produk.length/rowsPerPage);
+
+let pagination=document.getElementById("pagination");
+
+pagination.innerHTML="";
+
+for(let i=1;i<=pageCount;i++){
+
+let btn=document.createElement("button");
+
+btn.innerText=i;
+
+btn.onclick=function(){
+
+currentPage=i;
+
+tampilProduk();
+
+};
+
+pagination.appendChild(btn);
+
+}
+
+}
