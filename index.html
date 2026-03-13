@@ -1,89 +1,29 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Consumable Inventory System</title>
-
-<link rel="stylesheet" href="style.css">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<!-- SIDEBAR -->
-
-<div class="sidebar">
-
-<h2>Inventory</h2>
-
-<ul>
-<li onclick="showPage('dashboard')">Dashboard</li>
-<li onclick="showPage('produk')">Data Produk</li>
-<li onclick="showPage('barcode')">Barcode Transaksi</li>
-</ul>
-
-</div>
-
-
-<!-- CONTENT -->
-
-<div class="content">
-
-
-<!-- DASHBOARD -->
-
-<div id="dashboard" class="page active">
-
-<h1>Dashboard Inventory</h1>
-
-<div class="stats">
-
-<div class="card">
-<h3>Total Produk</h3>
-<p id="totalProduk">0</p>
-</div>
-
-<div class="card">
-<h3>Total Barang Masuk</h3>
-<p id="totalMasuk">0</p>
-</div>
-
-<div class="card">
-<h3>Total Barang Keluar</h3>
-<p id="totalKeluar">0</p>
-</div>
-
-</div>
-
-</div>
-
-
-
 <!-- DATA PRODUK -->
 
 <div id="produk" class="page">
 
 <h2>Master Data Produk</h2>
 
+<!-- SEARCH BAR -->
+<input 
+type="text" 
+id="searchInput" 
+placeholder="Cari Barcode atau Nama Barang..."
+onkeyup="searchProduk()"
+class="search-box"
+>
+
 <table class="produk-table">
 
 <thead>
 <tr>
 <th>No</th>
-<th>Barcode</th>
-<th>Nama Barang</th>
-<th>UOM</th>
-<th>Stock Awal</th>
-<th>IN</th>
-<th>OUT</th>
+<th onclick="sortTable('kode')">Barcode ⬍</th>
+<th onclick="sortTable('nama')">Nama Barang ⬍</th>
+<th onclick="sortTable('uom')">UOM ⬍</th>
+<th onclick="sortTable('awal')">Stock Awal ⬍</th>
+<th onclick="sortTable('masuk')">IN ⬍</th>
+<th onclick="sortTable('keluar')">OUT ⬍</th>
 <th>Stock Akhir</th>
 </tr>
 </thead>
@@ -96,43 +36,3 @@
 <div id="pagination" class="pagination"></div>
 
 </div>
-
-
-
-<!-- BARCODE TRANSAKSI -->
-
-<div id="barcode" class="page">
-
-<h2>Transaksi Barcode</h2>
-
-<div class="barcode-form">
-
-<input type="text" id="scanBarcode" placeholder="Scan Barcode">
-
-<input type="number" id="qty" placeholder="Qty">
-
-<br><br>
-
-<button onclick="prosesBarcode('masuk')">Barang Masuk</button>
-
-<button onclick="prosesBarcode('keluar')">Barang Keluar</button>
-
-<button onclick="prosesBarcode('so')">Stock Opname</button>
-
-<p id="info"></p>
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-<script src="script.js"></script>
-
-</body>
-
-</html>
