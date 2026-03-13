@@ -125,3 +125,36 @@ border-radius:4px;
 #pagination button:hover{
 background:#34495e;
 }
+.search-container{
+
+display:flex;
+align-items:center;
+background:white;
+border-radius:8px;
+padding:8px 12px;
+width:350px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+margin-bottom:15px;
+
+}
+
+.search-icon{
+
+margin-right:8px;
+font-size:16px;
+color:#666;
+
+}
+
+.search-input{
+
+border:none;
+outline:none;
+width:100%;
+font-size:14px;
+
+}
+
+.search-input::placeholder{
+color:#999;
+}
