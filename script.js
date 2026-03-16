@@ -496,3 +496,32 @@ localStorage.setItem("transaksi", JSON.stringify(history));
 alert("Transaksi berhasil disimpan");
 
 }
+async function loadProduk(){
+
+let url = "LINK_SPREADSHEET_CSV";
+
+let response = await fetch(url);
+let data = await response.text();
+
+let rows = data.split("\n").slice(1);
+
+let produk = rows.map(row => {
+
+let col = row.split(",");
+
+return{
+kode: col[0],
+nama: col[1],
+uom: col[2],
+stok: parseInt(col[3])
+};
+
+});
+
+localStorage.setItem("produk", JSON.stringify(produk));
+
+}
+loadProduk();
+let produk = JSON.parse(localStorage.getItem("produk")) || [];
+
+let item = produk.find(p => p.kode === barcodeScan);
