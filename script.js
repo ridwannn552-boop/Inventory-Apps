@@ -294,7 +294,7 @@ let scanner=new Html5QrcodeScanner(
 );
 
 scanner.render((decodedText)=>{
-prosesScanBarcode(decodedText);
+tampilkanHasilScan(decodedText);
 });
 
 }
@@ -342,3 +342,78 @@ loadSpreadsheet();
 startScanner();
 
 };
+let lastKodeScan = "";
+
+function tampilkanHasilScan(kode){
+
+let item = produk.find(p=>p.kode===kode);
+
+if(!item){
+document.getElementById("hasilScan").innerText="Produk tidak ditemukan";
+return;
+}
+
+lastKodeScan = kode;
+
+document.getElementById("scanBarcode").innerText = item.kode;
+document.getElementById("scanNama").innerText = item.nama;
+
+document.getElementById("hasilScan").innerText = "Barang ditemukan, isi qty lalu simpan";
+
+}
+function simpanTransaksi(){
+
+let qty = parseInt(document.getElementById("qty").value);
+
+if(!lastKodeScan){
+document.getElementById("hasilScan").innerText="Scan barcode terlebih dahulu";
+return;
+}
+
+if(!qty){
+document.getElementById("hasilScan").innerText="Isi Qty terlebih dahulu";
+return;
+}
+
+let item = produk.find(p=>p.kode===lastKodeScan);
+
+if(!item){
+document.getElementById("hasilScan").innerText="Produk tidak ditemukan";
+return;
+}
+
+if(modeTransaksi==="masuk"){
+item.masuk += qty;
+}
+
+if(modeTransaksi==="keluar"){
+item.keluar += qty;
+}
+
+if(modeTransaksi==="so"){
+item.awal = qty;
+item.masuk = 0;
+item.keluar = 0;
+}
+
+let now = new Date();
+
+historyTransaksi.push({
+
+tanggal:now.toISOString(),
+bulan:now.getMonth()+1,
+tahun:now.getFullYear(),
+jenis:modeTransaksi,
+kode:item.kode,
+nama:item.nama,
+qty:qty
+
+});
+
+tampilProduk();
+tampilHistory();
+
+document.getElementById("qty").value="";
+document.getElementById("hasilScan").innerText="Transaksi berhasil disimpan";
+
+}
