@@ -12,6 +12,11 @@ page.classList.remove("active");
 
 document.getElementById(pageId).classList.add("active");
 
+/* otomatis tampilkan history */
+if(pageId==="history"){
+tampilHistory();
+}
+
 }
 
 // ==========================
@@ -19,12 +24,17 @@ document.getElementById(pageId).classList.add("active");
 // ==========================
 
 let produk=[];
-let historyTransaksi=[];
+
+/* history disimpan di browser */
+let historyTransaksi = JSON.parse(localStorage.getItem("historyTransaksi")) || [];
+
 let beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+
 let currentPage=1;
 let rowsPerPage=50;
 
 let modeTransaksi="masuk";
+
 
 // ==========================
 // LOAD DATA GOOGLE SHEET
@@ -71,6 +81,7 @@ tampilProduk();
 
 }
 
+
 // ==========================
 // TAMPILKAN DATA PRODUK
 // ==========================
@@ -114,6 +125,7 @@ updateDashboard();
 
 }
 
+
 // ==========================
 // PAGINATION
 // ==========================
@@ -146,6 +158,7 @@ pagination.appendChild(btn);
 }
 
 }
+
 
 // ==========================
 // SEARCH PRODUK
@@ -190,6 +203,7 @@ tabel.innerHTML+=row;
 
 }
 
+
 // ==========================
 // DASHBOARD
 // ==========================
@@ -213,6 +227,7 @@ document.getElementById("totalKeluar").innerText=totalKeluar;
 
 }
 
+
 // ==========================
 // MODE TRANSAKSI
 // ==========================
@@ -224,63 +239,6 @@ document.getElementById("hasilScan").innerText="Mode : "+mode;
 
 }
 
-// ==========================
-// PROSES BARCODE
-// ==========================
-
-function prosesScanBarcode(kode){
-
-let qty=parseInt(document.getElementById("qty").value);
-
-if(!qty){
-document.getElementById("hasilScan").innerText="Isi Qty terlebih dahulu";
-return;
-}
-
-let item=produk.find(p=>p.kode===kode);
-
-if(!item){
-document.getElementById("hasilScan").innerText="Produk tidak ditemukan";
-return;
-}
-
-document.getElementById("scanBarcode").innerText=kode;
-document.getElementById("scanNama").innerText=item.nama;
-
-if(modeTransaksi==="masuk"){
-item.masuk+=qty;
-}
-
-if(modeTransaksi==="keluar"){
-item.keluar+=qty;
-}
-
-if(modeTransaksi==="so"){
-item.awal=qty;
-item.masuk=0;
-item.keluar=0;
-}
-
-let now=new Date();
-
-historyTransaksi.push({
-
-tanggal:now.toISOString(),
-bulan:now.getMonth()+1,
-tahun:now.getFullYear(),
-jenis:modeTransaksi,
-kode:item.kode,
-nama:item.nama,
-qty:qty
-
-});
-
-tampilProduk();
-tampilHistory();
-
-document.getElementById("hasilScan").innerText="Scan berhasil";
-
-}
 
 // ==========================
 // SCANNER
@@ -297,11 +255,12 @@ scanner.render((decodedText)=>{
 
 beep.play();
 
-prosesScanBarcode(decodedText);
+tampilkanHasilScan(decodedText);
 
 });
 
 }
+
 
 // ==========================
 // HISTORY
@@ -336,17 +295,12 @@ tabel.innerHTML+=row;
 
 }
 
+
 // ==========================
-// LOAD
+// SCAN RESULT
 // ==========================
 
-window.onload=function(){
-
-loadSpreadsheet();
-startScanner();
-
-};
-let lastKodeScan = "";
+let lastKodeScan="";
 
 function tampilkanHasilScan(kode){
 
@@ -365,6 +319,12 @@ document.getElementById("scanNama").innerText = item.nama;
 document.getElementById("hasilScan").innerText = "Barang ditemukan, isi qty lalu simpan";
 
 }
+
+
+// ==========================
+// SIMPAN TRANSAKSI
+// ==========================
+
 function simpanTransaksi(){
 
 let qty = parseInt(document.getElementById("qty").value);
@@ -414,6 +374,9 @@ qty:qty
 
 });
 
+/* simpan history */
+localStorage.setItem("historyTransaksi", JSON.stringify(historyTransaksi));
+
 tampilProduk();
 tampilHistory();
 
@@ -421,3 +384,16 @@ document.getElementById("qty").value="";
 document.getElementById("hasilScan").innerText="Transaksi berhasil disimpan";
 
 }
+
+
+// ==========================
+// LOAD
+// ==========================
+
+window.onload=function(){
+
+loadSpreadsheet();
+startScanner();
+tampilHistory();
+
+};
