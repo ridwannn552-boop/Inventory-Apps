@@ -34,34 +34,42 @@ async function loadSpreadsheet(){
 
 let url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&single=true&output=csv";
 
-let response=await fetch(url);
-let data=await response.text();
+let response = await fetch(url);
+let text = await response.text();
 
-let rows=data.split("\n");
+let rows = text.split("\n");
 
-produk=[];
+produk = [];
 
 for(let i=1;i<rows.length;i++){
 
-let row=rows[i].trim();
-if(row==="") continue;
+let row = rows[i].trim();
+if(row === "") continue;
 
-// CSV aman walau ada koma di teks
-let col=row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+// parsing csv yang aman
+let col = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+
+let kode = (col[1] || "").replace(/"/g,"").trim();
+let nama = (col[2] || "").replace(/"/g,"").trim();
+let uom  = (col[3] || "").replace(/"/g,"").trim();
+
+let awal   = parseInt(col[4]) || 0;
+let masuk  = parseInt(col[5]) || 0;
+let keluar = parseInt(col[6]) || 0;
 
 produk.push({
-
-kode:(col[1] || "").replace(/"/g,"").trim(),
-nama:(col[2] || "").replace(/"/g,"").trim(),
-uom:(col[3] || "").replace(/"/g,"").trim(),
-awal:parseInt(col[4]) || 0,
-masuk:parseInt(col[5]) || 0,
-keluar:parseInt(col[6]) || 0
-
+kode:kode,
+nama:nama,
+uom:uom,
+awal:awal,
+masuk:masuk,
+keluar:keluar
 });
 
 }
-console.log("DATA PRODUK:", produk);
+
+console.log("DATA PRODUK:",produk);
+
 tampilProduk();
 
 }
