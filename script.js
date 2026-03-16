@@ -1,3 +1,4 @@
+console.log("SCRIPT JALAN");
 // ==========================
 // NAVIGASI HALAMAN
 // ==========================
