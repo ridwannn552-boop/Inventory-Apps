@@ -237,15 +237,16 @@ background:#1f6690;
 width:100%;
 }
 
-/* TOOLBAR HISTORY */
-
-#history > div{
-display:flex;
-gap:10px;
-align-items:center;
-flex-wrap:wrap;
-margin-bottom:15px;
+#history h2{
+margin-top:0;
 }
+
+#history table{
+width:100%;
+margin-top:20px;
+}
+
+/* TOOLBAR HISTORY */
 
 #history select,
 #history button{
@@ -254,23 +255,7 @@ font-size:14px;
 border-radius:6px;
 border:1px solid #ccc;
 outline:none;
-}
-
-#history{
-width:100%;
-padding:0;
-background:transparent;
-box-shadow:none;
-border-radius:0;
-}
-
-#history h2{
-margin-top:0;
-}
-
-#history table{
-margin-top:20px;
-width:100%;
+margin-right:6px;
 }
 
 #history select:hover{
@@ -299,6 +284,7 @@ color:white;
 
 #history button:last-of-type:hover{
 background:#27ae60;
+}
 }
 
 /* RESPONSIVE */
