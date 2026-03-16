@@ -58,6 +58,7 @@ masuk:parseInt(col[5]) || 0,
 keluar:parseInt(col[6]) || 0
 
 });
+
 }
 
 tampilProduk();
@@ -96,7 +97,6 @@ let row=`
 <td>${item.keluar}</td>
 <td>${akhir}</td>
 </tr>
-
 `;
 
 tabel.innerHTML+=row;
@@ -176,7 +176,6 @@ let row=`
 <td>${item.keluar}</td>
 <td>${akhir}</td>
 </tr>
-
 `;
 
 tabel.innerHTML+=row;
@@ -233,7 +232,7 @@ return;
 }
 
 let item=produk.find(function(p){
-return p.kode.trim()===kode.trim();
+return p.kode===kode;
 });
 
 if(!item){
@@ -321,7 +320,6 @@ let row=`
 <td>${item.jenis}</td>
 <td>${item.qty}</td>
 </tr>
-
 `;
 
 tabel.innerHTML+=row;
@@ -373,10 +371,8 @@ XLSX.writeFile(workbook,"History_Transaksi.xlsx");
 // LOAD
 // ==========================
 
-window.onload=function(){
-
 loadSpreadsheet();
+
+window.onload=function(){
 startScanner();
-
 };
-
