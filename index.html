@@ -126,25 +126,16 @@ onkeyup="searchProduk()"
 
 <div id="barcode" class="page">
 
-<h2 class="scan-title">Barcode Scanner</h2>
+<h2>Barcode Scanner</h2>
 
-<div class="scanner-modern">
+<div class="scanner-box">
 
-<div class="camera-box">
 <div id="reader"></div>
-</div>
 
 <div class="scan-result">
 
-<div class="scan-row">
-<span>Barcode</span>
-<strong id="scanBarcode">-</strong>
-</div>
-
-<div class="scan-row">
-<span>Nama Barang</span>
-<strong id="scanNama">-</strong>
-</div>
+<p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
+<p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
 
 </div>
 
@@ -152,21 +143,21 @@ onkeyup="searchProduk()"
 
 <div class="scan-buttons">
 
-<button onclick="setMode('masuk')" class="btn btn-masuk">
+<button onclick="setMode('masuk')" class="btn-masuk">
 Barang Masuk
 </button>
 
-<button onclick="setMode('keluar')" class="btn btn-keluar">
+<button onclick="setMode('keluar')" class="btn-keluar">
 Barang Keluar
 </button>
 
-<button onclick="setMode('so')" class="btn btn-so">
+<button onclick="setMode('so')" class="btn-so">
 Stock Opname
 </button>
 
 </div>
 
-<button onclick="simpanTransaksi()" class="btn-simpan-modern">
+<button onclick="simpanTransaksi()" class="btn-simpan">
 Simpan Transaksi
 </button>
 
