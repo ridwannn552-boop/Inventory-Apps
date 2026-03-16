@@ -26,10 +26,6 @@ let rowsPerPage=50;
 
 let modeTransaksi="masuk";
 
-// scanner control
-let htmlScanner;
-let lastScan="";
-
 // ==========================
 // LOAD DATA GOOGLE SHEET
 // ==========================
@@ -241,7 +237,7 @@ return p.kode.trim()===kode.trim();
 });
 
 if(!item){
-document.getElementById("hasilScan").innerHTML="<span style='color:red'>Produk tidak ditemukan</span>";
+document.getElementById("hasilScan").innerText="Produk tidak ditemukan";
 return;
 }
 
@@ -284,79 +280,21 @@ document.getElementById("hasilScan").innerText="Scan berhasil";
 }
 
 // ==========================
-// SCANNER MODERN
+// SCANNER
 // ==========================
 
 function startScanner(){
 
-htmlScanner = new Html5Qrcode("reader");
-
-Html5Qrcode.getCameras().then(devices => {
-
-if(devices && devices.length){
-
-let cameraId = devices[0].id;
-
-htmlScanner.start(
-cameraId,
-{
-fps:15,
-qrbox:{width:250,height:250},
-aspectRatio:1.7
-},
-
-(decodedText)=>{
-
-// cegah scan berulang
-if(decodedText===lastScan){
-return;
-}
-
-lastScan=decodedText;
-
-scanBerhasil(decodedText);
-
-},
-
-(errorMessage)=>{}
-
+let scanner=new Html5QrcodeScanner(
+"reader",
+{fps:10,qrbox:250}
 );
 
-}
-
+scanner.render(function(decodedText){
+prosesScanBarcode(decodedText);
 });
 
 }
-
-// ==========================
-// SCAN BERHASIL
-// ==========================
-
-function scanBerhasil(kode){
-
-document.getElementById("scanBarcode").innerText=kode;
-
-let item=produk.find(p=>p.kode.trim()===kode.trim());
-
-if(!item){
-
-document.getElementById("hasilScan").innerHTML="<span style='color:red;font-weight:bold'>BARANG TIDAK TERDAFTAR</span>";
-return;
-
-}
-
-document.getElementById("scanNama").innerText=item.nama;
-
-// bunyi beep
-let beep=new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
-beep.play();
-
-}
-
-// reset scan agar bisa scan lagi
-setInterval(()=>{
-lastScan="";
-},2000);
 
 // ==========================
 // HISTORY
@@ -435,8 +373,10 @@ XLSX.writeFile(workbook,"History_Transaksi.xlsx");
 // LOAD
 // ==========================
 
-loadSpreadsheet();
-
 window.onload=function(){
+
+loadSpreadsheet();
 startScanner();
+
 };
+
