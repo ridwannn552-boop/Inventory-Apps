@@ -307,10 +307,23 @@ let scanner=new Html5QrcodeScanner(
 );
 
 scanner.render((decodedText)=>{
-prosesScanBarcode(decodedText);
-});
 
+let item=produk.find(p=>p.kode===decodedText);
+
+if(!item){
+alert("Produk tidak ditemukan");
+return;
 }
+
+document.getElementById("scanBarcode").innerText=item.kode;
+document.getElementById("scanNama").innerText=item.nama;
+
+document.getElementById("scanArea").style.display="none";
+document.getElementById("scanResult").style.display="block";
+
+barcodeAktif=item.kode;
+
+});
 
 
 
