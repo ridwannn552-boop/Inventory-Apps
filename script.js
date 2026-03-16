@@ -1,8 +1,7 @@
 // ==========================
 // NAVIGASI HALAMAN
 // ==========================
-
-function showPage(pageId){
+function showPage(pageId,el){
 
 let pages=document.querySelectorAll(".page");
 
@@ -12,13 +11,25 @@ page.classList.remove("active");
 
 document.getElementById(pageId).classList.add("active");
 
-/* otomatis tampilkan history */
+/* menu aktif */
+
+let menus=document.querySelectorAll(".sidebar ul li");
+
+menus.forEach(function(m){
+m.classList.remove("active-menu");
+});
+
+if(el){
+el.classList.add("active-menu");
+}
+
+/* tampilkan history */
+
 if(pageId==="history"){
 tampilHistory();
 }
 
 }
-
 
 // ==========================
 // DATA
