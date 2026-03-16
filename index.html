@@ -127,12 +127,53 @@ onkeyup="searchProduk()"
 
 <div id="barcode" class="page">
 
-<h2>Barcode Scanner</h2>
+<!-- LAYAR SCANNER FULL -->
 
-<div class="scanner-box">
+<div id="scanArea" class="scan-full">
 
 <div id="reader"></div>
 
+</div>
+
+
+<!-- LAYAR DETAIL BARANG -->
+
+<div id="scanResult" class="scan-result" style="display:none;">
+
+<h2>Detail Barang</h2>
+
+<p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
+<p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
+
+<br>
+
+<input type="number" id="qty" placeholder="Qty">
+
+<br><br>
+
+<button onclick="setMode('masuk')" class="btn-masuk">
+Barang Masuk
+</button>
+
+<button onclick="setMode('keluar')" class="btn-keluar">
+Barang Keluar
+</button>
+
+<button onclick="setMode('so')" class="btn-so">
+Stock Opname
+</button>
+
+<br><br>
+
+<button onclick="simpanTransaksi()" class="btn-simpan">
+Simpan Transaksi
+</button>
+
+<p id="hasilScan"></p>
+
+</div>
+
+</div>
 <br>
 
 <!-- HASIL SCAN -->
