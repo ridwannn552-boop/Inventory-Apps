@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 
 <head>
@@ -12,13 +11,7 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- SCANNER -->
-
 <script src="https://unpkg.com/html5-qrcode"></script>
-
-<!-- EXCEL DOWNLOAD -->
-
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 </head>
@@ -27,211 +20,216 @@
 
 <div class="container">
 
-```
 <!-- SIDEBAR -->
+
 <div class="sidebar">
 
-    <h2>Inventory</h2>
+<h2>Inventory</h2>
 
-    <ul>
-        <li onclick="showPage('dashboard')">Dashboard</li>
-        <li onclick="showPage('produk')">Data Produk</li>
-        <li onclick="showPage('barcode')">Barcode Transaksi</li>
-        <li onclick="showPage('history')">History Transaksi</li>
-    </ul>
+<ul>
+<li onclick="showPage('dashboard')">Dashboard</li>
+<li onclick="showPage('produk')">Data Produk</li>
+<li onclick="showPage('barcode')">Barcode Transaksi</li>
+<li onclick="showPage('history')">History Transaksi</li>
+</ul>
 
 </div>
 
 
 <!-- CONTENT -->
+
 <div class="content">
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="page active">
+<!-- DASHBOARD -->
 
-        <h1>Dashboard Inventory</h1>
+<div id="dashboard" class="page active">
 
-        <div class="stats">
+<h1>Dashboard Inventory</h1>
 
-            <div class="card">
-                <h3>Total Produk</h3>
-                <p id="totalProduk">0</p>
-            </div>
+<div class="stats">
 
-            <div class="card">
-                <h3>Total Barang Masuk</h3>
-                <p id="totalMasuk">0</p>
-            </div>
+<div class="card">
+<h3>Total Produk</h3>
+<p id="totalProduk">0</p>
+</div>
 
-            <div class="card">
-                <h3>Total Barang Keluar</h3>
-                <p id="totalKeluar">0</p>
-            </div>
+<div class="card">
+<h3>Total Barang Masuk</h3>
+<p id="totalMasuk">0</p>
+</div>
 
-        </div>
-
-    </div>
-
-
-
-    <!-- DATA PRODUK -->
-    <div id="produk" class="page">
-
-        <h2>Master Data Produk</h2>
-
-        <div class="search-wrapper">
-
-            <div class="search-bar">
-
-                <span class="search-icon">🔍</span>
-
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Cari Barcode atau Nama Barang..."
-                    onkeyup="searchProduk()"
-                >
-
-            </div>
-
-        </div>
-
-
-        <table class="produk-table">
-
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th onclick="sortTable('nama')">Nama Barang ⬍</th>
-                    <th onclick="sortTable('uom')">UOM ⬍</th>
-                    <th onclick="sortTable('awal')">Stock Awal ⬍</th>
-                    <th onclick="sortTable('masuk')">IN ⬍</th>
-                    <th onclick="sortTable('keluar')">OUT ⬍</th>
-                    <th>Stock Akhir</th>
-                </tr>
-            </thead>
-
-            <tbody id="dataProduk"></tbody>
-
-        </table>
-
-        <div id="pagination" class="pagination"></div>
-
-    </div>
-
-
-
-    <!-- BARCODE SCANNER -->
-    <div id="barcode" class="page">
-
-        <h2>Barcode Scanner</h2>
-
-        <div class="scanner-box">
-
-            <div id="reader"></div>
-
-            <br>
-
-            <!-- HASIL SCAN -->
-            <p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
-            <p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
-
-            <br>
-
-            <input type="number" id="qty" placeholder="Qty">
-
-            <br><br>
-
-            <button onclick="setMode('masuk')" class="btn-masuk">
-                Barang Masuk
-            </button>
-
-            <button onclick="setMode('keluar')" class="btn-keluar">
-                Barang Keluar
-            </button>
-
-            <button onclick="setMode('so')" class="btn-so">
-                Stock Opname
-            </button>
-
-            <br><br>
-
-           
-            <p id="hasilScan"></p>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- HISTORY TRANSAKSI -->
-    <div id="history" class="page">
-
-        <h2>History Transaksi</h2>
-
-        <!-- FILTER -->
-        <div style="margin-bottom:20px">
-
-            <select id="filterBulan">
-
-                <option value="">Semua Bulan</option>
-                <option value="1">Jan</option>
-                <option value="2">Feb</option>
-                <option value="3">Mar</option>
-                <option value="4">Apr</option>
-                <option value="5">Mei</option>
-                <option value="6">Jun</option>
-                <option value="7">Jul</option>
-                <option value="8">Agu</option>
-                <option value="9">Sep</option>
-                <option value="10">Okt</option>
-                <option value="11">Nov</option>
-                <option value="12">Des</option>
-
-            </select>
-
-            <select id="filterJenis">
-
-                <option value="">Semua Transaksi</option>
-                <option value="masuk">Barang Masuk</option>
-                <option value="keluar">Barang Keluar</option>
-                <option value="so">Stock Opname</option>
-
-            </select>
-
-            <button onclick="filterHistory()">Filter</button>
-            <button onclick="downloadExcel()">Download Excel</button>
-
-        </div>
-
-
-        <table class="produk-table">
-
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Tanggal</th>
-                    <th>Barcode</th>
-                    <th>Nama Barang</th>
-                    <th>Transaksi</th>
-                    <th>Qty</th>
-                </tr>
-            </thead>
-
-            <tbody id="dataHistory"></tbody>
-
-        </table>
-
-    </div>
+<div class="card">
+<h3>Total Barang Keluar</h3>
+<p id="totalKeluar">0</p>
+</div>
 
 </div>
-```
+
+</div>
+
+
+
+<!-- DATA PRODUK -->
+
+<div id="produk" class="page">
+
+<h2>Master Data Produk</h2>
+
+<div class="search-wrapper">
+
+<div class="search-bar">
+
+<span class="search-icon">🔍</span>
+
+<input
+type="text"
+id="searchInput"
+placeholder="Cari Barcode atau Nama Barang..."
+onkeyup="searchProduk()"
+>
+
+</div>
+
+</div>
+
+
+<table class="produk-table">
+
+<thead>
+
+<tr>
+
+<th>No</th>
+<th>Barcode</th>
+<th>Nama Barang</th>
+<th>UOM</th>
+<th>Stock Awal</th>
+<th>IN</th>
+<th>OUT</th>
+<th>Stock Akhir</th>
+
+</tr>
+
+</thead>
+
+<tbody id="dataProduk"></tbody>
+
+</table>
+
+<div id="pagination"></div>
+
+</div>
+
+
+
+<!-- BARCODE SCANNER -->
+
+<div id="barcode" class="page">
+
+<h2>Barcode Scanner</h2>
+
+<div class="scanner-box">
+
+<div id="reader"></div>
+
+<br>
+
+<p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
+<p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
+
+<br>
+
+<input type="number" id="qty" placeholder="Qty">
+
+<br><br>
+
+<button onclick="setMode('masuk')" class="btn-masuk">
+Barang Masuk
+</button>
+
+<button onclick="setMode('keluar')" class="btn-keluar">
+Barang Keluar
+</button>
+
+<button onclick="setMode('so')" class="btn-so">
+Stock Opname
+</button>
+
+<p id="hasilScan"></p>
+
+</div>
+
+</div>
+
+
+
+<!-- HISTORY -->
+
+<div id="history" class="page">
+
+<h2>History Transaksi</h2>
+
+<div style="margin-bottom:20px">
+
+<select id="filterBulan">
+
+<option value="">Semua Bulan</option>
+<option value="1">Jan</option>
+<option value="2">Feb</option>
+<option value="3">Mar</option>
+<option value="4">Apr</option>
+<option value="5">Mei</option>
+<option value="6">Jun</option>
+<option value="7">Jul</option>
+<option value="8">Agu</option>
+<option value="9">Sep</option>
+<option value="10">Okt</option>
+<option value="11">Nov</option>
+<option value="12">Des</option>
+
+</select>
+
+<select id="filterJenis">
+
+<option value="">Semua Transaksi</option>
+<option value="masuk">Barang Masuk</option>
+<option value="keluar">Barang Keluar</option>
+<option value="so">Stock Opname</option>
+
+</select>
+
+<button onclick="filterHistory()">Filter</button>
+<button onclick="downloadExcel()">Download Excel</button>
+
+</div>
+
+
+<table class="produk-table">
+
+<thead>
+
+<tr>
+<th>No</th>
+<th>Tanggal</th>
+<th>Barcode</th>
+<th>Nama Barang</th>
+<th>Transaksi</th>
+<th>Qty</th>
+</tr>
+
+</thead>
+
+<tbody id="dataHistory"></tbody>
+
+</table>
+
+</div>
+
+</div>
 
 </div>
 
 <script src="script.js"></script>
 
 </body>
-
 </html>
