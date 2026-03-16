@@ -234,10 +234,6 @@ background:#1f6690;
 /* HISTORY */
 
 #history{
-background:#fff;
-padding:20px;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
 width:100%;
 }
 
@@ -245,8 +241,8 @@ width:100%;
 
 #history > div{
 display:flex;
-align-items:center;
 gap:10px;
+align-items:center;
 flex-wrap:wrap;
 margin-bottom:15px;
 }
