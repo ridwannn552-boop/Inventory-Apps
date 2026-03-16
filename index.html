@@ -126,47 +126,55 @@ onkeyup="searchProduk()"
 
 <div id="barcode" class="page">
 
-<h2>Barcode Scanner</h2>
+<h2 class="scan-title">Barcode Scanner</h2>
 
-<div class="scanner-box">
+<div class="scanner-modern">
 
+<div class="camera-box">
 <div id="reader"></div>
+</div>
 
-<br>
+<div class="scan-result">
 
-<p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
-<p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
+<div class="scan-row">
+<span>Barcode</span>
+<strong id="scanBarcode">-</strong>
+</div>
 
-<br>
+<div class="scan-row">
+<span>Nama Barang</span>
+<strong id="scanNama">-</strong>
+</div>
 
-<input type="number" id="qty" placeholder="Qty">
+</div>
 
-<br><br>
+<input type="number" id="qty" placeholder="Masukkan Qty">
 
-<button onclick="setMode('masuk')" class="btn-masuk">
+<div class="scan-buttons">
+
+<button onclick="setMode('masuk')" class="btn btn-masuk">
 Barang Masuk
 </button>
 
-<button onclick="setMode('keluar')" class="btn-keluar">
+<button onclick="setMode('keluar')" class="btn btn-keluar">
 Barang Keluar
 </button>
 
-<button onclick="setMode('so')" class="btn-so">
+<button onclick="setMode('so')" class="btn btn-so">
 Stock Opname
 </button>
-  
-<button onclick="simpanTransaksi()" class="btn-simpan">
+
+</div>
+
+<button onclick="simpanTransaksi()" class="btn-simpan-modern">
 Simpan Transaksi
 </button>
-  
+
 <p id="hasilScan"></p>
 
 </div>
 
 </div>
-
-
-
 <!-- HISTORY -->
 
 <div id="history" class="page">
