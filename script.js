@@ -46,7 +46,7 @@ for(let i=1;i<rows.length;i++){
 let row=rows[i].trim();
 if(row==="") continue;
 
-let col=row.split(",");
+let col=row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
 produk.push({
 
