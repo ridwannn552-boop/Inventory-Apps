@@ -6,7 +6,7 @@ function showPage(pageId){
 
 let pages=document.querySelectorAll(".page");
 
-pages.forEach(page=>{
+pages.forEach(function(page){
 page.classList.remove("active");
 });
 
@@ -46,13 +46,14 @@ for(let i=1;i<rows.length;i++){
 let row=rows[i].trim();
 if(row==="") continue;
 
+// CSV aman walau ada koma di teks
 let col=row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
 produk.push({
 
-kode:col || "",
-nama:col || "",
-uom:col || "",
+kode:col ? col[1].replace(/"/g,"").trim() : "",
+nama:col ? col[2].replace(/"/g,"").trim() : "",
+uom:col ? col[3].replace(/"/g,"").trim() : "",
 awal:parseInt(col[4]) || 0,
 masuk:parseInt(col[5]) || 0,
 keluar:parseInt(col[6]) || 0
@@ -81,7 +82,7 @@ let end=start+rowsPerPage;
 
 let dataPage=produk.slice(start,end);
 
-dataPage.forEach((item,index)=>{
+dataPage.forEach(function(item,index){
 
 let akhir=item.awal + item.masuk - item.keluar;
 
@@ -97,7 +98,6 @@ let row=`
 <td>${item.keluar}</td>
 <td>${akhir}</td>
 </tr>
-
 `;
 
 tabel.innerHTML+=row;
@@ -131,7 +131,7 @@ if(i===currentPage){
 btn.style.background="#1abc9c";
 }
 
-btn.onclick=()=>{
+btn.onclick=function(){
 currentPage=i;
 tampilProduk();
 };
@@ -150,18 +150,18 @@ function searchProduk(){
 
 let keyword=document.getElementById("searchInput").value.toLowerCase();
 
-let filtered=produk.filter(item=>
+let filtered=produk.filter(function(item){
 
-item.kode.toLowerCase().includes(keyword) ||
-item.nama.toLowerCase().includes(keyword)
+return item.kode.toLowerCase().includes(keyword) ||
+item.nama.toLowerCase().includes(keyword);
 
-);
+});
 
 let tabel=document.getElementById("dataProduk");
 
 tabel.innerHTML="";
 
-filtered.forEach((item,index)=>{
+filtered.forEach(function(item,index){
 
 let akhir=item.awal + item.masuk - item.keluar;
 
@@ -177,7 +177,6 @@ let row=`
 <td>${item.keluar}</td>
 <td>${akhir}</td>
 </tr>
-
 `;
 
 tabel.innerHTML+=row;
@@ -197,9 +196,11 @@ document.getElementById("totalProduk").innerText=produk.length;
 let totalMasuk=0;
 let totalKeluar=0;
 
-produk.forEach(p=>{
+produk.forEach(function(p){
+
 totalMasuk+=p.masuk;
 totalKeluar+=p.keluar;
+
 });
 
 document.getElementById("totalMasuk").innerText=totalMasuk;
@@ -304,7 +305,7 @@ if(!tabel) return;
 
 tabel.innerHTML="";
 
-data.forEach((item,index)=>{
+data.forEach(function(item,index){
 
 let tanggal=new Date(item.tanggal).toLocaleString();
 
@@ -318,7 +319,6 @@ let row=`
 <td>${item.jenis}</td>
 <td>${item.qty}</td>
 </tr>
-
 `;
 
 tabel.innerHTML+=row;
@@ -328,50 +328,12 @@ tabel.innerHTML+=row;
 }
 
 // ==========================
-// FILTER HISTORY
-// ==========================
-
-function filterHistory(){
-
-let bulan=document.getElementById("filterBulan").value;
-let jenis=document.getElementById("filterJenis").value;
-
-let hasil=historyTransaksi.filter(item=>{
-
-let cocok=true;
-
-if(bulan && item.bulan!=bulan) cocok=false;
-if(jenis && item.jenis!=jenis) cocok=false;
-
-return cocok;
-
-});
-
-tampilHistory(hasil);
-
-}
-
-// ==========================
-// DOWNLOAD EXCEL
-// ==========================
-
-function downloadExcel(){
-
-let worksheet=XLSX.utils.json_to_sheet(historyTransaksi);
-let workbook=XLSX.utils.book_new();
-
-XLSX.utils.book_append_sheet(workbook,worksheet,"History");
-
-XLSX.writeFile(workbook,"History_Transaksi.xlsx");
-
-}
-
-// ==========================
 // LOAD
 // ==========================
 
-loadSpreadsheet();
+window.onload=function(){
 
-window.onload=()=>{
+loadSpreadsheet();
 startScanner();
+
 };
