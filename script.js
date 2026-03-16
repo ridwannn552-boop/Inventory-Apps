@@ -20,7 +20,7 @@ document.getElementById(pageId).classList.add("active");
 
 let produk=[];
 let historyTransaksi=[];
-
+let beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 let currentPage=1;
 let rowsPerPage=50;
 
@@ -294,7 +294,11 @@ let scanner=new Html5QrcodeScanner(
 );
 
 scanner.render((decodedText)=>{
-tampilkanHasilScan(decodedText);
+
+beep.play();
+
+prosesScanBarcode(decodedText);
+
 });
 
 }
