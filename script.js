@@ -414,3 +414,85 @@ loadSpreadsheet();
 window.onload=()=>{
 startScanner();
 };
+let barcodeAktif = "";
+let kategoriAktif = "";
+function cariProduk(barcodeScan){
+
+let produk = JSON.parse(localStorage.getItem("produk")) || [];
+
+let item = produk.find(p => p.barcode === barcodeScan);
+
+if(item){
+
+barcodeAktif = item.barcode;
+
+document.getElementById("hasilBarcode").innerText = item.barcode;
+document.getElementById("hasilKode").innerText = item.kode;
+document.getElementById("hasilNama").innerText = item.nama;
+
+}else{
+
+alert("Barang belum ada di Data Produk");
+
+}
+
+}
+function setKategori(kategori){
+
+kategoriAktif = kategori;
+
+alert("Kategori dipilih : " + kategori);
+
+}
+function simpanTransaksi(){
+
+let qty = parseInt(document.getElementById("qty").value);
+
+if(barcodeAktif == ""){
+alert("Scan barang dulu");
+return;
+}
+
+if(kategoriAktif == ""){
+alert("Pilih kategori transaksi");
+return;
+}
+
+let produk = JSON.parse(localStorage.getItem("produk")) || [];
+
+let index = produk.findIndex(p => p.barcode === barcodeAktif);
+
+if(index === -1){
+alert("Produk tidak ditemukan");
+return;
+}
+
+if(kategoriAktif == "MASUK"){
+produk[index].stok += qty;
+}
+
+if(kategoriAktif == "KELUAR"){
+produk[index].stok -= qty;
+}
+
+if(kategoriAktif == "OPNAME"){
+produk[index].stok = qty;
+}
+
+localStorage.setItem("produk", JSON.stringify(produk));
+
+let history = JSON.parse(localStorage.getItem("transaksi")) || [];
+
+history.push({
+barcode: barcodeAktif,
+nama: produk[index].nama,
+qty: qty,
+kategori: kategoriAktif,
+tanggal: new Date().toLocaleString()
+});
+
+localStorage.setItem("transaksi", JSON.stringify(history));
+
+alert("Transaksi berhasil disimpan");
+
+}
