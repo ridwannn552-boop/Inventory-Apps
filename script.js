@@ -46,16 +46,16 @@ for(let i=1;i<rows.length;i++){
 let row=rows[i].trim();
 if(row==="") continue;
 
-let col=row.split(",");
+let col=row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
 produk.push({
 
-kode:col[1]||"",
-nama:col[2]||"",
-uom:col[3]||"",
-awal:parseInt(col[4])||0,
-masuk:parseInt(col[5])||0,
-keluar:parseInt(col[6])||0
+kode:col[1]?.replace(/"/g,'').trim() || "",
+nama:col[2]?.replace(/"/g,'').trim() || "",
+uom:col[3]?.replace(/"/g,'').trim() || "",
+awal:parseInt(col[4]) || 0,
+masuk:parseInt(col[5]) || 0,
+keluar:parseInt(col[6]) || 0
 
 });
 }
