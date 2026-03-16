@@ -37,7 +37,7 @@ let url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4
 let response = await fetch(url);
 let text = await response.text();
 
-let rows = text.split("\n");
+let rows = text.split(/\r?\n/);
 
 produk = [];
 
@@ -46,7 +46,6 @@ for(let i=1;i<rows.length;i++){
 let row = rows[i].trim();
 if(row === "") continue;
 
-// parsing csv yang aman
 let col = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
 let kode = (col[1] || "").replace(/"/g,"").trim();
@@ -67,8 +66,6 @@ keluar:keluar
 });
 
 }
-
-console.log("DATA PRODUK:",produk);
 
 tampilProduk();
 
