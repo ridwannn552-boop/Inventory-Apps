@@ -6,7 +6,7 @@ function showPage(pageId){
 
 let pages=document.querySelectorAll(".page");
 
-pages.forEach(function(page){
+pages.forEach(page=>{
 page.classList.remove("active");
 });
 
@@ -46,13 +46,13 @@ for(let i=1;i<rows.length;i++){
 let row=rows[i].trim();
 if(row==="") continue;
 
-let col=row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+let col=row.split(",");
 
 produk.push({
 
-kode:col?.replace(/"/g,'').trim() || "",
-nama:col?.replace(/"/g,'').trim() || "",
-uom:col?.replace(/"/g,'').trim() || "",
+kode:col || "",
+nama:col || "",
+uom:col || "",
 awal:parseInt(col[4]) || 0,
 masuk:parseInt(col[5]) || 0,
 keluar:parseInt(col[6]) || 0
@@ -81,7 +81,7 @@ let end=start+rowsPerPage;
 
 let dataPage=produk.slice(start,end);
 
-dataPage.forEach(function(item,index){
+dataPage.forEach((item,index)=>{
 
 let akhir=item.awal + item.masuk - item.keluar;
 
@@ -97,6 +97,7 @@ let row=`
 <td>${item.keluar}</td>
 <td>${akhir}</td>
 </tr>
+
 `;
 
 tabel.innerHTML+=row;
@@ -130,7 +131,7 @@ if(i===currentPage){
 btn.style.background="#1abc9c";
 }
 
-btn.onclick=function(){
+btn.onclick=()=>{
 currentPage=i;
 tampilProduk();
 };
@@ -149,18 +150,18 @@ function searchProduk(){
 
 let keyword=document.getElementById("searchInput").value.toLowerCase();
 
-let filtered=produk.filter(function(item){
+let filtered=produk.filter(item=>
 
-return item.kode.toLowerCase().includes(keyword) ||
-item.nama.toLowerCase().includes(keyword);
+item.kode.toLowerCase().includes(keyword) ||
+item.nama.toLowerCase().includes(keyword)
 
-});
+);
 
 let tabel=document.getElementById("dataProduk");
 
 tabel.innerHTML="";
 
-filtered.forEach(function(item,index){
+filtered.forEach((item,index)=>{
 
 let akhir=item.awal + item.masuk - item.keluar;
 
@@ -176,6 +177,7 @@ let row=`
 <td>${item.keluar}</td>
 <td>${akhir}</td>
 </tr>
+
 `;
 
 tabel.innerHTML+=row;
@@ -195,11 +197,9 @@ document.getElementById("totalProduk").innerText=produk.length;
 let totalMasuk=0;
 let totalKeluar=0;
 
-produk.forEach(function(p){
-
+produk.forEach(p=>{
 totalMasuk+=p.masuk;
 totalKeluar+=p.keluar;
-
 });
 
 document.getElementById("totalMasuk").innerText=totalMasuk;
@@ -231,9 +231,7 @@ document.getElementById("hasilScan").innerText="Isi Qty terlebih dahulu";
 return;
 }
 
-let item=produk.find(function(p){
-return p.kode===kode;
-});
+let item=produk.find(p=>p.kode===kode);
 
 if(!item){
 document.getElementById("hasilScan").innerText="Produk tidak ditemukan";
@@ -289,7 +287,7 @@ let scanner=new Html5QrcodeScanner(
 {fps:10,qrbox:250}
 );
 
-scanner.render(function(decodedText){
+scanner.render((decodedText)=>{
 prosesScanBarcode(decodedText);
 });
 
@@ -306,7 +304,7 @@ if(!tabel) return;
 
 tabel.innerHTML="";
 
-data.forEach(function(item,index){
+data.forEach((item,index)=>{
 
 let tanggal=new Date(item.tanggal).toLocaleString();
 
@@ -320,6 +318,7 @@ let row=`
 <td>${item.jenis}</td>
 <td>${item.qty}</td>
 </tr>
+
 `;
 
 tabel.innerHTML+=row;
@@ -337,7 +336,7 @@ function filterHistory(){
 let bulan=document.getElementById("filterBulan").value;
 let jenis=document.getElementById("filterJenis").value;
 
-let hasil=historyTransaksi.filter(function(item){
+let hasil=historyTransaksi.filter(item=>{
 
 let cocok=true;
 
@@ -373,6 +372,6 @@ XLSX.writeFile(workbook,"History_Transaksi.xlsx");
 
 loadSpreadsheet();
 
-window.onload=function(){
+window.onload=()=>{
 startScanner();
 };
