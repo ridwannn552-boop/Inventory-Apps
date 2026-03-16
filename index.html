@@ -135,6 +135,12 @@ onkeyup="searchProduk()"
 
 <br>
 
+<!-- HASIL SCAN -->
+<p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
+<p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
+
+<br>
+
 <input type="number" id="qty" placeholder="Qty">
 
 <br><br>
@@ -151,13 +157,17 @@ Barang Keluar
 Stock Opname
 </button>
 
+<br><br>
+
+<button onclick="simpanTransaksi()" class="btn-simpan">
+Simpan Transaksi
+</button>
+
 <p id="hasilScan"></p>
 
 </div>
 
 </div>
-
-
 
 <!-- HISTORY TRANSAKSI -->
 
