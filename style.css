@@ -376,3 +376,101 @@ font-weight:bold;
 .btn-simpan:hover{
 background:#1a252f;
 }
+/* ===== SCANNER MODERN ===== */
+
+.scan-title{
+margin-bottom:20px;
+font-weight:600;
+}
+
+.scanner-modern{
+background:white;
+padding:25px;
+border-radius:12px;
+width:420px;
+box-shadow:0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* kamera */
+
+.camera-box{
+background:#f8f9fb;
+border-radius:10px;
+padding:10px;
+margin-bottom:15px;
+border:1px solid #e4e6eb;
+}
+
+/* info barang */
+
+.scan-result{
+background:#f9fafc;
+border-radius:8px;
+padding:10px;
+margin-bottom:15px;
+}
+
+.scan-row{
+display:flex;
+justify-content:space-between;
+padding:6px 0;
+font-size:14px;
+}
+
+.scan-row span{
+color:#666;
+}
+
+/* qty */
+
+#qty{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ddd;
+font-size:14px;
+margin-bottom:15px;
+}
+
+/* tombol */
+
+.scan-buttons{
+display:flex;
+gap:8px;
+margin-bottom:10px;
+}
+
+.btn{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+color:white;
+font-weight:500;
+}
+
+.btn-masuk{
+background:#27ae60;
+}
+
+.btn-keluar{
+background:#e74c3c;
+}
+
+.btn-so{
+background:#2980b9;
+}
+
+/* simpan */
+
+.btn-simpan-modern{
+width:100%;
+padding:12px;
+background:#2c3e50;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
