@@ -51,9 +51,9 @@ let col=row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
 produk.push({
 
-kode:col[1] ? col[1].replace(/"/g,"").trim() : "",
-nama:col[2] ? col[2].replace(/"/g,"").trim() : "",
-uom:col[3] ? col[3].replace(/"/g,"").trim() : "",
+kode:(col[1] || "").replace(/"/g,"").trim(),
+nama:(col[2] || "").replace(/"/g,"").trim(),
+uom:(col[3] || "").replace(/"/g,"").trim(),
 awal:parseInt(col[4]) || 0,
 masuk:parseInt(col[5]) || 0,
 keluar:parseInt(col[6]) || 0
