@@ -335,3 +335,8 @@ animation:scanMove 2s linear infinite;
 100%{top:0;}
 
 }
+/* MENU AKTIF */
+
+.sidebar ul li.active-menu{
+background:#333;
+}
