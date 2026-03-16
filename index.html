@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="id">
 
 <head>
@@ -13,9 +14,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- SCANNER -->
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <!-- EXCEL DOWNLOAD -->
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 </head>
@@ -39,11 +42,9 @@
 
 </div>
 
-
 <!-- CONTENT -->
 
 <div class="content">
-
 
 <!-- DASHBOARD -->
 
@@ -72,8 +73,6 @@
 
 </div>
 
-
-
 <!-- DATA PRODUK -->
 
 <div id="produk" class="page">
@@ -91,12 +90,12 @@ type="text"
 id="searchInput"
 placeholder="Cari Barcode atau Nama Barang..."
 onkeyup="searchProduk()"
+
 >
 
 </div>
 
 </div>
-
 
 <table class="produk-table">
 
@@ -121,13 +120,11 @@ onkeyup="searchProduk()"
 
 </div>
 
-
-
 <!-- BARCODE SCANNER -->
 
 <div id="barcode" class="page">
 
-<!-- LAYAR SCANNER FULL -->
+<!-- SCANNER AREA -->
 
 <div id="scanArea" class="scan-full">
 
@@ -135,47 +132,12 @@ onkeyup="searchProduk()"
 
 </div>
 
-
-<!-- LAYAR DETAIL BARANG -->
+<!-- DETAIL BARANG SETELAH SCAN -->
 
 <div id="scanResult" class="scan-result" style="display:none;">
 
 <h2>Detail Barang</h2>
 
-<p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
-<p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
-
-<br>
-
-<input type="number" id="qty" placeholder="Qty">
-
-<br><br>
-
-<button onclick="setMode('masuk')" class="btn-masuk">
-Barang Masuk
-</button>
-
-<button onclick="setMode('keluar')" class="btn-keluar">
-Barang Keluar
-</button>
-
-<button onclick="setMode('so')" class="btn-so">
-Stock Opname
-</button>
-
-<br><br>
-
-<button onclick="simpanTransaksi()" class="btn-simpan">
-Simpan Transaksi
-</button>
-
-<p id="hasilScan"></p>
-
-</div>
-
-</div>
-
-<!-- HASIL SCAN -->
 <p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
 <p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
 
@@ -215,8 +177,6 @@ Simpan Transaksi
 
 <h2>History Transaksi</h2>
 
-<!-- FILTER -->
-
 <div style="margin-bottom:20px">
 
 <select id="filterBulan">
@@ -237,49 +197,5 @@ Simpan Transaksi
 
 </select>
 
-<select id="filterJenis">
+<select id
 
-<option value="">Semua Transaksi</option>
-<option value="masuk">Barang Masuk</option>
-<option value="keluar">Barang Keluar</option>
-<option value="so">Stock Opname</option>
-
-</select>
-
-<button onclick="filterHistory()">Filter</button>
-
-<button onclick="downloadExcel()">Download Excel</button>
-
-</div>
-
-
-<table class="produk-table">
-
-<thead>
-<tr>
-<th>No</th>
-<th>Tanggal</th>
-<th>Barcode</th>
-<th>Nama Barang</th>
-<th>Transaksi</th>
-<th>Qty</th>
-</tr>
-</thead>
-
-<tbody id="dataHistory"></tbody>
-
-</table>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-<script src="script.js"></script>
-
-</body>
-
-</html>
