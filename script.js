@@ -50,15 +50,14 @@ let col=row.split(",");
 
 produk.push({
 
-kode:col||"",
-nama:col||"",
-uom:col||"",
-awal:parseInt(col[3])||0,
-masuk:parseInt(col[4])||0,
-keluar:parseInt(col[5])||0
+kode:col[1]||"",
+nama:col[2]||"",
+uom:col[3]||"",
+awal:parseInt(col[4])||0,
+masuk:parseInt(col[5])||0,
+keluar:parseInt(col[6])||0
 
 });
-
 }
 
 tampilProduk();
