@@ -254,6 +254,8 @@ document.getElementById("hasilScan").innerText="Mode : "+mode;
 // SCANNER
 // ==========================
 
+let lastScanTime = 0;
+
 function startScanner(){
 
 let scanner=new Html5QrcodeScanner(
@@ -263,11 +265,17 @@ let scanner=new Html5QrcodeScanner(
 
 scanner.render((decodedText)=>{
 
+let now = Date.now();
+
+// ✅ ANTI DOUBLE SCAN
+if(now - lastScanTime < 1500) return;
+
+lastScanTime = now;
+
 beep.play();
 tampilkanHasilScan(decodedText);
 
 });
-
 }
 
 
@@ -363,9 +371,9 @@ XLSX.writeFile(wb,"History_Transaksi.xlsx");
 // SCAN RESULT
 // ==========================
 
-let lastKodeScan="";
-
 function tampilkanHasilScan(kode){
+
+kode = kode.trim(); // ✅ FIX
 
 let item = produk.find(p=>p.kode===kode);
 
@@ -381,8 +389,10 @@ document.getElementById("scanNama").innerText=item.nama;
 
 document.getElementById("hasilScan").innerText="Barang ditemukan, isi qty lalu simpan";
 
-}
+// ✅ AUTO FOCUS
+document.getElementById("qty").focus();
 
+}
 
 // ==========================
 // SIMPAN TRANSAKSI
@@ -397,8 +407,9 @@ document.getElementById("hasilScan").innerText="Scan barcode terlebih dahulu";
 return;
 }
 
-if(!qty){
-document.getElementById("hasilScan").innerText="Isi Qty terlebih dahulu";
+// ✅ VALIDASI KUAT
+if(!qty || qty <= 0){
+document.getElementById("hasilScan").innerText="Qty tidak valid";
 return;
 }
 
