@@ -3,93 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inventory Cloud System</title>
+<title>Inventory App</title>
 
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
 </head>
 
 <body>
 
 <!-- LOGIN -->
 <div id="loginPage" class="login">
-<h2>Login System</h2>
-<input type="text" id="username" placeholder="Username">
-<select id="role">
-<option value="operator">Operator</option>
-<option value="leader">Leader</option>
-</select>
+<h2>Login</h2>
+<input type="text" id="nik" placeholder="NIK">
+<input type="password" id="password" placeholder="Password">
 <button onclick="login()">Masuk</button>
 </div>
 
+<!-- APP -->
 <div id="mainApp" style="display:none">
 
 <div class="container">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-<h2>MENU</h2>
 <ul>
-<li onclick="showPage('dashboard',this)">Dashboard</li>
-<li onclick="showPage('produk',this)">Data Produk</li>
-<li onclick="showPage('scanner',this)">Scan</li>
-<li onclick="showPage('history',this)">History</li>
+<li onclick="showPage('dashboard')">Dashboard</li>
+<li onclick="showPage('scanner')">Scan</li>
+<li onclick="showPage('history')">History</li>
 <li onclick="logout()">Logout</li>
 </ul>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="page active">
 <h2>Dashboard</h2>
-
 <canvas id="chart"></canvas>
-
-<div class="stats">
-<div class="card"><h3>Total Produk</h3><p id="totalProduk">0</p></div>
-<div class="card"><h3>Total Masuk</h3><p id="totalMasuk">0</p></div>
-<div class="card"><h3>Total Keluar</h3><p id="totalKeluar">0</p></div>
-</div>
 </div>
 
-<!-- PRODUK -->
-<div id="produk" class="page">
-<h2>Data Produk</h2>
-<input type="text" id="searchInput" placeholder="Cari..." onkeyup="searchProduk()">
-
-<table>
-<thead>
-<tr>
-<th>Kode</th><th>Nama</th><th>Stok</th>
-</tr>
-</thead>
-<tbody id="dataProduk"></tbody>
-</table>
-</div>
-
-<!-- SCAN -->
 <div id="scanner" class="page">
-<h2>Scan AUTO</h2>
-
+<h2>Scan</h2>
 <div id="reader"></div>
 
 <p id="hasilScan"></p>
-<p>Kode: <b id="scanBarcode"></b></p>
-<p>Nama: <b id="scanNama"></b></p>
+<p id="scanNama"></p>
 
 <button onclick="setMode('masuk')">Masuk</button>
 <button onclick="setMode('keluar')">Keluar</button>
 </div>
 
-<!-- HISTORY -->
 <div id="history" class="page">
 <h2>History</h2>
-
-<button onclick="downloadExcel()">Download</button>
-
 <p id="totalHistory"></p>
 
 <table>
@@ -103,10 +70,8 @@
 <th>Qty</th>
 </tr>
 </thead>
-
 <tbody id="dataHistory"></tbody>
 </table>
-
 </div>
 
 </div>
@@ -115,5 +80,11 @@
 </div>
 
 <script src="script.js"></script>
+<script>
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("sw.js");
+}
+</script>
+
 </body>
 </html>
