@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inventory System</title>
+<title>Inventory System PRO</title>
 
 <link rel="stylesheet" href="style.css">
-
 <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 
@@ -54,9 +53,7 @@
 <div id="produk" class="page">
 <h2>Data Produk</h2>
 
-<div class="search-bar">
 <input type="text" id="searchInput" placeholder="Cari produk..." onkeyup="searchProduk()">
-</div>
 
 <table class="produk-table">
 <thead>
@@ -80,17 +77,18 @@
 
 <!-- SCANNER -->
 <div id="scanner" class="page">
-<h2>Scan Barcode</h2>
+<h2>Scan Barcode (AUTO SAVE)</h2>
 
 <div class="scanner-container">
+
 <div id="reader"></div>
 
-<p id="hasilScan"></p>
+<p id="hasilScan">Mode: MASUK</p>
 
 <p>Kode: <b id="scanBarcode">-</b></p>
 <p>Nama: <b id="scanNama">-</b></p>
 
-<input type="number" id="qty" placeholder="Input Qty">
+<input type="number" id="qty" placeholder="Manual Qty (opsional)">
 
 <br><br>
 
@@ -100,7 +98,8 @@
 
 <br><br>
 
-<button onclick="simpanTransaksi()">Simpan</button>
+<button onclick="simpanTransaksi()">Simpan Manual</button>
+
 </div>
 </div>
 
@@ -135,8 +134,11 @@
 
 <button onclick="filterHistory()">Filter</button>
 <button onclick="resetFilter()">Reset</button>
+<button onclick="downloadExcel()">Download</button>
 
 </div>
+
+<p id="totalHistory"></p>
 
 <table>
 <thead>
@@ -144,11 +146,13 @@
 <th>No</th>
 <th>Tanggal</th>
 <th>Kode</th>
+<th>Reff</th>
 <th>Nama</th>
 <th>Jenis</th>
 <th>Qty</th>
 </tr>
 </thead>
+
 <tbody id="dataHistory"></tbody>
 </table>
 
