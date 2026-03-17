@@ -21,7 +21,7 @@ document.getElementById("hasilScan").innerText = "Mode: " + mode;
 }
 
 // ==========================
-// LOAD DATA DARI SHEET
+// LOAD DATA DARI SHEET (FIX TOTAL)
 // ==========================
 async function loadData() {
 
@@ -36,24 +36,26 @@ produkMaster = [];
 
 for (let i = 1; i < rows.length; i++) {
 
-let c = rows[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+// 🔥 FIX: parsing stabil (tidak potong nama)
+let c = rows[i].replace("\r","").split(",");
+
 if (!c || !c[1]) continue;
 
 produkMaster.push({
-kode: c[1]?.replace(/"/g, "").trim(),
-reff: c[2]?.replace(/"/g, "").trim(),
-nama: c[3]?.replace(/"/g, "").trim(),
-uom: c[4]?.replace(/"/g, "").trim(),
+kode: c[1]?.trim(),
+reff: c[2]?.trim(),
+nama: c[3]?.trim(),
+uom: c[4]?.trim(),
 awal: parseInt(c[5]) || 0
 });
 }
 
-// setelah load → hitung ulang dari history
+// 🔥 hitung ulang dari history
 hitungUlangProduk();
 }
 
 // ==========================
-// HITUNG ULANG MASTER
+// HITUNG ULANG MASTER (DARI HISTORY)
 // ==========================
 function hitungUlangProduk() {
 
@@ -158,7 +160,7 @@ document.getElementById("hasilScan").innerText = "✅ Ditemukan";
 }
 
 // ==========================
-// SIMPAN TRANSAKSI (MASUK HISTORY)
+// SIMPAN TRANSAKSI
 // ==========================
 function simpanTransaksi() {
 
@@ -184,7 +186,7 @@ qty: qty
 
 localStorage.setItem("history", JSON.stringify(historyTransaksi));
 
-// 🔥 kunci sinkron
+// 🔥 AUTO SINKRON
 hitungUlangProduk();
 tampilHistory();
 
