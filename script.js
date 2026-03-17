@@ -335,7 +335,8 @@ loadSpreadsheet();
 startScanner();
 tampilHistory();
 
-qty.addEventListener("keypress",e=>{
-if(e.key==="Enter") simpanTransaksi();
+document.getElementById("qty").addEventListener("keypress", e=>{
+if(e.key==="Enter"){
+simpanTransaksi();
+}
 });
-};
