@@ -82,7 +82,12 @@ let uom   = (col[4]||"").replace(/"/g,"").trim();
 let awal   = parseInt(col[5])||0;
 let masuk  = parseInt(col[6])||0;
 let keluar = parseInt(col[7])||0;
+} // tutup for
 
+// 🔥 TAMBAHKAN INI
+tampilProduk();
+
+} // tutup loadSpreadsheet
 // ======================
 // SIMPAN DATA
 // ======================
