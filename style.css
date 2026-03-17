@@ -27,8 +27,7 @@ cursor:pointer;
 border-radius:4px;
 }
 
-.sidebar ul li:hover,
-.sidebar ul li.active-menu{
+.sidebar ul li:hover{
 background:#333;
 }
 
@@ -44,7 +43,6 @@ display:none;
 display:block;
 }
 
-/* DASHBOARD */
 .stats{
 display:grid;
 grid-template-columns:repeat(3,1fr);
@@ -69,11 +67,17 @@ th,td{
 border:1px solid #ddd;
 padding:8px;
 text-align:center;
-font-size:13px;
 }
 
 th{
 background:#f1f1f1;
+}
+
+.search-wrapper{
+margin-bottom:15px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
 }
 
 /* SCANNER */
@@ -95,11 +99,3 @@ border-radius:5px;
 .btn-masuk{background:green;color:white;}
 .btn-keluar{background:red;color:white;}
 .btn-so{background:blue;color:white;}
-
-/* FILTER */
-.search-wrapper{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:15px;
-}
