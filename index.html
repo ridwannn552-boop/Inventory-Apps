@@ -21,13 +21,12 @@
 <div class="container">
 
 <!-- SIDEBAR -->
-
 <div class="sidebar">
 
 <h2>Inventory</h2>
 
 <ul>
-<li onclick="showPage('dashboard',this)">Dashboard</li>
+<li onclick="showPage('dashboard',this)" class="active-menu">Dashboard</li>
 <li onclick="showPage('produk',this)">Data Produk</li>
 <li onclick="showPage('barcode',this)">Barcode Transaksi</li>
 <li onclick="showPage('history',this)">History Transaksi</li>
@@ -37,11 +36,9 @@
 
 
 <!-- CONTENT -->
-
 <div class="content">
 
 <!-- DASHBOARD -->
-
 <div id="dashboard" class="page active">
 
 <h1>Dashboard Inventory</h1>
@@ -68,9 +65,7 @@
 </div>
 
 
-
 <!-- DATA PRODUK -->
-
 <div id="produk" class="page">
 
 <h2>Master Data Produk</h2>
@@ -108,6 +103,7 @@ onkeyup="searchProduk()"
 <th>Stock Akhir</th>
 </tr>
 </thead>
+
 <tbody id="dataProduk"></tbody>
 
 </table>
@@ -117,23 +113,19 @@ onkeyup="searchProduk()"
 </div>
 
 
-
 <!-- BARCODE SCANNER -->
-
 <div id="barcode" class="page">
 
 <h2>Barcode Scanner</h2>
 
 <div class="scanner-container">
 
+<!-- SEDIKIT DIRAPIKAN (tanpa ubah konsep) -->
 <div class="scanner-camera">
 
 <div class="scanner-area">
-
 <div id="reader"></div>
-
 <div class="scan-line"></div>
-
 </div>
 
 </div>
@@ -147,17 +139,9 @@ onkeyup="searchProduk()"
 
 <div class="scan-buttons">
 
-<button onclick="setMode('masuk')" class="btn-masuk">
-Barang Masuk
-</button>
-
-<button onclick="setMode('keluar')" class="btn-keluar">
-Barang Keluar
-</button>
-
-<button onclick="setMode('so')" class="btn-so">
-Stock Opname
-</button>
+<button onclick="setMode('masuk')" class="btn-masuk">Barang Masuk</button>
+<button onclick="setMode('keluar')" class="btn-keluar">Barang Keluar</button>
+<button onclick="setMode('so')" class="btn-so">Stock Opname</button>
 
 </div>
 
@@ -168,14 +152,13 @@ Simpan Transaksi
 <p id="hasilScan"></p>
 
 </div>
-</div>
-</div>   <!-- TAMBAHAN PENUTUP SCANNER-CONTAINER -->
 
-</div>   <!-- PENUTUP PAGE BARCODE -->
+</div>
+
+</div>
 
 
 <!-- HISTORY -->
-
 <div id="history" class="page">
 
 <h2>History Transaksi</h2>
@@ -183,7 +166,6 @@ Simpan Transaksi
 <div style="margin-bottom:20px">
 
 <select id="filterBulan">
-
 <option value="">Semua Bulan</option>
 <option value="1">Jan</option>
 <option value="2">Feb</option>
@@ -197,16 +179,13 @@ Simpan Transaksi
 <option value="10">Okt</option>
 <option value="11">Nov</option>
 <option value="12">Des</option>
-
 </select>
 
 <select id="filterJenis">
-
 <option value="">Semua Transaksi</option>
 <option value="masuk">Barang Masuk</option>
 <option value="keluar">Barang Keluar</option>
 <option value="so">Stock Opname</option>
-
 </select>
 
 <button onclick="filterHistory()">Filter</button>
@@ -214,11 +193,9 @@ Simpan Transaksi
 
 </div>
 
-
 <table class="produk-table">
 
 <thead>
-
 <tr>
 <th>No</th>
 <th>Tanggal</th>
@@ -227,7 +204,6 @@ Simpan Transaksi
 <th>Transaksi</th>
 <th>Qty</th>
 </tr>
-
 </thead>
 
 <tbody id="dataHistory"></tbody>
