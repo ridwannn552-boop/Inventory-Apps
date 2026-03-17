@@ -465,3 +465,8 @@ startScanner();
 tampilHistory();
 
 };
+document.getElementById("qty").addEventListener("keypress", function(e){
+if(e.key==="Enter"){
+simpanTransaksi();
+}
+});
