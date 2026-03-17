@@ -82,9 +82,25 @@ let uom   = (col[4]||"").replace(/"/g,"").trim();
 let awal   = parseInt(col[5])||0;
 let masuk  = parseInt(col[6])||0;
 let keluar = parseInt(col[7])||0;
-} // tutup for
 
-// 🔥 TAMBAHKAN INI
+// ======================
+// ✅ HARUS DI SINI
+// ======================
+
+produk.push({
+no:no,
+kode:kode,
+reff:reff,
+nama:nama,
+uom:uom,
+awal:awal,
+masuk:masuk,
+keluar:keluar
+});
+
+} // tutup loop
+
+// ✅ tampilkan data
 tampilProduk();
 
 } // tutup loadSpreadsheet
@@ -203,10 +219,10 @@ filtered.forEach(function(item,index){
 let akhir=item.awal + item.masuk - item.keluar;
 
 let row=`
-
 <tr>
-<td>${index+1}</td>
+<td>${item.no}</td>
 <td>${item.kode}</td>
+<td>${item.reff}</td>
 <td>${item.nama}</td>
 <td>${item.uom}</td>
 <td>${item.awal}</td>
@@ -215,7 +231,6 @@ let row=`
 <td>${akhir}</td>
 </tr>
 `;
-
 tabel.innerHTML+=row;
 
 });
