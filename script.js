@@ -36,6 +36,7 @@ tampilHistory();
 // ==========================
 
 let produk=[];
+let lastKodeScan = ""; // ✅ FIX
 
 let historyTransaksi = JSON.parse(localStorage.getItem("historyTransaksi")) || [];
 
@@ -69,10 +70,6 @@ if(row==="") continue;
 
 let col = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
-// ======================
-// MAPPING SESUAI SHEET
-// ======================
-
 let no    = (col[0]||"").replace(/"/g,"").trim();
 let kode  = (col[1]||"").replace(/"/g,"").trim();
 let reff  = (col[2]||"").replace(/"/g,"").trim();
@@ -82,31 +79,6 @@ let uom   = (col[4]||"").replace(/"/g,"").trim();
 let awal   = parseInt(col[5])||0;
 let masuk  = parseInt(col[6])||0;
 let keluar = parseInt(col[7])||0;
-
-// ======================
-// ✅ HARUS DI SINI
-// ======================
-
-produk.push({
-no:no,
-kode:kode,
-reff:reff,
-nama:nama,
-uom:uom,
-awal:awal,
-masuk:masuk,
-keluar:keluar
-});
-
-} // tutup loop
-
-// ✅ tampilkan data
-tampilProduk();
-
-} // tutup loadSpreadsheet
-// ======================
-// SIMPAN DATA
-// ======================
 
 produk.push({
 no:no,
@@ -120,6 +92,13 @@ keluar:keluar
 });
 
 }
+
+// tampilkan data
+tampilProduk();
+
+}
+
+
 // ==========================
 // TAMPIL PRODUK
 // ==========================
@@ -158,6 +137,7 @@ tabel.innerHTML+=row;
 
 buatPagination();
 updateDashboard();
+
 }
 
 
@@ -203,18 +183,23 @@ function searchProduk(){
 
 let keyword=document.getElementById("searchInput").value.toLowerCase();
 
+if(keyword===""){
+tampilProduk();
+return;
+}
+
 let filtered=produk.filter(function(item){
 
 return item.kode.toLowerCase().includes(keyword) ||
-item.nama.toLowerCase().includes(keyword);
+       item.nama.toLowerCase().includes(keyword) ||
+       item.reff.toLowerCase().includes(keyword);
 
 });
 
 let tabel=document.getElementById("dataProduk");
-
 tabel.innerHTML="";
 
-filtered.forEach(function(item,index){
+filtered.forEach(function(item){
 
 let akhir=item.awal + item.masuk - item.keluar;
 
@@ -231,6 +216,7 @@ let row=`
 <td>${akhir}</td>
 </tr>
 `;
+
 tabel.innerHTML+=row;
 
 });
@@ -250,10 +236,8 @@ let totalMasuk=0;
 let totalKeluar=0;
 
 produk.forEach(function(p){
-
 totalMasuk+=p.masuk;
 totalKeluar+=p.keluar;
-
 });
 
 document.getElementById("totalMasuk").innerText=totalMasuk;
@@ -267,10 +251,8 @@ document.getElementById("totalKeluar").innerText=totalKeluar;
 // ==========================
 
 function setMode(mode){
-
 modeTransaksi=mode;
 document.getElementById("hasilScan").innerText="Mode : "+mode;
-
 }
 
 
@@ -282,16 +264,11 @@ let lastScanTime = 0;
 
 function startScanner(){
 
-let scanner=new Html5QrcodeScanner(
-"reader",
-{fps:10,qrbox:250}
-);
+let scanner=new Html5QrcodeScanner("reader",{fps:10,qrbox:250});
 
 scanner.render((decodedText)=>{
 
 let now = Date.now();
-
-// ✅ ANTI DOUBLE SCAN
 if(now - lastScanTime < 1500) return;
 
 lastScanTime = now;
@@ -304,100 +281,12 @@ tampilkanHasilScan(decodedText);
 
 
 // ==========================
-// HISTORY
-// ==========================
-
-function tampilHistory(data=historyTransaksi){
-
-let tabel=document.getElementById("dataHistory");
-if(!tabel) return;
-
-tabel.innerHTML="";
-
-data.forEach(function(item,index){
-
-let tanggal=new Date(item.tanggal).toLocaleString();
-
-let row=`
-
-<tr>
-<td>${index+1}</td>
-<td>${tanggal}</td>
-<td>${item.kode}</td>
-<td>${item.nama}</td>
-<td>${item.jenis}</td>
-<td>${item.qty}</td>
-</tr>
-`;
-
-tabel.innerHTML+=row;
-
-});
-
-}
-
-
-// ==========================
-// FILTER HISTORY
-// ==========================
-
-function filterHistory(){
-
-let bulan=document.getElementById("filterBulan").value;
-let jenis=document.getElementById("filterJenis").value;
-
-let filtered=historyTransaksi.filter(function(item){
-
-let cocok=true;
-
-if(bulan && item.bulan!=bulan) cocok=false;
-if(jenis && item.jenis!=jenis) cocok=false;
-
-return cocok;
-
-});
-
-tampilHistory(filtered);
-
-}
-
-
-// ==========================
-// DOWNLOAD EXCEL
-// ==========================
-
-function downloadExcel(){
-
-let data=historyTransaksi.map(function(item){
-
-return{
-Tanggal:new Date(item.tanggal).toLocaleString(),
-Barcode:item.kode,
-Nama:item.nama,
-Transaksi:item.jenis,
-Qty:item.qty
-};
-
-});
-
-let ws=XLSX.utils.json_to_sheet(data);
-
-let wb=XLSX.utils.book_new();
-
-XLSX.utils.book_append_sheet(wb,ws,"History");
-
-XLSX.writeFile(wb,"History_Transaksi.xlsx");
-
-}
-
-
-// ==========================
 // SCAN RESULT
 // ==========================
 
 function tampilkanHasilScan(kode){
 
-kode = kode.trim(); // ✅ FIX
+kode = kode.trim();
 
 let item = produk.find(p=>p.kode===kode);
 
@@ -413,10 +302,10 @@ document.getElementById("scanNama").innerText=item.nama;
 
 document.getElementById("hasilScan").innerText="Barang ditemukan, isi qty lalu simpan";
 
-// ✅ AUTO FOCUS
 document.getElementById("qty").focus();
 
 }
+
 
 // ==========================
 // SIMPAN TRANSAKSI
@@ -431,7 +320,6 @@ document.getElementById("hasilScan").innerText="Scan barcode terlebih dahulu";
 return;
 }
 
-// ✅ VALIDASI KUAT
 if(!qty || qty <= 0){
 document.getElementById("hasilScan").innerText="Qty tidak valid";
 return;
@@ -456,7 +344,6 @@ item.keluar=0;
 let now=new Date();
 
 historyTransaksi.push({
-
 tanggal:now.toISOString(),
 bulan:now.getMonth()+1,
 tahun:now.getFullYear(),
@@ -464,7 +351,6 @@ jenis:modeTransaksi,
 kode:item.kode,
 nama:item.nama,
 qty:qty
-
 });
 
 localStorage.setItem("historyTransaksi",JSON.stringify(historyTransaksi));
@@ -479,6 +365,39 @@ document.getElementById("hasilScan").innerText="Transaksi berhasil disimpan";
 
 
 // ==========================
+// HISTORY
+// ==========================
+
+function tampilHistory(data=historyTransaksi){
+
+let tabel=document.getElementById("dataHistory");
+if(!tabel) return;
+
+tabel.innerHTML="";
+
+data.forEach(function(item,index){
+
+let tanggal=new Date(item.tanggal).toLocaleString();
+
+let row=`
+<tr>
+<td>${index+1}</td>
+<td>${tanggal}</td>
+<td>${item.kode}</td>
+<td>${item.nama}</td>
+<td>${item.jenis}</td>
+<td>${item.qty}</td>
+</tr>
+`;
+
+tabel.innerHTML+=row;
+
+});
+
+}
+
+
+// ==========================
 // LOAD
 // ==========================
 
@@ -488,9 +407,11 @@ loadSpreadsheet();
 startScanner();
 tampilHistory();
 
-};
+// enter = simpan
 document.getElementById("qty").addEventListener("keypress", function(e){
 if(e.key==="Enter"){
 simpanTransaksi();
 }
 });
+
+};
