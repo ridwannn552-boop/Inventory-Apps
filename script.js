@@ -69,13 +69,14 @@ if(row==="") continue;
 
 let col = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
+// ✅ FIX MAPPING
 let kode = (col[1]||"").replace(/"/g,"").trim();
-let nama = (col[2]||"").replace(/"/g,"").trim();
-let uom  = (col[3]||"").replace(/"/g,"").trim();
+let nama = (col[3]||"").replace(/"/g,"").trim();
+let uom  = (col[4]||"").replace(/"/g,"").trim();
 
-let awal   = parseInt(col[4])||0;
-let masuk  = parseInt(col[5])||0;
-let keluar = parseInt(col[6])||0;
+let awal   = parseInt(col[5])||0;
+let masuk  = parseInt(col[6])||0;
+let keluar = parseInt(col[7])||0;
 
 produk.push({
 kode:kode,
@@ -89,9 +90,7 @@ keluar:keluar
 }
 
 tampilProduk();
-
 }
-
 
 // ==========================
 // TAMPIL PRODUK
