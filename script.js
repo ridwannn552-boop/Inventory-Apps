@@ -224,24 +224,26 @@ tampilkanHasilScan(text);
 
 function tampilkanHasilScan(kode){
 
-kode=kode.trim();
+kode = kode.trim();
 
-let item=produk.find(p=>p.kode===kode);
+let item = produk.find(p=>p.kode.trim() === kode);
+
+let hasil = document.getElementById("hasilScan");
 
 if(!item){
-hasilScan.innerText="Produk tidak ditemukan";
+hasil.innerText = "❌ Produk tidak ditemukan";
 return;
 }
 
-lastKodeScan=kode;
+lastKodeScan = kode;
 
-scanBarcode.innerText=item.kode;
-scanNama.innerText=item.nama;
+document.getElementById("scanBarcode").innerText = item.kode;
+document.getElementById("scanNama").innerText = item.nama;
 
-hasilScan.innerText="Barang ditemukan";
-qty.focus();
+hasil.innerText = "✅ Barang ditemukan";
+
+document.getElementById("qty").focus();
 }
-
 
 // ==========================
 // SIMPAN TRANSAKSI
@@ -249,40 +251,55 @@ qty.focus();
 
 function simpanTransaksi(){
 
-let qtyVal=parseInt(qty.value);
+let qtyInput = document.getElementById("qty");
+let hasil = document.getElementById("hasilScan");
 
-if(!lastKodeScan) return hasilScan.innerText="Scan dulu";
-if(!qtyVal || qtyVal<=0) return hasilScan.innerText="Qty salah";
+let qtyVal = parseInt(qtyInput.value);
 
-let item=produk.find(p=>p.kode===lastKodeScan);
-
-if(modeTransaksi==="masuk") item.masuk+=qtyVal;
-if(modeTransaksi==="keluar") item.keluar+=qtyVal;
-
-if(modeTransaksi==="so"){
-item.awal=qtyVal;
-item.masuk=0;
-item.keluar=0;
+if(!lastKodeScan){
+hasil.innerText = "❌ Scan barcode dulu";
+return;
 }
 
-let now=new Date();
+if(!qtyVal || qtyVal <= 0){
+hasil.innerText = "❌ Qty tidak valid";
+return;
+}
+
+let item = produk.find(p=>p.kode.trim() === lastKodeScan.trim());
+
+if(!item){
+hasil.innerText = "❌ Produk tidak ditemukan";
+return;
+}
+
+if(modeTransaksi === "masuk") item.masuk += qtyVal;
+if(modeTransaksi === "keluar") item.keluar += qtyVal;
+
+if(modeTransaksi === "so"){
+item.awal = qtyVal;
+item.masuk = 0;
+item.keluar = 0;
+}
+
+let now = new Date();
 
 historyTransaksi.push({
-tanggal:now.toISOString(),
-bulan:now.getMonth()+1,
-jenis:modeTransaksi,
-kode:item.kode,
-nama:item.nama,
-qty:qtyVal
+tanggal: now.toISOString(),
+bulan: now.getMonth()+1,
+jenis: modeTransaksi,
+kode: item.kode,
+nama: item.nama,
+qty: qtyVal
 });
 
-localStorage.setItem("historyTransaksi",JSON.stringify(historyTransaksi));
+localStorage.setItem("historyTransaksi", JSON.stringify(historyTransaksi));
 
 tampilProduk();
 tampilHistory();
 
-qty.value="";
-hasilScan.innerText="Berhasil";
+qtyInput.value = "";
+hasil.innerText = "✅ Transaksi berhasil disimpan";
 }
 
 
