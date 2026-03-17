@@ -1,7 +1,6 @@
 // ==========================
 // DATA GLOBAL
 // ==========================
-
 let produk = [];
 let lastKodeScan = "";
 let historyTransaksi = JSON.parse(localStorage.getItem("historyTransaksi")) || [];
@@ -16,7 +15,6 @@ let modeTransaksi = "masuk";
 // ==========================
 // NAVIGASI
 // ==========================
-
 function showPage(pageId, el){
 
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -32,10 +30,11 @@ tampilHistory();
 
 
 // ==========================
-// LOAD DATA SHEET
+// LOAD DATA
 // ==========================
-
 async function loadSpreadsheet(){
+
+try{
 
 let url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&single=true&output=csv";
 
@@ -68,16 +67,22 @@ produk.push({no,kode,reff,nama,uom,awal,masuk,keluar});
 
 tampilProduk();
 updateDashboard();
+
+}catch(e){
+console.log("ERROR LOAD DATA:", e);
+}
+
 }
 
 
 // ==========================
 // TABEL PRODUK
 // ==========================
-
 function tampilProduk(){
 
 let tabel=document.getElementById("dataProduk");
+if(!tabel) return;
+
 tabel.innerHTML="";
 
 let start=(currentPage-1)*rowsPerPage;
@@ -108,10 +113,11 @@ buatPagination();
 // ==========================
 // PAGINATION
 // ==========================
-
 function buatPagination(){
 
 let el=document.getElementById("pagination");
+if(!el) return;
+
 el.innerHTML="";
 
 let total=Math.ceil(produk.length/rowsPerPage);
@@ -136,7 +142,6 @@ el.appendChild(btn);
 // ==========================
 // SEARCH
 // ==========================
-
 function searchProduk(){
 
 let keyword=document.getElementById("searchInput").value.toLowerCase();
@@ -177,7 +182,6 @@ tabel.innerHTML+=`
 // ==========================
 // DASHBOARD
 // ==========================
-
 function updateDashboard(){
 
 document.getElementById("totalProduk").innerText=produk.length;
@@ -195,16 +199,24 @@ document.getElementById("totalKeluar").innerText=keluar;
 
 
 // ==========================
-// SCANNER
+// SCANNER (AMAN)
 // ==========================
-
 let lastScanTime=0;
 
 function startScanner(){
 
+if(!window.Html5QrcodeScanner){
+console.log("Scanner tidak tersedia");
+return;
+}
+
+try{
+
 let scanner=new Html5QrcodeScanner("reader",{fps:10,qrbox:250});
 
 scanner.render(text=>{
+
+if(!text) return;
 
 let now=Date.now();
 if(now-lastScanTime<1500) return;
@@ -215,40 +227,44 @@ beep.play();
 tampilkanHasilScan(text);
 
 });
+
+}catch(e){
+console.log("ERROR SCANNER:", e);
+}
+
 }
 
 
 // ==========================
 // HASIL SCAN
 // ==========================
-
 function tampilkanHasilScan(kode){
 
 kode = kode.trim();
 
-let item = produk.find(p=>p.kode.trim() === kode);
-
 let hasil = document.getElementById("hasilScan");
 
+let item = produk.find(p=>p.kode.trim() === kode);
+
 if(!item){
-hasil.innerText = "❌ Produk tidak ditemukan";
+hasil.innerText="❌ Produk tidak ditemukan";
 return;
 }
 
-lastKodeScan = kode;
+lastKodeScan=kode;
 
-document.getElementById("scanBarcode").innerText = item.kode;
-document.getElementById("scanNama").innerText = item.nama;
+document.getElementById("scanBarcode").innerText=item.kode;
+document.getElementById("scanNama").innerText=item.nama;
 
-hasil.innerText = "✅ Barang ditemukan";
+hasil.innerText="✅ Barang ditemukan";
 
 document.getElementById("qty").focus();
 }
 
+
 // ==========================
 // SIMPAN TRANSAKSI
 // ==========================
-
 function simpanTransaksi(){
 
 let qtyInput = document.getElementById("qty");
@@ -257,59 +273,60 @@ let hasil = document.getElementById("hasilScan");
 let qtyVal = parseInt(qtyInput.value);
 
 if(!lastKodeScan){
-hasil.innerText = "❌ Scan barcode dulu";
+hasil.innerText="❌ Scan barcode dulu";
 return;
 }
 
-if(!qtyVal || qtyVal <= 0){
-hasil.innerText = "❌ Qty tidak valid";
+if(!qtyVal || qtyVal<=0){
+hasil.innerText="❌ Qty tidak valid";
 return;
 }
 
 let item = produk.find(p=>p.kode.trim() === lastKodeScan.trim());
 
 if(!item){
-hasil.innerText = "❌ Produk tidak ditemukan";
+hasil.innerText="❌ Produk tidak ditemukan";
 return;
 }
 
-if(modeTransaksi === "masuk") item.masuk += qtyVal;
-if(modeTransaksi === "keluar") item.keluar += qtyVal;
+if(modeTransaksi==="masuk") item.masuk+=qtyVal;
+if(modeTransaksi==="keluar") item.keluar+=qtyVal;
 
-if(modeTransaksi === "so"){
-item.awal = qtyVal;
-item.masuk = 0;
-item.keluar = 0;
+if(modeTransaksi==="so"){
+item.awal=qtyVal;
+item.masuk=0;
+item.keluar=0;
 }
 
-let now = new Date();
+let now=new Date();
 
 historyTransaksi.push({
-tanggal: now.toISOString(),
-bulan: now.getMonth()+1,
-jenis: modeTransaksi,
-kode: item.kode,
-nama: item.nama,
-qty: qtyVal
+tanggal:now.toISOString(),
+bulan:now.getMonth()+1,
+jenis:modeTransaksi,
+kode:item.kode,
+nama:item.nama,
+qty:qtyVal
 });
 
-localStorage.setItem("historyTransaksi", JSON.stringify(historyTransaksi));
+localStorage.setItem("historyTransaksi",JSON.stringify(historyTransaksi));
 
 tampilProduk();
 tampilHistory();
 
-qtyInput.value = "";
-hasil.innerText = "✅ Transaksi berhasil disimpan";
+qtyInput.value="";
+hasil.innerText="✅ Transaksi berhasil disimpan";
 }
 
 
 // ==========================
 // HISTORY
 // ==========================
-
 function tampilHistory(data=historyTransaksi){
 
 let tabel=document.getElementById("dataHistory");
+if(!tabel) return;
+
 tabel.innerHTML="";
 
 data.forEach((h,i)=>{
@@ -329,27 +346,27 @@ tabel.innerHTML+=`
 // ==========================
 // LOAD
 // ==========================
-
-window.onload=()=>{
-loadSpreadsheet();
-startScanner();
-tampilHistory();
-
-document.getElementById("qty").addEventListener("keypress", e=>{
-if(e.key==="Enter"){
-simpanTransaksi();
-}
-});
 window.onload = () => {
 
 loadSpreadsheet();
-startScanner();
 tampilHistory();
 
-document.getElementById("qty").addEventListener("keypress", e=>{
+// scanner aman (tidak bikin crash)
+try{
+startScanner();
+}catch(e){
+console.log("Scanner gagal:", e);
+}
+
+// ENTER untuk simpan
+let qtyInput = document.getElementById("qty");
+
+if(qtyInput){
+qtyInput.addEventListener("keypress", e=>{
 if(e.key==="Enter"){
 simpanTransaksi();
 }
 });
+}
 
 };
