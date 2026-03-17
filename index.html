@@ -1,22 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Consumable Inventory System</title>
+<title>Inventory System</title>
 
 <link rel="stylesheet" href="style.css">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- 🔥 AMANKAN SCANNER -->
 <script src="https://unpkg.com/html5-qrcode"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
 </head>
 
 <body>
@@ -25,146 +16,99 @@
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-
-<h2>Inventory</h2>
-
+<h2>MENU</h2>
 <ul>
-<li onclick="showPage('dashboard',this)" class="active-menu">Dashboard</li>
+<li onclick="showPage('dashboard',this)">Dashboard</li>
 <li onclick="showPage('produk',this)">Data Produk</li>
-<li onclick="showPage('barcode',this)">Barcode Transaksi</li>
-<li onclick="showPage('history',this)">History Transaksi</li>
+<li onclick="showPage('scanner',this)">Scan</li>
+<li onclick="showPage('history',this)">History</li>
 </ul>
-
 </div>
-
 
 <!-- CONTENT -->
 <div class="content">
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="page active">
-
-<h1>Dashboard Inventory</h1>
+<h2>Dashboard</h2>
 
 <div class="stats">
-
 <div class="card">
 <h3>Total Produk</h3>
 <p id="totalProduk">0</p>
 </div>
 
 <div class="card">
-<h3>Total Barang Masuk</h3>
+<h3>Total Masuk</h3>
 <p id="totalMasuk">0</p>
 </div>
 
 <div class="card">
-<h3>Total Barang Keluar</h3>
+<h3>Total Keluar</h3>
 <p id="totalKeluar">0</p>
 </div>
-
+</div>
 </div>
 
-</div>
-
-
-<!-- DATA PRODUK -->
+<!-- PRODUK -->
 <div id="produk" class="page">
-
-<h2>Master Data Produk</h2>
-
-<div class="search-wrapper">
+<h2>Data Produk</h2>
 
 <div class="search-bar">
-
-<span class="search-icon">🔍</span>
-
-<input
-type="text"
-id="searchInput"
-placeholder="Cari Barcode atau Nama Barang..."
-onkeyup="searchProduk()"
->
-
+<input type="text" id="searchInput" placeholder="Cari produk..." onkeyup="searchProduk()">
 </div>
-
-</div>
-
 
 <table class="produk-table">
-
 <thead>
 <tr>
 <th>No</th>
-<th>Barcode</th>
-<th>Reff No</th>
-<th>Nama Barang</th>
+<th>Kode</th>
+<th>Reff</th>
+<th>Nama</th>
 <th>UOM</th>
-<th>Stock Awal</th>
-<th>IN</th>
-<th>OUT</th>
-<th>Stock Akhir</th>
+<th>Awal</th>
+<th>Masuk</th>
+<th>Keluar</th>
+<th>Akhir</th>
 </tr>
 </thead>
-
 <tbody id="dataProduk"></tbody>
-
 </table>
 
 <div id="pagination"></div>
-
 </div>
 
-
-<!-- BARCODE -->
-<div id="barcode" class="page">
-
-<h2>Barcode Scanner</h2>
+<!-- SCANNER -->
+<div id="scanner" class="page">
+<h2>Scan Barcode</h2>
 
 <div class="scanner-container">
-
-<div class="scanner-camera">
-
-<div class="scanner-area">
 <div id="reader"></div>
-<div class="scan-line"></div>
-</div>
-
-</div>
-
-<div class="scanner-info">
-
-<p><b>Barcode :</b> <span id="scanBarcode">-</span></p>
-<p><b>Nama Barang :</b> <span id="scanNama">-</span></p>
-
-<input type="number" id="qty" placeholder="Masukkan Qty">
-
-<div class="scan-buttons">
-<button onclick="setMode('masuk')" class="btn-masuk">Barang Masuk</button>
-<button onclick="setMode('keluar')" class="btn-keluar">Barang Keluar</button>
-<button onclick="setMode('so')" class="btn-so">Stock Opname</button>
-</div>
-
-<!-- 🔥 TAMBAHKAN ID BIAR LEBIH AMAN -->
-<button id="btnSimpan" class="btn-simpan">
-Simpan Transaksi
-</button>
 
 <p id="hasilScan"></p>
 
-</div>
+<p>Kode: <b id="scanBarcode">-</b></p>
+<p>Nama: <b id="scanNama">-</b></p>
 
-</div>
+<input type="number" id="qty" placeholder="Input Qty">
 
-</div>
+<br><br>
 
+<button class="btn-masuk" onclick="setMode('masuk')">Masuk</button>
+<button class="btn-keluar" onclick="setMode('keluar')">Keluar</button>
+<button class="btn-so" onclick="setMode('so')">Stock Opname</button>
+
+<br><br>
+
+<button onclick="simpanTransaksi()">Simpan</button>
+</div>
+</div>
 
 <!-- HISTORY -->
 <div id="history" class="page">
-
 <h2>History Transaksi</h2>
 
-<div style="margin-bottom:20px">
+<div class="search-wrapper">
 
 <select id="filterBulan">
 <option value="">Semua Bulan</option>
@@ -183,53 +127,36 @@ Simpan Transaksi
 </select>
 
 <select id="filterJenis">
-<option value="">Semua Transaksi</option>
-<option value="masuk">Barang Masuk</option>
-<option value="keluar">Barang Keluar</option>
-<option value="so">Stock Opname</option>
+<option value="">Semua</option>
+<option value="masuk">Masuk</option>
+<option value="keluar">Keluar</option>
+<option value="so">SO</option>
 </select>
 
 <button onclick="filterHistory()">Filter</button>
-<button onclick="downloadExcel()">Download Excel</button>
+<button onclick="resetFilter()">Reset</button>
 
 </div>
 
-<table class="produk-table">
-
+<table>
 <thead>
 <tr>
 <th>No</th>
 <th>Tanggal</th>
-<th>Barcode</th>
-<th>Nama Barang</th>
-<th>Transaksi</th>
+<th>Kode</th>
+<th>Nama</th>
+<th>Jenis</th>
 <th>Qty</th>
 </tr>
 </thead>
-
 <tbody id="dataHistory"></tbody>
-
 </table>
 
 </div>
 
 </div>
-
 </div>
 
 <script src="script.js"></script>
-
-<!-- 🔥 PASTIKAN BUTTON SELALU JALAN -->
-<script>
-document.addEventListener("DOMContentLoaded", function(){
-let btn = document.getElementById("btnSimpan");
-if(btn){
-btn.addEventListener("click", function(){
-simpanTransaksi();
-});
-}
-});
-</script>
-
 </body>
 </html>
