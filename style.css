@@ -1,9 +1,16 @@
 body{margin:0;font-family:Arial;background:#f4f6f9;}
 
-.container{display:flex;}
+.login{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+height:100vh;
+gap:10px;
+}
 
-.sidebar{width:220px;background:#111;color:white;padding:20px;}
-.sidebar ul{list-style:none;padding:0;}
+.container{display:flex;}
+.sidebar{width:200px;background:#111;color:white;}
 .sidebar li{padding:10px;cursor:pointer;}
 .sidebar li:hover{background:#333;}
 
@@ -17,14 +24,3 @@ th,td{border:1px solid #ddd;padding:8px;text-align:center;}
 
 .masuk{background:#d4edda;}
 .keluar{background:#f8d7da;}
-
-.card{background:white;padding:20px;margin:10px;}
-
-.login{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-height:100vh;
-gap:10px;
-}
