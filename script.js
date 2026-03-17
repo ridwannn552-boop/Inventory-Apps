@@ -1,9 +1,14 @@
 let produk = [];
+let produkMaster = []; // data asli dari spreadsheet
 let historyTransaksi = JSON.parse(localStorage.getItem("history")) || [];
+
 let lastKodeScan = "";
 let modeTransaksi = "masuk";
 
-function showPage(id, el) {
+// ==========================
+// NAVIGASI
+// ==========================
+function showPage(id) {
 document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 
@@ -16,7 +21,7 @@ document.getElementById("hasilScan").innerText = "Mode: " + mode;
 }
 
 // ==========================
-// LOAD DATA (FIX SINKRON)
+// LOAD DATA DARI SHEET
 // ==========================
 async function loadData() {
 
@@ -27,33 +32,67 @@ let text = await res.text();
 
 let rows = text.split("\n");
 
-produk = [];
+produkMaster = [];
 
 for (let i = 1; i < rows.length; i++) {
 
-// parsing aman (anti geser karena koma)
 let c = rows[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-
 if (!c || !c[1]) continue;
 
-produk.push({
-kode: c[1]?.replace(/"/g, "").trim(),   // BARCODE
-reff: c[2]?.replace(/"/g, "").trim(),   // REFF
-nama: c[3]?.replace(/"/g, "").trim(),   // NAMA
-uom: c[4]?.replace(/"/g, "").trim(),    // UOM
-awal: parseInt(c[5]) || 0,
-masuk: parseInt(c[6]) || 0,
-keluar: parseInt(c[7]) || 0,
-akhir: parseInt(c[8]) || 0
+produkMaster.push({
+kode: c[1]?.replace(/"/g, "").trim(),
+reff: c[2]?.replace(/"/g, "").trim(),
+nama: c[3]?.replace(/"/g, "").trim(),
+uom: c[4]?.replace(/"/g, "").trim(),
+awal: parseInt(c[5]) || 0
 });
 }
+
+// setelah load → hitung ulang dari history
+hitungUlangProduk();
+}
+
+// ==========================
+// HITUNG ULANG MASTER
+// ==========================
+function hitungUlangProduk() {
+
+produk = JSON.parse(JSON.stringify(produkMaster));
+
+// reset
+produk.forEach(p => {
+p.masuk = 0;
+p.keluar = 0;
+p.akhir = p.awal;
+});
+
+// hitung dari history
+historyTransaksi.forEach(h => {
+
+let item = produk.find(p => p.kode == h.kode);
+if (!item) return;
+
+if (h.jenis === "masuk") {
+item.masuk += h.qty;
+item.akhir += h.qty;
+}
+
+if (h.jenis === "keluar") {
+item.keluar += h.qty;
+item.akhir -= h.qty;
+}
+
+if (h.jenis === "so") {
+item.akhir = h.qty;
+}
+});
 
 tampilProduk();
 updateDashboard();
 }
 
 // ==========================
-// TAMPIL PRODUK (SINKRON)
+// TABEL PRODUK
 // ==========================
 function tampilProduk() {
 
@@ -92,7 +131,7 @@ document.getElementById("totalKeluar").innerText = totalKeluar;
 }
 
 // ==========================
-// SCANNER (FIX SINKRON)
+// SCANNER
 // ==========================
 function startScanner() {
 
@@ -100,7 +139,7 @@ let scanner = new Html5QrcodeScanner("reader", { fps: 10 });
 
 scanner.render(code => {
 
-let item = produk.find(p =>
+let item = produkMaster.find(p =>
 p.kode?.toLowerCase().trim() === code.toLowerCase().trim()
 );
 
@@ -109,7 +148,7 @@ document.getElementById("hasilScan").innerText = "❌ Tidak ditemukan";
 return;
 }
 
-lastKodeScan = code;
+lastKodeScan = item.kode;
 
 document.getElementById("scanBarcode").innerText = item.kode;
 document.getElementById("scanNama").innerText = item.nama;
@@ -119,54 +158,41 @@ document.getElementById("hasilScan").innerText = "✅ Ditemukan";
 }
 
 // ==========================
-// SIMPAN TRANSAKSI
+// SIMPAN TRANSAKSI (MASUK HISTORY)
 // ==========================
 function simpanTransaksi() {
 
 let qty = parseInt(document.getElementById("qty").value);
-if (!qty || qty <= 0) return;
+if (!qty || !lastKodeScan) return;
 
-let item = produk.find(p => p.kode == lastKodeScan);
+let item = produkMaster.find(p => p.kode == lastKodeScan);
 if (!item) return;
 
-if (modeTransaksi === "masuk") {
-item.masuk += qty;
-item.akhir += qty;
-}
-
-if (modeTransaksi === "keluar") {
-item.keluar += qty;
-item.akhir -= qty;
-}
-
-if (modeTransaksi === "so") {
-item.akhir = qty;
-}
-
-// simpan history
 let now = new Date();
 
 historyTransaksi.push({
+id: Date.now(),
 tanggal: now.toLocaleString(),
 bulan: now.getMonth() + 1,
 jenis: modeTransaksi,
 kode: item.kode,
+reff: item.reff,
 nama: item.nama,
+uom: item.uom,
 qty: qty
 });
 
 localStorage.setItem("history", JSON.stringify(historyTransaksi));
 
-// update tampilan
-tampilProduk();
+// 🔥 kunci sinkron
+hitungUlangProduk();
 tampilHistory();
-updateDashboard();
 
 document.getElementById("qty").value = "";
 }
 
 // ==========================
-// HISTORY
+// HISTORY + EDIT + HAPUS
 // ==========================
 function tampilHistory(data = historyTransaksi) {
 
@@ -180,12 +206,50 @@ t.innerHTML += `
 <td>${i + 1}</td>
 <td>${h.tanggal}</td>
 <td>${h.kode}</td>
-<td>-</td>
+<td>${h.reff}</td>
 <td>${h.nama}</td>
 <td>${h.jenis}</td>
 <td>${h.qty}</td>
+<td>
+<button onclick="editHistory(${h.id})">Edit</button>
+<button onclick="hapusHistory(${h.id})">Hapus</button>
+</td>
 </tr>`;
 });
+}
+
+// ==========================
+// EDIT
+// ==========================
+function editHistory(id) {
+
+let h = historyTransaksi.find(x => x.id === id);
+if (!h) return;
+
+let qtyBaru = prompt("Edit Qty:", h.qty);
+if (qtyBaru === null) return;
+
+h.qty = parseInt(qtyBaru) || h.qty;
+
+localStorage.setItem("history", JSON.stringify(historyTransaksi));
+
+hitungUlangProduk();
+tampilHistory();
+}
+
+// ==========================
+// HAPUS
+// ==========================
+function hapusHistory(id) {
+
+if (!confirm("Hapus data ini?")) return;
+
+historyTransaksi = historyTransaksi.filter(h => h.id !== id);
+
+localStorage.setItem("history", JSON.stringify(historyTransaksi));
+
+hitungUlangProduk();
+tampilHistory();
 }
 
 // ==========================
