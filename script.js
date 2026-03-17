@@ -11,6 +11,9 @@ let currentPage = 1;
 let rowsPerPage = 50;
 let modeTransaksi = "masuk";
 
+let scannerInstance = null;
+let lastScanTime = 0;
+
 
 // ==========================
 // NAVIGASI
@@ -26,6 +29,25 @@ if(el) el.classList.add("active-menu");
 if(pageId==="history"){
 tampilHistory();
 }
+}
+
+
+// ==========================
+// MODE TRANSAKSI
+// ==========================
+function setMode(mode){
+
+modeTransaksi = mode;
+
+let hasil = document.getElementById("hasilScan");
+
+let warna = {
+masuk: "green",
+keluar: "red",
+so: "blue"
+};
+
+hasil.innerHTML = `<b style="color:${warna[mode]}">Mode: ${mode.toUpperCase()}</b>`;
 }
 
 
@@ -199,24 +221,19 @@ document.getElementById("totalKeluar").innerText=keluar;
 
 
 // ==========================
-// SCANNER (AMAN)
+// SCANNER FIX (TANPA REFRESH)
 // ==========================
-let lastScanTime=0;
-
 function startScanner(){
 
-if(!window.Html5QrcodeScanner){
-console.log("Scanner tidak tersedia");
-return;
+if(!window.Html5QrcodeScanner) return;
+
+if(scannerInstance){
+scannerInstance.clear().catch(()=>{});
 }
 
-try{
+scannerInstance = new Html5QrcodeScanner("reader",{fps:10,qrbox:250});
 
-let scanner=new Html5QrcodeScanner("reader",{fps:10,qrbox:250});
-
-scanner.render(text=>{
-
-if(!text) return;
+scannerInstance.render(text=>{
 
 let now=Date.now();
 if(now-lastScanTime<1500) return;
@@ -227,11 +244,6 @@ beep.play();
 tampilkanHasilScan(text);
 
 });
-
-}catch(e){
-console.log("ERROR SCANNER:", e);
-}
-
 }
 
 
@@ -263,7 +275,7 @@ document.getElementById("qty").focus();
 
 
 // ==========================
-// SIMPAN TRANSAKSI
+// SIMPAN TRANSAKSI (FIX TOTAL)
 // ==========================
 function simpanTransaksi(){
 
@@ -289,6 +301,7 @@ hasil.innerText="❌ Produk tidak ditemukan";
 return;
 }
 
+// UPDATE DATA PRODUK
 if(modeTransaksi==="masuk") item.masuk+=qtyVal;
 if(modeTransaksi==="keluar") item.keluar+=qtyVal;
 
@@ -298,6 +311,7 @@ item.masuk=0;
 item.keluar=0;
 }
 
+// SIMPAN HISTORY + REFF
 let now=new Date();
 
 historyTransaksi.push({
@@ -305,22 +319,28 @@ tanggal:now.toISOString(),
 bulan:now.getMonth()+1,
 jenis:modeTransaksi,
 kode:item.kode,
+reff:item.reff,
 nama:item.nama,
 qty:qtyVal
 });
 
 localStorage.setItem("historyTransaksi",JSON.stringify(historyTransaksi));
 
+// REFRESH UI
 tampilProduk();
 tampilHistory();
 
 qtyInput.value="";
 hasil.innerText="✅ Transaksi berhasil disimpan";
+
+// RESET SCAN TANPA REFRESH
+lastKodeScan="";
+startScanner();
 }
 
 
 // ==========================
-// HISTORY
+// HISTORY + REFF
 // ==========================
 function tampilHistory(data=historyTransaksi){
 
@@ -335,11 +355,35 @@ tabel.innerHTML+=`
 <td>${i+1}</td>
 <td>${new Date(h.tanggal).toLocaleString()}</td>
 <td>${h.kode}</td>
+<td>${h.reff || "-"}</td>
 <td>${h.nama}</td>
 <td>${h.jenis}</td>
 <td>${h.qty}</td>
 </tr>`;
 });
+}
+
+
+// ==========================
+// FILTER HISTORY (FIX)
+// ==========================
+function filterHistory(){
+
+let bulan=document.getElementById("filterBulan").value;
+let jenis=document.getElementById("filterJenis").value;
+
+let hasil = historyTransaksi.filter(item=>{
+
+let ok = true;
+
+if(bulan && item.bulan != bulan) ok = false;
+if(jenis && item.jenis != jenis) ok = false;
+
+return ok;
+
+});
+
+tampilHistory(hasil);
 }
 
 
@@ -350,23 +394,12 @@ window.onload = () => {
 
 loadSpreadsheet();
 tampilHistory();
-
-// scanner aman (tidak bikin crash)
-try{
 startScanner();
-}catch(e){
-console.log("Scanner gagal:", e);
-}
 
-// ENTER untuk simpan
-let qtyInput = document.getElementById("qty");
-
-if(qtyInput){
-qtyInput.addEventListener("keypress", e=>{
+document.getElementById("qty").addEventListener("keypress", e=>{
 if(e.key==="Enter"){
 simpanTransaksi();
 }
 });
-}
 
 };
