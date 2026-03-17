@@ -106,8 +106,6 @@ keluar:keluar
 function tampilProduk(){
 
 let tabel=document.getElementById("dataProduk");
-if(!tabel) return;
-
 tabel.innerHTML="";
 
 let start=(currentPage-1)*rowsPerPage;
@@ -120,10 +118,10 @@ dataPage.forEach(function(item,index){
 let akhir=item.awal + item.masuk - item.keluar;
 
 let row=`
-
 <tr>
-<td>${start+index+1}</td>
+<td>${item.no}</td>
 <td>${item.kode}</td>
+<td>${item.reff}</td>
 <td>${item.nama}</td>
 <td>${item.uom}</td>
 <td>${item.awal}</td>
@@ -139,7 +137,6 @@ tabel.innerHTML+=row;
 
 buatPagination();
 updateDashboard();
-
 }
 
 
