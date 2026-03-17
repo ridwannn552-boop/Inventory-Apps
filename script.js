@@ -340,3 +340,16 @@ if(e.key==="Enter"){
 simpanTransaksi();
 }
 });
+window.onload = () => {
+
+loadSpreadsheet();
+startScanner();
+tampilHistory();
+
+document.getElementById("qty").addEventListener("keypress", e=>{
+if(e.key==="Enter"){
+simpanTransaksi();
+}
+});
+
+};
