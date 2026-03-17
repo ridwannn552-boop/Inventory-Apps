@@ -11,7 +11,10 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- 🔥 AMANKAN SCANNER -->
 <script src="https://unpkg.com/html5-qrcode"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 </head>
@@ -113,14 +116,13 @@ onkeyup="searchProduk()"
 </div>
 
 
-<!-- BARCODE SCANNER -->
+<!-- BARCODE -->
 <div id="barcode" class="page">
 
 <h2>Barcode Scanner</h2>
 
 <div class="scanner-container">
 
-<!-- SEDIKIT DIRAPIKAN (tanpa ubah konsep) -->
 <div class="scanner-camera">
 
 <div class="scanner-area">
@@ -138,14 +140,13 @@ onkeyup="searchProduk()"
 <input type="number" id="qty" placeholder="Masukkan Qty">
 
 <div class="scan-buttons">
-
 <button onclick="setMode('masuk')" class="btn-masuk">Barang Masuk</button>
 <button onclick="setMode('keluar')" class="btn-keluar">Barang Keluar</button>
 <button onclick="setMode('so')" class="btn-so">Stock Opname</button>
-
 </div>
 
-<button onclick="simpanTransaksi()" class="btn-simpan">
+<!-- 🔥 TAMBAHKAN ID BIAR LEBIH AMAN -->
+<button id="btnSimpan" class="btn-simpan">
 Simpan Transaksi
 </button>
 
@@ -217,6 +218,18 @@ Simpan Transaksi
 </div>
 
 <script src="script.js"></script>
+
+<!-- 🔥 PASTIKAN BUTTON SELALU JALAN -->
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+let btn = document.getElementById("btnSimpan");
+if(btn){
+btn.addEventListener("click", function(){
+simpanTransaksi();
+});
+}
+});
+</script>
 
 </body>
 </html>
