@@ -341,3 +341,13 @@ animation:scanMove 2s linear infinite;
 .sidebar ul li.active-menu{
 background:#333;
 }
+#history button:last-of-type:hover{
+background:#27ae60;
+}
+.scanner-container{
+background:white;
+padding:20px;
+border-radius:10px;
+width:420px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
