@@ -76,6 +76,26 @@ th{
 background:#f1f1f1;
 }
 
+/* HISTORY FIX */
+#history{
+overflow-x:auto;
+}
+
+/* WARNA */
+.masuk{background:#d4edda;}
+.keluar{background:#f8d7da;}
+.so{background:#d6eaf8;}
+
+.minus{
+color:red;
+font-weight:bold;
+}
+
+#totalHistory{
+font-weight:bold;
+margin:10px 0;
+}
+
 /* SCANNER */
 .scanner-container{
 background:white;
@@ -96,7 +116,6 @@ border-radius:5px;
 .btn-keluar{background:red;color:white;}
 .btn-so{background:blue;color:white;}
 
-/* FILTER */
 .search-wrapper{
 display:flex;
 gap:10px;
