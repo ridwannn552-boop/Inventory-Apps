@@ -162,3 +162,9 @@ background:#2e59d9;
 .pagination button.active{
 background:#1e1e2f;
 }
+.content{
+flex:1;
+padding:25px;
+max-width:1200px; /* 🔥 batasi lebar */
+margin:auto;      /* 🔥 bikin ke tengah */
+}
