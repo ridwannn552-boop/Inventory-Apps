@@ -30,7 +30,7 @@ document.getElementById("hasilScan").innerText = "Mode: " + mode;
 }
 
 // ==========================
-// 🔥 PARSER CSV AMAN
+// PARSER CSV AMAN
 // ==========================
 function parseCSV(str){
 return str.split("\n").map(row=>{
@@ -48,7 +48,7 @@ return result;
 }
 
 // ==========================
-// LOAD DATA (FIX TOTAL)
+// LOAD DATA
 // ==========================
 async function loadData(){
 
@@ -62,7 +62,6 @@ let rows=parseCSV(text);
 produkMaster=[];
 
 for(let i=1;i<rows.length;i++){
-
 let c=rows[i];
 if(!c[1]) continue;
 
@@ -135,7 +134,7 @@ t.innerHTML+=`
 }
 
 // ==========================
-// 🔍 SEARCH PRODUK (FIX ERROR)
+// SEARCH
 // ==========================
 function searchProduk(){
 
@@ -180,13 +179,12 @@ document.getElementById("totalKeluar").innerText = keluar;
 }
 
 // ==========================
-// SCANNER
+// SCANNER (UPGRADE UX)
 // ==========================
 function startScanner(){
 
 if(html5QrCode) return;
 
-// 🔥 UI SCANNER (AUTO CAMERA + FRAME)
 html5QrCode = new Html5QrcodeScanner(
 "reader",
 {
@@ -203,16 +201,23 @@ html5QrCode.render((code)=>{
 
 let clean = code.trim().toUpperCase();
 
-document.getElementById("hasilScan").innerText = "SCAN: " + clean;
-
-// anti double scan
+// anti double
 if(clean === lastScan) return;
 lastScan = clean;
+
+// 🔥 FEEDBACK VISUAL
+let hasil = document.getElementById("hasilScan");
+hasil.innerText = "✅ TERBACA: " + clean;
+hasil.style.color = "green";
+
+// 🔊 BEEP
+new Audio("https://www.soundjay.com/button/sounds/beep-07.mp3").play();
 
 let item = produkMaster.find(p => p.kode === clean);
 
 if(!item){
-document.getElementById("hasilScan").innerText = "❌ Tidak ditemukan";
+hasil.innerText = "❌ Tidak ditemukan";
+hasil.style.color = "red";
 return;
 }
 
@@ -220,19 +225,42 @@ lastKodeScan = item.kode;
 
 document.getElementById("scanBarcode").innerText = item.kode;
 document.getElementById("scanNama").innerText = item.nama;
-document.getElementById("hasilScan").innerText = "✅ Ditemukan";
+
+// 🔥 AUTO ISI QTY
+document.getElementById("qty").value = 1;
+document.getElementById("qty").focus();
 
 setTimeout(()=>{ lastScan=""; },1000);
 
 });
 }
+
 // ==========================
-// SIMPAN
+// STOP SCANNER
+// ==========================
+function stopScanner(){
+if(html5QrCode){
+html5QrCode.clear();
+html5QrCode = null;
+}
+}
+
+// ==========================
+// SIMPAN (FIX TOTAL)
 // ==========================
 function simpanTransaksi(){
 
-let qty=parseInt(document.getElementById("qty").value);
-if(!qty || !lastKodeScan) return;
+let qty = parseInt(document.getElementById("qty").value);
+
+if(!lastKodeScan){
+alert("Scan dulu barang!");
+return;
+}
+
+if(!qty || qty <= 0){
+alert("Qty tidak valid!");
+return;
+}
 
 let item = produkMaster.find(p=>p.kode===lastKodeScan);
 
@@ -249,10 +277,20 @@ qty:qty
 
 localStorage.setItem("history",JSON.stringify(historyTransaksi));
 
+// update
 hitungUlangProduk();
 tampilHistory();
 
-document.getElementById("qty").value="";
+// 🔥 RESET OTOMATIS
+lastKodeScan = "";
+lastScan = "";
+
+document.getElementById("scanBarcode").innerText = "-";
+document.getElementById("scanNama").innerText = "-";
+document.getElementById("qty").value = "";
+
+document.getElementById("hasilScan").innerText = "✔ Tersimpan, scan lagi...";
+document.getElementById("hasilScan").style.color = "blue";
 }
 
 // ==========================
