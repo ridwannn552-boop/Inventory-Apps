@@ -1,6 +1,3 @@
-/* =========================
-GLOBAL
-========================= */
 *{
   box-sizing:border-box;
 }
@@ -18,18 +15,12 @@ body{
   overflow:hidden;
 }
 
-/* =========================
-LAYOUT
-========================= */
 .container{
   display:flex;
   height:100vh;
   overflow:hidden;
 }
 
-/* =========================
-SIDEBAR
-========================= */
 .sidebar{
   width:230px;
   background:#1e1e2f;
@@ -68,9 +59,6 @@ SIDEBAR
   background:#4e73df;
 }
 
-/* =========================
-CONTENT
-========================= */
 .content{
   flex:1;
   padding:25px;
@@ -78,9 +66,6 @@ CONTENT
   height:100vh;
 }
 
-/* =========================
-PAGE
-========================= */
 .page{
   display:none;
   animation:fade 0.2s ease;
@@ -95,16 +80,10 @@ PAGE
   to{opacity:1; transform:translateY(0);}
 }
 
-/* =========================
-HEADINGS
-========================= */
 h2{
   margin:0 0 15px 0;
 }
 
-/* =========================
-DASHBOARD
-========================= */
 #dashboard{
   max-width:1000px;
 }
@@ -143,9 +122,6 @@ DASHBOARD
   margin:0;
 }
 
-/* =========================
-TOOLBAR
-========================= */
 .toolbar,
 .filter-bar{
   display:flex;
@@ -155,9 +131,6 @@ TOOLBAR
   margin-bottom:10px;
 }
 
-/* =========================
-INPUT & BUTTON
-========================= */
 input, select{
   padding:10px 12px;
   border-radius:8px;
@@ -188,9 +161,6 @@ button:hover{
 .btn-so{ background:#f6c23e; color:black; }
 .btn-simpan{ background:#4e73df; color:white; width:100%; }
 
-/* =========================
-TABLE
-========================= */
 .table-container{
   width:100%;
   height:65vh;
@@ -226,9 +196,6 @@ tr:hover{
   background:#f5f7ff;
 }
 
-/* =========================
-PAGINATION
-========================= */
 .pagination{
   margin-top:12px;
   display:flex;
@@ -246,9 +213,6 @@ PAGINATION
   color:white;
 }
 
-/* =========================
-SCANNER
-========================= */
 #scanner{
   max-width:560px;
 }
@@ -266,6 +230,7 @@ SCANNER
   overflow:hidden;
   margin-bottom:10px;
   background:#fafafa;
+  min-height:260px;
 }
 
 .scan-actions{
@@ -275,9 +240,6 @@ SCANNER
   margin:12px 0;
 }
 
-/* =========================
-MENU TOGGLE
-========================= */
 #menuToggle{
   display:none;
   position:fixed;
@@ -292,9 +254,6 @@ MENU TOGGLE
   box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
 
-/* =========================
-MOBILE
-========================= */
 @media (max-width:768px){
   #menuToggle{
     display:block;
