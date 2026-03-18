@@ -13,12 +13,15 @@ LAYOUT
 ========================= */
 .container{
 display:flex;
-height:100vh;
+min-height:100vh;
 }
 
+/* =========================
+SIDEBAR
+========================= */
 .sidebar{
 width:220px;
-background:linear-gradient(180deg,#1e1e2f,#2b2b45);
+background:#1e1e2f;
 color:white;
 padding:20px;
 }
@@ -30,6 +33,7 @@ margin-bottom:20px;
 .sidebar ul{
 list-style:none;
 padding:0;
+margin:0;
 }
 
 .sidebar ul li{
@@ -42,21 +46,23 @@ transition:0.2s;
 
 .sidebar ul li:hover
 
-.sidebar ul li.active{
-background:#4e73df;
-}
-
+/* =========================
+CONTENT
+========================= */
 .content{
 flex:1;
 padding:20px;
-width:100%;
 }
 
 /* =========================
 PAGE
 ========================= */
-.page{display:none;}
-.page.active{display:block;}
+.page{
+display:none;
+}
+.page.active{
+display:block;
+}
 
 /* =========================
 DASHBOARD
@@ -71,7 +77,7 @@ gap:15px;
 background:white;
 padding:20px;
 border-radius:12px;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 
 /* =========================
@@ -91,18 +97,20 @@ TABLE
 ========================= */
 .table-container{
 width:100%;
-height:70vh;
+height:65vh;
 overflow:auto;
 background:white;
 border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
+/* table */
 table{
 width:100%;
 border-collapse:collapse;
 }
 
+/* header */
 th{
 background:#4e73df;
 color:white;
@@ -111,6 +119,7 @@ top:0;
 z-index:2;
 }
 
+/* cell */
 th, td{
 padding:10px;
 border-bottom:1px solid #eee;
@@ -142,15 +151,26 @@ border-radius:6px;
 cursor:pointer;
 }
 
-.btn-masuk{background:#1cc88a;color:white;}
-.btn-keluar{background:#e74a3b;color:white;}
-.btn-so{background:#36b9cc;color:white;}
+.btn-masuk{
+background:#1cc88a;
+color:white;
+}
+
+.btn-keluar{
+background:#e74a3b;
+color:white;
+}
+
+.btn-so{
+background:#36b9cc;
+color:white;
+}
 
 /* =========================
 PAGINATION
 ========================= */
 .pagination{
-margin-top:15px;
+margin-top:10px;
 text-align:center;
 }
 
@@ -175,16 +195,17 @@ width:100%;
 max-width:400px;
 height:300px;
 margin:auto;
-border-radius:12px;
+border-radius:10px;
 overflow:hidden;
 border:2px solid #ddd;
 }
 
 /* =========================
-🔥 RESPONSIVE MOBILE FIX
+🔥 MOBILE RESPONSIVE
 ========================= */
 @media (max-width:768px){
 
+/* layout jadi vertikal */
 .container{
 flex-direction:column;
 }
@@ -192,20 +213,11 @@ flex-direction:column;
 /* sidebar jadi atas */
 .sidebar{
 width:100%;
-display:flex;
-overflow-x:auto;
 }
 
-.sidebar ul{
-display:flex;
-width:100%;
-}
-
-.sidebar ul li{
-flex:1;
-text-align:center;
-font-size:12px;
-padding:10px;
+/* dashboard stack */
+.stats{
+grid-template-columns:1fr;
 }
 
 /* content */
@@ -213,21 +225,16 @@ padding:10px;
 padding:10px;
 }
 
-/* dashboard */
-.stats{
-grid-template-columns:1fr;
-}
-
 /* 🔥 TABLE FIX */
 .table-container{
 height:60vh;
 overflow-x:auto;
 overflow-y:auto;
--webkit-overflow-scrolling: touch;
 }
 
+/* biar bisa scroll kanan */
 table{
-min-width:700px; /* biar bisa scroll */
+min-width:700px;
 }
 
 /* teks */
@@ -248,10 +255,4 @@ padding:4px 6px;
 font-size:10px;
 }
 
-}
-
-
-}
-.table-container{
--webkit-overflow-scrolling: touch;
 }
