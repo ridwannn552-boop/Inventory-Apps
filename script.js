@@ -38,8 +38,6 @@ document.getElementById("hasilScan").innerText = "Mode: " + mode;
 }
 
 // ==========================
-// CSV PARSER
-// ==========================
 function parseCSV(str){
 return str.split("\n").map(row=>{
 let result=[], current="", inside=false;
@@ -140,12 +138,13 @@ produk = JSON.parse(JSON.stringify(produkMaster));
 
 let map = {};
 
-produk.forEach(p=>{
+for(let i=0;i<produk.length;i++){
+let p = produk[i];
 p.masuk=0;
 p.keluar=0;
 p.akhir=p.awal;
-map[p.kode] = p;
-});
+map[p.kode]=p;
+}
 
 for(let i=0;i<historyTransaksi.length;i++){
 let h = historyTransaksi[i];
@@ -163,22 +162,24 @@ item.akhir -= h.qty;
 }
 }
 
+// 🔥 RESET PAGE
 currentPageProduk = 1;
+
 tampilProduk();
 updateDashboard();
 }
 
 // ==========================
-// PRODUK + PAGINATION
+// PRODUK PAGINATION
 // ==========================
 function tampilProduk(){
 
 let t = document.getElementById("dataProduk");
 
-let start = (currentPageProduk-1)*perPage;
+let start = (currentPageProduk - 1) * perPage;
 let end = start + perPage;
 
-let data = produk.slice(start,end);
+let data = produk.slice(start, end);
 
 let html = "";
 
@@ -187,7 +188,7 @@ let p = data[i];
 
 html += `
 <tr>
-<td>${start+i+1}</td>
+<td>${start + i + 1}</td>
 <td>${p.kode}</td>
 <td>${p.reff}</td>
 <td>${p.nama}</td>
@@ -200,13 +201,20 @@ html += `
 }
 
 t.innerHTML = html;
+
 renderPaginationProduk();
 }
 
 function renderPaginationProduk(){
 
-let totalPage = Math.ceil(produk.length/perPage);
 let el = document.getElementById("paginationProduk");
+if(!el) return;
+
+let totalPage = Math.ceil(produk.length / perPage);
+
+el.innerHTML = "";
+
+if(totalPage <= 1) return;
 
 let html = "";
 
@@ -222,14 +230,20 @@ el.innerHTML = html;
 }
 
 function changePageProduk(p){
-let total = Math.ceil(produk.length/perPage);
-if(p<1||p>total) return;
-currentPageProduk=p;
+
+let total = Math.ceil(produk.length / perPage);
+
+if(p < 1 || p > total) return;
+
+currentPageProduk = p;
+
 tampilProduk();
+
+window.scrollTo({top:0, behavior:"smooth"});
 }
 
 // ==========================
-// HISTORY + PAGINATION
+// HISTORY PAGINATION
 // ==========================
 function tampilHistory(){
 
@@ -237,10 +251,10 @@ let t = document.getElementById("dataHistory");
 
 let dataAll = historyTransaksi.slice().reverse();
 
-let start = (currentPageHistory-1)*perPage;
+let start = (currentPageHistory - 1) * perPage;
 let end = start + perPage;
 
-let data = dataAll.slice(start,end);
+let data = dataAll.slice(start, end);
 
 let html = "";
 
@@ -249,7 +263,7 @@ let h = data[i];
 
 html += `
 <tr>
-<td>${start+i+1}</td>
+<td>${start + i + 1}</td>
 <td>${h.tanggal}</td>
 <td>${h.kode}</td>
 <td>${h.reff}</td>
@@ -261,13 +275,20 @@ html += `
 }
 
 t.innerHTML = html;
+
 renderPaginationHistory(dataAll.length);
 }
 
 function renderPaginationHistory(total){
 
-let totalPage = Math.ceil(total/perPage);
 let el = document.getElementById("paginationHistory");
+if(!el) return;
+
+let totalPage = Math.ceil(total / perPage);
+
+el.innerHTML = "";
+
+if(totalPage <= 1) return;
 
 let html = "";
 
@@ -283,10 +304,16 @@ el.innerHTML = html;
 }
 
 function changePageHistory(p){
-let total = Math.ceil(historyTransaksi.length/perPage);
-if(p<1||p>total) return;
-currentPageHistory=p;
+
+let total = Math.ceil(historyTransaksi.length / perPage);
+
+if(p < 1 || p > total) return;
+
+currentPageHistory = p;
+
 tampilHistory();
+
+window.scrollTo({top:0, behavior:"smooth"});
 }
 
 // ==========================
