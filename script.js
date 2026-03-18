@@ -224,6 +224,7 @@ async function loadHistoryFromSheet(useCache = true){
     alert("Gagal memuat data history.");
   }
 }
+
 // ==========================
 // REFRESH
 // ==========================
