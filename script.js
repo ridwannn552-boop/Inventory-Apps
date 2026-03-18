@@ -1,6 +1,3 @@
-// ==========================
-// GLOBAL
-// ==========================
 let produk = [];
 let produkMaster = [];
 let historyTransaksi = [];
@@ -16,21 +13,16 @@ let currentPageProduk = 1;
 let currentPageHistory = 1;
 const perPage = 40;
 
-// ==========================
-// URL
-// ==========================
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwdUWJmN6rXf2l_KJSVDSpPzE3kqZbJ9PKxEhDaG8E5OGjmidOZFX22Rrn4AifsI5fU/exec";
 const URL_HISTORY_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=657187893&output=csv";
 const URL_PRODUK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&output=csv";
 
 const audioScan = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
 
-// ==========================
-// NAVIGASI
-// ==========================
 function showPage(id, el){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  const page = document.getElementById(id);
+  if(page) page.classList.add("active");
 
   document.querySelectorAll(".sidebar li").forEach(li => li.classList.remove("active"));
   if(el) el.classList.add("active");
@@ -50,17 +42,12 @@ function toggleMenu(){
   if(sidebar) sidebar.classList.toggle("active");
 }
 
-// ==========================
-// MODE
-// ==========================
 function setMode(mode){
   modeTransaksi = mode;
-  document.getElementById("hasilScan").innerText = "Mode: " + mode;
+  const hasil = document.getElementById("hasilScan");
+  if(hasil) hasil.innerText = "Mode: " + mode;
 }
 
-// ==========================
-// CSV PARSER
-// ==========================
 function parseCSV(str){
   const rows = [];
   let row = [];
@@ -102,9 +89,6 @@ function parseCSV(str){
   return rows;
 }
 
-// ==========================
-// LOAD MASTER
-// ==========================
 async function loadData(useCache = true){
   try{
     if(useCache){
@@ -112,7 +96,6 @@ async function loadData(useCache = true){
       if(cache){
         produkMaster = JSON.parse(cache);
         hitungUlangProduk();
-        return;
       }
     }
 
@@ -124,10 +107,10 @@ async function loadData(useCache = true){
 
     for(let i = 1; i < rows.length; i++){
       const c = rows[i];
-      if(!c[1]) continue;
+      if(!c || !c[1]) continue;
 
       const kode = (c[1] || "").trim().toUpperCase();
-      if(!kode) continue;
+      if(!kode || kode === "KODE") continue;
 
       produkMaster.push({
         kode: kode,
@@ -146,9 +129,6 @@ async function loadData(useCache = true){
   }
 }
 
-// ==========================
-// LOAD HISTORY
-// ==========================
 async function loadHistoryFromSheet(useCache = true){
   try{
     if(useCache){
@@ -158,7 +138,6 @@ async function loadHistoryFromSheet(useCache = true){
         historyFiltered = [...historyTransaksi].reverse();
         hitungUlangProduk();
         tampilHistory();
-        return;
       }
     }
 
@@ -170,16 +149,7 @@ async function loadHistoryFromSheet(useCache = true){
 
     for(let i = 1; i < rows.length; i++){
       const c = rows[i];
-      if(!c.length) continue;
-
-      // Struktur sheet history:
-      // 0 = NO
-      // 1 = TANGGAL
-      // 2 = BARCODE
-      // 3 = REF
-      // 4 = NAMA BARANG
-      // 5 = JENIS
-      // 6 = QTY
+      if(!c || !c.length) continue;
 
       const tanggal = (c[1] || "").trim();
       const kode = (c[2] || "").trim().toUpperCase();
@@ -211,9 +181,6 @@ async function loadHistoryFromSheet(useCache = true){
   }
 }
 
-// ==========================
-// REFRESH
-// ==========================
 function refreshMasterData(){
   localStorage.removeItem("produkMaster");
   loadData(false);
@@ -224,12 +191,8 @@ function refreshHistoryData(){
   loadHistoryFromSheet(false);
 }
 
-// ==========================
-// HITUNG STOK
-// ==========================
 function hitungUlangProduk(){
   produk = JSON.parse(JSON.stringify(produkMaster));
-
   const map = {};
 
   for(let i = 0; i < produk.length; i++){
@@ -261,9 +224,6 @@ function hitungUlangProduk(){
   updateDashboard();
 }
 
-// ==========================
-// DASHBOARD
-// ==========================
 function updateDashboard(){
   let totalMasuk = 0;
   let totalKeluar = 0;
@@ -278,23 +238,6 @@ function updateDashboard(){
   document.getElementById("totalKeluar").innerText = totalKeluar;
 }
 
-function updateDashboardSearch(){
-  let totalMasuk = 0;
-  let totalKeluar = 0;
-
-  for(let i = 0; i < produk.length; i++){
-    totalMasuk += produk[i].masuk;
-    totalKeluar += produk[i].keluar;
-  }
-
-  document.getElementById("totalProduk").innerText = produk.length;
-  document.getElementById("totalMasuk").innerText = totalMasuk;
-  document.getElementById("totalKeluar").innerText = totalKeluar;
-}
-
-// ==========================
-// SEARCH PRODUK
-// ==========================
 function searchProduk(){
   const input = document.getElementById("searchInput");
   const keyword = input ? input.value.trim().toLowerCase() : "";
@@ -338,19 +281,25 @@ function searchProduk(){
 
   currentPageProduk = 1;
   tampilProduk();
-  updateDashboardSearch();
+
+  let totalMasuk = 0;
+  let totalKeluar = 0;
+  for(let i = 0; i < produk.length; i++){
+    totalMasuk += produk[i].masuk;
+    totalKeluar += produk[i].keluar;
+  }
+
+  document.getElementById("totalProduk").innerText = produk.length;
+  document.getElementById("totalMasuk").innerText = totalMasuk;
+  document.getElementById("totalKeluar").innerText = totalKeluar;
 }
 
-// ==========================
-// TAMPIL PRODUK
-// ==========================
 function tampilProduk(){
   const t = document.getElementById("dataProduk");
   if(!t) return;
 
   const start = (currentPageProduk - 1) * perPage;
-  const end = start + perPage;
-  const data = produk.slice(start, end);
+  const data = produk.slice(start, start + perPage);
 
   let html = "";
 
@@ -384,18 +333,15 @@ function renderPaginationProduk(){
   if(!el) return;
 
   const totalPage = Math.ceil(produk.length / perPage);
-
   if(totalPage <= 1){
     el.innerHTML = "";
     return;
   }
 
   let html = `<button onclick="changePageProduk(${currentPageProduk - 1})">Prev</button>`;
-
   for(let i = 1; i <= totalPage; i++){
     html += `<button class="${i === currentPageProduk ? "active" : ""}" onclick="changePageProduk(${i})">${i}</button>`;
   }
-
   html += `<button onclick="changePageProduk(${currentPageProduk + 1})">Next</button>`;
   el.innerHTML = html;
 }
@@ -411,17 +357,10 @@ function changePageProduk(page){
   if(content) content.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ==========================
-// FILTER HISTORY
-// ==========================
 function filterHistory(){
-  const bulanEl = document.getElementById("filterBulan");
-  const jenisEl = document.getElementById("filterJenis");
-  const keywordEl = document.getElementById("filterKeyword");
-
-  const bulan = bulanEl ? bulanEl.value : "";
-  const jenis = jenisEl ? jenisEl.value.trim().toLowerCase() : "";
-  const keyword = keywordEl ? keywordEl.value.trim().toLowerCase() : "";
+  const bulan = document.getElementById("filterBulan").value;
+  const jenis = document.getElementById("filterJenis").value.trim().toLowerCase();
+  const keyword = document.getElementById("filterKeyword").value.trim().toLowerCase();
 
   historyFiltered = [...historyTransaksi].reverse().filter(item => {
     let cocokBulan = true;
@@ -456,31 +395,21 @@ function filterHistory(){
 }
 
 function resetFilterHistory(){
-  const bulanEl = document.getElementById("filterBulan");
-  const jenisEl = document.getElementById("filterJenis");
-  const keywordEl = document.getElementById("filterKeyword");
-
-  if(bulanEl) bulanEl.value = "";
-  if(jenisEl) jenisEl.value = "";
-  if(keywordEl) keywordEl.value = "";
-
+  document.getElementById("filterBulan").value = "";
+  document.getElementById("filterJenis").value = "";
+  document.getElementById("filterKeyword").value = "";
   historyFiltered = [...historyTransaksi].reverse();
   currentPageHistory = 1;
   tampilHistory();
 }
 
-// ==========================
-// TAMPIL HISTORY
-// ==========================
 function tampilHistory(){
   const t = document.getElementById("dataHistory");
   if(!t) return;
 
   const source = historyFiltered;
-
   const start = (currentPageHistory - 1) * perPage;
-  const end = start + perPage;
-  const data = source.slice(start, end);
+  const data = source.slice(start, start + perPage);
 
   let html = "";
 
@@ -491,10 +420,10 @@ function tampilHistory(){
         <td>${start + i + 1}</td>
         <td>${escapeHtml(h.tanggal)}</td>
         <td>${escapeHtml(h.kode)}</td>
+        <td>${escapeHtml(h.reff)}</td>
         <td>${escapeHtml(h.nama)}</td>
         <td>${escapeHtml(h.jenis)}</td>
         <td>${h.qty}</td>
-        <td>-</td>
       </tr>
     `;
   }
@@ -512,18 +441,15 @@ function renderPaginationHistory(total){
   if(!el) return;
 
   const totalPage = Math.ceil(total / perPage);
-
   if(totalPage <= 1){
     el.innerHTML = "";
     return;
   }
 
   let html = `<button onclick="changePageHistory(${currentPageHistory - 1})">Prev</button>`;
-
   for(let i = 1; i <= totalPage; i++){
     html += `<button class="${i === currentPageHistory ? "active" : ""}" onclick="changePageHistory(${i})">${i}</button>`;
   }
-
   html += `<button onclick="changePageHistory(${currentPageHistory + 1})">Next</button>`;
   el.innerHTML = html;
 }
@@ -539,13 +465,9 @@ function changePageHistory(page){
   if(content) content.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ==========================
-// DOWNLOAD HISTORY
-// ==========================
 function downloadExcel(){
   const data = historyFiltered;
-
-  let csv = "Tanggal,Kode,Reff,Nama,Jenis,Qty\n";
+  let csv = "Tanggal,Barcode,Ref,Nama Barang,Jenis,Qty\n";
 
   for(let i = 0; i < data.length; i++){
     const item = data[i];
@@ -561,13 +483,9 @@ function downloadExcel(){
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-
   URL.revokeObjectURL(url);
 }
 
-// ==========================
-// SCANNER
-// ==========================
 function startScanner(){
   if(html5QrCode) return;
 
@@ -628,9 +546,6 @@ function stopScanner(){
   }
 }
 
-// ==========================
-// SIMPAN TRANSAKSI
-// ==========================
 async function simpanTransaksi(){
   try{
     const qty = parseInt(document.getElementById("qty").value, 10);
@@ -651,16 +566,30 @@ async function simpanTransaksi(){
       return;
     }
 
-    await fetch(URL_SCRIPT, {
+    const payload = {
+      kode: item.kode,
+      reff: item.reff,
+      nama: item.nama,
+      jenis: modeTransaksi,
+      qty: qty
+    };
+
+    console.log("KIRIM DATA:", payload);
+
+    const response = await fetch(URL_SCRIPT, {
       method: "POST",
-      body: JSON.stringify({
-        kode: item.kode,
-        reff: item.reff,
-        nama: item.nama,
-        jenis: modeTransaksi,
-        qty: qty
-      })
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify(payload)
     });
+
+    const resultText = await response.text();
+    console.log("RESPON APPS SCRIPT:", resultText);
+
+    if(!response.ok){
+      throw new Error("HTTP error " + response.status);
+    }
 
     localStorage.removeItem("history");
     await loadHistoryFromSheet(false);
@@ -674,13 +603,10 @@ async function simpanTransaksi(){
     alert("Transaksi berhasil disimpan");
   }catch(err){
     console.error("Gagal simpan:", err);
-    alert("Gagal menyimpan transaksi.");
+    alert("Gagal menyimpan transaksi. Buka F12 > Console.");
   }
 }
 
-// ==========================
-// UTIL
-// ==========================
 function escapeHtml(value){
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -694,9 +620,6 @@ function safeCsv(value){
   return String(value ?? "").replaceAll('"', '""');
 }
 
-// ==========================
-// INIT
-// ==========================
 window.onload = async () => {
   historyFiltered = [];
   await loadData(true);
