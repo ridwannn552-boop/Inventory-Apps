@@ -7,7 +7,9 @@
 
 <link rel="stylesheet" href="style.css">
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- ❌ HAPUS CHART (tidak dipakai, bikin berat) -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 
@@ -15,6 +17,7 @@
 
 <div class="container">
 
+<!-- SIDEBAR -->
 <div class="sidebar">
 <h2>INVENTORY</h2>
 <ul>
@@ -30,26 +33,31 @@
 <!-- DASHBOARD -->
 <div id="dashboard" class="page active">
 <h2>Dashboard</h2>
+
 <div class="stats">
 <div class="card">
 <h3>Total Produk</h3>
 <p id="totalProduk">0</p>
 </div>
+
 <div class="card">
 <h3>Total Masuk</h3>
 <p id="totalMasuk">0</p>
 </div>
+
 <div class="card">
 <h3>Total Keluar</h3>
 <p id="totalKeluar">0</p>
 </div>
 </div>
+
 </div>
 
 <!-- PRODUK -->
 <div id="produk" class="page">
 <h2>Data Produk</h2>
-<input type="text" placeholder="Cari..." onkeyup="searchProduk()" id="searchInput">
+
+<input type="text" placeholder="Cari..." id="searchInput" onkeyup="searchProduk()">
 
 <table>
 <thead>
@@ -65,6 +73,7 @@
 <th>Akhir</th>
 </tr>
 </thead>
+
 <tbody id="dataProduk"></tbody>
 </table>
 </div>
@@ -73,19 +82,21 @@
 <div id="scanner" class="page">
 <h2>Scan Barcode</h2>
 
+<!-- 🔥 FIX WAJIB -->
 <div id="reader" class="reader-box"></div>
 
-<p id="hasilScan">Arahkan barcode...</p>
+<p id="hasilScan">Arahkan barcode ke kamera</p>
+
 <p>Kode: <b id="scanBarcode">-</b></p>
 <p>Nama: <b id="scanNama">-</b></p>
 
-<input type="number" id="qty" placeholder="Qty">
+<input type="number" id="qty" placeholder="Input Qty">
 
 <br><br>
 
 <button class="btn-masuk" onclick="setMode('masuk')">Masuk</button>
 <button class="btn-keluar" onclick="setMode('keluar')">Keluar</button>
-<button class="btn-so" onclick="setMode('so')">SO</button>
+<button class="btn-so" onclick="setMode('so')">Stock Opname</button>
 
 <br><br>
 
@@ -94,10 +105,11 @@
 
 <!-- HISTORY -->
 <div id="history" class="page">
-<h2>History</h2>
+<h2>History Transaksi</h2>
 
+<div style="margin-bottom:10px;">
 <select id="filterBulan">
-<option value="">Semua</option>
+<option value="">Semua Bulan</option>
 <option value="1">Jan</option>
 <option value="2">Feb</option>
 <option value="3">Mar</option>
@@ -113,14 +125,15 @@
 </select>
 
 <select id="filterJenis">
-<option value="">Semua</option>
-<option value="masuk">Masuk</option>
-<option value="keluar">Keluar</option>
-<option value="so">SO</option>
+<option value="">Semua Transaksi</option>
+<option value="masuk">Barang Masuk</option>
+<option value="keluar">Barang Keluar</option>
+<option value="so">Stock Opname</option>
 </select>
 
 <button onclick="filterHistory()">Filter</button>
-<button onclick="downloadExcel()">Download</button>
+<button onclick="downloadExcel()">Download Excel</button>
+</div>
 
 <table>
 <thead>
@@ -134,6 +147,7 @@
 <th>Aksi</th>
 </tr>
 </thead>
+
 <tbody id="dataHistory"></tbody>
 </table>
 
@@ -143,5 +157,6 @@
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
