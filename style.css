@@ -1,9 +1,15 @@
+/* =========================
+GLOBAL
+========================= */
 body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
 background:#eef1f5;
 }
 
+/* =========================
+LAYOUT
+========================= */
 .container{
 display:flex;
 min-height:100vh;
@@ -31,9 +37,15 @@ flex:1;
 padding:25px;
 }
 
+/* =========================
+PAGE
+========================= */
 .page{display:none;}
 .page.active{display:block;}
 
+/* =========================
+DASHBOARD
+========================= */
 .stats{
 display:grid;
 grid-template-columns:repeat(3,1fr);
@@ -47,9 +59,19 @@ border-radius:12px;
 box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
+/* =========================
+TABLE
+========================= */
+.table-container{
+max-height:400px;
+overflow:auto;
+background:white;
+border-radius:10px;
+scroll-behavior:smooth;
+}
+
 table{
 width:100%;
-background:white;
 border-collapse:collapse;
 margin-top:10px;
 }
@@ -59,11 +81,27 @@ background:#4e73df;
 color:white;
 }
 
+/* 🔥 HEADER STICKY */
+thead th{
+position:sticky;
+top:0;
+z-index:2;
+background:#4e73df;
+}
+
 th,td{
 padding:8px;
 border:1px solid #ddd;
 }
 
+/* 🔥 ZEBRA BIAR ENAK DIBACA */
+tbody tr:nth-child(even){
+background:#f9f9f9;
+}
+
+/* =========================
+SCANNER
+========================= */
 .reader-box{
 width:100%;
 max-width:400px;
@@ -74,6 +112,18 @@ overflow:hidden;
 border:2px solid #ddd;
 }
 
+#reader{
+width:100%;
+max-width:400px;
+height:300px;
+border:2px solid #ccc;
+border-radius:10px;
+overflow:hidden;
+}
+
+/* =========================
+BUTTON
+========================= */
 button{
 padding:8px 12px;
 border:none;
@@ -84,33 +134,28 @@ cursor:pointer;
 .btn-masuk{background:green;color:white;}
 .btn-keluar{background:red;color:white;}
 .btn-so{background:blue;color:white;}
-#reader{
-width:100%;
-max-width:400px;
-height:300px;
-border:2px solid #ccc;
-border-radius:10px;
-overflow:hidden;
-}
-.table-container{
-max-height:400px;
-overflow:auto;
-background:white;
-border-radius:10px;
-}
+
+/* =========================
+PAGINATION
+========================= */
 .pagination{
 margin-top:10px;
 text-align:center;
 }
 
 .pagination button{
-margin:2px;
-padding:5px 10px;
+margin:3px;
+padding:6px 10px;
 border:none;
 background:#4e73df;
 color:white;
 border-radius:5px;
 cursor:pointer;
+transition:0.2s;
+}
+
+.pagination button:hover{
+background:#2e59d9;
 }
 
 .pagination button.active{
