@@ -9,7 +9,7 @@ let html5QrCode;
 let lastScan = "";
 
 // 🔥 GANTI INI
-const URL_SCRIPT = "PASTE_URL_APPS_SCRIPT_KAMU";
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwdUWJmN6rXf2l_KJSVDSpPzE3kqZbJ9PKxEhDaG8E5OGjmidOZFX22Rrn4AifsI5fU/exec";
 const URL_HISTORY_CSV = "https://docs.google.com/spreadsheets/.../pub?gid=657187893&output=csv";
 
 // ==========================
