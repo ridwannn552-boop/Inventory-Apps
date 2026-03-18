@@ -13,7 +13,7 @@ let currentPageProduk = 1;
 let currentPageHistory = 1;
 const perPage = 40;
 
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxvz_aw7e_5JJtn_51hFgzU3b3Qg6T55IoBtPV9AbICJyqDl2P3nJcMZbBX2G7Jq0Vr/exec";
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzEHh3in4BFoFyREjL2vzzqWGK8GEHl1kjndJ0P7b-Oawwt3we1_K4VNM3-0d-cGiVI/exec";
 const URL_HISTORY_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=657187893&output=csv";
 const URL_PRODUK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&output=csv";
 
