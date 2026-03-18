@@ -63,10 +63,11 @@ box-shadow:0 5px 10px rgba(0,0,0,0.1);
 TABLE
 ========================= */
 .table-container{
-max-height:400px;
+height:calc(100vh - 220px); /* 🔥 otomatis penuh layar */
 overflow:auto;
 background:white;
 border-radius:10px;
+}
 scroll-behavior:smooth;
 }
 
