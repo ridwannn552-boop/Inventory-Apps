@@ -12,7 +12,7 @@ LAYOUT
 ========================= */
 .container{
 display:flex;
-min-height:100vh;
+height:100vh;
 }
 
 .sidebar{
@@ -20,6 +20,7 @@ width:220px;
 background:#1e1e2f;
 color:white;
 padding:20px;
+height:100vh;
 }
 
 .sidebar ul li{
@@ -63,11 +64,10 @@ box-shadow:0 5px 10px rgba(0,0,0,0.1);
 TABLE
 ========================= */
 .table-container{
-height:calc(100vh - 220px); /* 🔥 otomatis penuh layar */
+height:75vh; /* 🔥 ini yang kamu butuhkan */
 overflow:auto;
 background:white;
 border-radius:10px;
-}
 scroll-behavior:smooth;
 }
 
@@ -82,7 +82,7 @@ background:#4e73df;
 color:white;
 }
 
-/* 🔥 HEADER STICKY */
+/* HEADER STICKY */
 thead th{
 position:sticky;
 top:0;
@@ -95,7 +95,7 @@ padding:8px;
 border:1px solid #ddd;
 }
 
-/* 🔥 ZEBRA BIAR ENAK DIBACA */
+/* ZEBRA */
 tbody tr:nth-child(even){
 background:#f9f9f9;
 }
@@ -161,32 +161,4 @@ background:#2e59d9;
 
 .pagination button.active{
 background:#1e1e2f;
-}
-.content{
-flex:1;
-padding:25px;
-height:100vh;
-display:flex;
-flex-direction:column;
-}
-.page.active{
-display:flex;
-flex-direction:column;
-height:100%;
-}
-.table-container{
-flex:1;
-overflow:auto;
-background:white;
-border-radius:10px;
-}
-.sidebar{
-width:220px;
-background:#1e1e2f;
-color:white;
-padding:20px;
-height:100vh;
-}
-.container{
-height:100vh;
 }
