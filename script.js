@@ -673,36 +673,25 @@ async function simpanTransaksi(){
     });
 
     const resultText = await response.text();
-    console.log("RESPON APPS SCRIPT:", resultText);
+    console.log("RESPON APPS SCRIPT RAW:", resultText);
 
     if(!response.ok){
       throw new Error("HTTP error " + response.status + " | " + resultText);
     }
 
-    const sekarang = new Date();
-    const tanggalFormat =
-      String(sekarang.getDate()).padStart(2, "0") + "/" +
-      String(sekarang.getMonth() + 1).padStart(2, "0") + "/" +
-      sekarang.getFullYear() + " " +
-      String(sekarang.getHours()).padStart(2, "0") + ":" +
-      String(sekarang.getMinutes()).padStart(2, "0") + ":" +
-      String(sekarang.getSeconds()).padStart(2, "0");
+    let result;
+    try{
+      result = JSON.parse(resultText);
+    }catch(parseErr){
+      throw new Error("Respon Apps Script bukan JSON valid: " + resultText);
+    }
 
-    const dataBaru = {
-      tanggal: tanggalFormat,
-      kode: item.kode,
-      reff: item.reff,
-      nama: item.nama,
-      jenis: modeTransaksi,
-      qty: qty
-    };
+    if(!result.success){
+      throw new Error(result.message || "Apps Script gagal menyimpan data");
+    }
 
-    historyTransaksi.push(dataBaru);
-    historyFiltered = [...historyTransaksi].reverse();
-    localStorage.setItem("history", JSON.stringify(historyTransaksi));
-
-    hitungUlangProduk();
-    tampilHistory();
+    localStorage.removeItem("history");
+    await loadHistoryFromSheet(false);
 
     lastKodeScan = "";
 
@@ -721,7 +710,6 @@ async function simpanTransaksi(){
     alert("Gagal menyimpan transaksi:\n" + err.message);
   }
 }
-
 // ==========================
 // UTIL
 // ==========================
