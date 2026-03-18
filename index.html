@@ -15,7 +15,6 @@
 
   <div class="container">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
       <h2>INVENTORY</h2>
       <ul>
@@ -26,24 +25,19 @@
       </ul>
     </aside>
 
-    <!-- CONTENT -->
     <main class="content">
 
-      <!-- DASHBOARD -->
       <section id="dashboard" class="page active">
         <h2>Dashboard</h2>
-
         <div class="stats">
           <div class="card">
             <h3>Total Produk</h3>
             <p id="totalProduk">0</p>
           </div>
-
           <div class="card">
             <h3>Total Masuk</h3>
             <p id="totalMasuk">0</p>
           </div>
-
           <div class="card">
             <h3>Total Keluar</h3>
             <p id="totalKeluar">0</p>
@@ -51,7 +45,6 @@
         </div>
       </section>
 
-      <!-- PRODUK -->
       <section id="produk" class="page">
         <h2>Data Produk</h2>
 
@@ -87,7 +80,6 @@
         <div id="paginationProduk" class="pagination"></div>
       </section>
 
-      <!-- SCANNER -->
       <section id="scanner" class="page">
         <h2>Scan Barcode</h2>
 
@@ -111,7 +103,6 @@
         </div>
       </section>
 
-      <!-- HISTORY -->
       <section id="history" class="page">
         <h2>History Transaksi</h2>
 
@@ -142,7 +133,7 @@
           <input
             type="text"
             id="filterKeyword"
-            placeholder="Cari barcode / nama / ref..."
+            placeholder="Cari barcode / ref / nama..."
             onkeyup="filterHistory()"
           />
 
@@ -158,9 +149,9 @@
               <tr>
                 <th>No</th>
                 <th>Tanggal</th>
-                <th>Barcode</th>
-                <th>Ref</th>
-                <th>Nama Barang</th>
+                <th>Kode</th>
+                <th>Reff</th>
+                <th>Nama</th>
                 <th>Jenis</th>
                 <th>Qty</th>
               </tr>
