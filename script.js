@@ -8,6 +8,11 @@ let modeTransaksi = "masuk";
 let html5QrCode;
 let lastScan = "";
 
+// PAGINATION
+let currentPageProduk = 1;
+let currentPageHistory = 1;
+const perPage = 40;
+
 // URL
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwdUWJmN6rXf2l_KJSVDSpPzE3kqZbJ9PKxEhDaG8E5OGjmidOZFX22Rrn4AifsI5fU/exec";
 const URL_HISTORY_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=657187893&output=csv";
@@ -21,7 +26,6 @@ document.getElementById(id).classList.add("active");
 if(id==="scanner") startScanner();
 else stopScanner();
 
-// 🔥 tidak reload terus
 if(id==="history" && historyTransaksi.length === 0){
 loadHistoryFromSheet();
 }
@@ -52,7 +56,7 @@ return result;
 }
 
 // ==========================
-// LOAD PRODUK (CACHE)
+// LOAD PRODUK
 // ==========================
 async function loadData(){
 
@@ -66,7 +70,6 @@ return;
 
 let res = await fetch(URL_PRODUK);
 let text = await res.text();
-
 let rows = parseCSV(text);
 
 produkMaster = [];
@@ -84,14 +87,12 @@ awal: parseInt(c[5]) || 0
 });
 }
 
-// simpan cache
 localStorage.setItem("produkMaster", JSON.stringify(produkMaster));
-
 hitungUlangProduk();
 }
 
 // ==========================
-// LOAD HISTORY (CACHE)
+// LOAD HISTORY
 // ==========================
 async function loadHistoryFromSheet(){
 
@@ -106,7 +107,6 @@ return;
 
 let res = await fetch(URL_HISTORY_CSV);
 let text = await res.text();
-
 let rows = parseCSV(text);
 
 historyTransaksi = [];
@@ -125,7 +125,6 @@ qty:parseInt(c[5])||0
 });
 }
 
-// simpan cache
 localStorage.setItem("history", JSON.stringify(historyTransaksi));
 
 hitungUlangProduk();
@@ -133,21 +132,25 @@ tampilHistory();
 }
 
 // ==========================
-// HITUNG
+// HITUNG (ANTI FREEZE)
 // ==========================
 function hitungUlangProduk(){
 
 produk = JSON.parse(JSON.stringify(produkMaster));
 
+let map = {};
+
 produk.forEach(p=>{
 p.masuk=0;
 p.keluar=0;
 p.akhir=p.awal;
+map[p.kode] = p;
 });
 
-historyTransaksi.forEach(h=>{
-let item = produk.find(p=>p.kode === h.kode);
-if(!item) return;
+for(let i=0;i<historyTransaksi.length;i++){
+let h = historyTransaksi[i];
+let item = map[h.kode];
+if(!item) continue;
 
 if(h.jenis==="masuk"){
 item.masuk += h.qty;
@@ -158,27 +161,33 @@ if(h.jenis==="keluar"){
 item.keluar += h.qty;
 item.akhir -= h.qty;
 }
-});
+}
 
+currentPageProduk = 1;
 tampilProduk();
 updateDashboard();
 }
 
 // ==========================
-// RENDER PRODUK (SUPER CEPAT)
+// PRODUK + PAGINATION
 // ==========================
 function tampilProduk(){
 
 let t = document.getElementById("dataProduk");
 
+let start = (currentPageProduk-1)*perPage;
+let end = start + perPage;
+
+let data = produk.slice(start,end);
+
 let html = "";
 
-for(let i=0;i<produk.length;i++){
-let p = produk[i];
+for(let i=0;i<data.length;i++){
+let p = data[i];
 
 html += `
 <tr>
-<td>${i+1}</td>
+<td>${start+i+1}</td>
 <td>${p.kode}</td>
 <td>${p.reff}</td>
 <td>${p.nama}</td>
@@ -191,27 +200,97 @@ html += `
 }
 
 t.innerHTML = html;
+renderPaginationProduk();
+}
+
+function renderPaginationProduk(){
+
+let totalPage = Math.ceil(produk.length/perPage);
+let el = document.getElementById("paginationProduk");
+
+let html = "";
+
+html += `<button onclick="changePageProduk(${currentPageProduk-1})">Prev</button>`;
+
+for(let i=1;i<=totalPage;i++){
+html += `<button class="${i===currentPageProduk?'active':''}" onclick="changePageProduk(${i})">${i}</button>`;
+}
+
+html += `<button onclick="changePageProduk(${currentPageProduk+1})">Next</button>`;
+
+el.innerHTML = html;
+}
+
+function changePageProduk(p){
+let total = Math.ceil(produk.length/perPage);
+if(p<1||p>total) return;
+currentPageProduk=p;
+tampilProduk();
 }
 
 // ==========================
-function updateDashboard(){
+// HISTORY + PAGINATION
+// ==========================
+function tampilHistory(){
 
-document.getElementById("totalProduk").innerText = produk.length;
+let t = document.getElementById("dataHistory");
 
-let masuk = 0;
-let keluar = 0;
+let dataAll = historyTransaksi.slice().reverse();
 
-for(let i=0;i<produk.length;i++){
-masuk += produk[i].masuk;
-keluar += produk[i].keluar;
+let start = (currentPageHistory-1)*perPage;
+let end = start + perPage;
+
+let data = dataAll.slice(start,end);
+
+let html = "";
+
+for(let i=0;i<data.length;i++){
+let h = data[i];
+
+html += `
+<tr>
+<td>${start+i+1}</td>
+<td>${h.tanggal}</td>
+<td>${h.kode}</td>
+<td>${h.reff}</td>
+<td>${h.nama}</td>
+<td>${h.jenis}</td>
+<td>${h.qty}</td>
+<td>-</td>
+</tr>`;
 }
 
-document.getElementById("totalMasuk").innerText = masuk;
-document.getElementById("totalKeluar").innerText = keluar;
+t.innerHTML = html;
+renderPaginationHistory(dataAll.length);
+}
+
+function renderPaginationHistory(total){
+
+let totalPage = Math.ceil(total/perPage);
+let el = document.getElementById("paginationHistory");
+
+let html = "";
+
+html += `<button onclick="changePageHistory(${currentPageHistory-1})">Prev</button>`;
+
+for(let i=1;i<=totalPage;i++){
+html += `<button class="${i===currentPageHistory?'active':''}" onclick="changePageHistory(${i})">${i}</button>`;
+}
+
+html += `<button onclick="changePageHistory(${currentPageHistory+1})">Next</button>`;
+
+el.innerHTML = html;
+}
+
+function changePageHistory(p){
+let total = Math.ceil(historyTransaksi.length/perPage);
+if(p<1||p>total) return;
+currentPageHistory=p;
+tampilHistory();
 }
 
 // ==========================
-// SCANNER (RINGAN)
+// SCANNER
 // ==========================
 function startScanner(){
 
@@ -225,19 +304,14 @@ qrbox:{width:200,height:100}
 html5QrCode.render((code)=>{
 
 let clean = code.trim().toUpperCase();
-
 if(clean===lastScan) return;
-lastScan=clean;
 
-let hasil = document.getElementById("hasilScan");
-hasil.innerText="✅ "+clean;
-hasil.style.color="green";
+lastScan=clean;
 
 let item = produkMaster.find(p=>p.kode===clean);
 
 if(!item){
-hasil.innerText="❌ Tidak ditemukan";
-hasil.style.color="red";
+document.getElementById("hasilScan").innerText="❌ Tidak ditemukan";
 return;
 }
 
@@ -245,15 +319,12 @@ lastKodeScan=item.kode;
 
 document.getElementById("scanBarcode").innerText=item.kode;
 document.getElementById("scanNama").innerText=item.nama;
-
 document.getElementById("qty").value=1;
 
 setTimeout(()=>{lastScan="";},1500);
-
 });
 }
 
-// ==========================
 function stopScanner(){
 if(html5QrCode){
 html5QrCode.clear();
@@ -261,8 +332,6 @@ html5QrCode=null;
 }
 }
 
-// ==========================
-// SIMPAN
 // ==========================
 async function simpanTransaksi(){
 
@@ -275,61 +344,25 @@ return;
 
 let item=produkMaster.find(p=>p.kode===lastKodeScan);
 
-let data={
+await fetch(URL_SCRIPT,{
+method:"POST",
+body:JSON.stringify({
 kode:item.kode,
 reff:item.reff,
 nama:item.nama,
 jenis:modeTransaksi,
 qty:qty
-};
-
-await fetch(URL_SCRIPT,{
-method:"POST",
-body:JSON.stringify(data)
+})
 });
 
-// 🔥 clear cache biar fresh
 localStorage.removeItem("history");
 
-// reload
 await loadHistoryFromSheet();
 
 lastKodeScan="";
 document.getElementById("scanBarcode").innerText="-";
 document.getElementById("scanNama").innerText="-";
 document.getElementById("qty").value="";
-
-document.getElementById("hasilScan").innerText="✔ Tersimpan (SYNC)";
-}
-
-// ==========================
-// HISTORY RENDER CEPAT
-// ==========================
-function tampilHistory(){
-
-let t = document.getElementById("dataHistory");
-
-let html = "";
-
-let data = historyTransaksi.slice().reverse();
-
-for(let i=0;i<data.length;i++){
-let h = data[i];
-
-html += `
-<tr>
-<td>${i+1}</td>
-<td>${h.tanggal}</td>
-<td>${h.kode}</td>
-<td>${h.reff}</td>
-<td>${h.nama}</td>
-<td>${h.jenis}</td>
-<td>${h.qty}</td>
-<td>-</td>
-</tr>`;
-}
-
-t.innerHTML = html;
 }
 
 // ==========================
