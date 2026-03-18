@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Inventory System</title>
 
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
-
 </head>
 
 <body>
@@ -19,7 +16,7 @@
 <div class="container">
 
 <div class="sidebar">
-<h2>MENU</h2>
+<h2>INVENTORY</h2>
 <ul>
 <li onclick="showPage('dashboard',this)">Dashboard</li>
 <li onclick="showPage('produk',this)">Data Produk</li>
@@ -33,18 +30,15 @@
 <!-- DASHBOARD -->
 <div id="dashboard" class="page active">
 <h2>Dashboard</h2>
-
 <div class="stats">
 <div class="card">
 <h3>Total Produk</h3>
 <p id="totalProduk">0</p>
 </div>
-
 <div class="card">
 <h3>Total Masuk</h3>
 <p id="totalMasuk">0</p>
 </div>
-
 <div class="card">
 <h3>Total Keluar</h3>
 <p id="totalKeluar">0</p>
@@ -55,10 +49,9 @@
 <!-- PRODUK -->
 <div id="produk" class="page">
 <h2>Data Produk</h2>
+<input type="text" placeholder="Cari..." onkeyup="searchProduk()" id="searchInput">
 
-<input type="text" id="searchInput" placeholder="Cari produk..." onkeyup="searchProduk()">
-
-<table class="produk-table">
+<table>
 <thead>
 <tr>
 <th>No</th>
@@ -80,19 +73,19 @@
 <div id="scanner" class="page">
 <h2>Scan Barcode</h2>
 
-<div id="reader" style="width:100%; max-width:400px;"></div>
+<div id="reader" class="reader-box"></div>
 
-<p id="hasilScan">Arahkan barcode ke kamera</p>
+<p id="hasilScan">Arahkan barcode...</p>
 <p>Kode: <b id="scanBarcode">-</b></p>
 <p>Nama: <b id="scanNama">-</b></p>
 
-<input type="number" id="qty" placeholder="Input Qty">
+<input type="number" id="qty" placeholder="Qty">
 
 <br><br>
 
-<button onclick="setMode('masuk')">Masuk</button>
-<button onclick="setMode('keluar')">Keluar</button>
-<button onclick="setMode('so')">Stock Opname</button>
+<button class="btn-masuk" onclick="setMode('masuk')">Masuk</button>
+<button class="btn-keluar" onclick="setMode('keluar')">Keluar</button>
+<button class="btn-so" onclick="setMode('so')">SO</button>
 
 <br><br>
 
@@ -101,10 +94,10 @@
 
 <!-- HISTORY -->
 <div id="history" class="page">
-<h2>History Transaksi</h2>
+<h2>History</h2>
 
 <select id="filterBulan">
-<option value="">Semua Bulan</option>
+<option value="">Semua</option>
 <option value="1">Jan</option>
 <option value="2">Feb</option>
 <option value="3">Mar</option>
@@ -127,7 +120,7 @@
 </select>
 
 <button onclick="filterHistory()">Filter</button>
-<button onclick="downloadExcel()">Download Excel</button>
+<button onclick="downloadExcel()">Download</button>
 
 <table>
 <thead>
@@ -135,7 +128,6 @@
 <th>No</th>
 <th>Tanggal</th>
 <th>Kode</th>
-<th>Reff</th>
 <th>Nama</th>
 <th>Jenis</th>
 <th>Qty</th>
@@ -151,6 +143,5 @@
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
