@@ -92,3 +92,9 @@ border:2px solid #ccc;
 border-radius:10px;
 overflow:hidden;
 }
+.table-container{
+max-height:400px;
+overflow:auto;
+background:white;
+border-radius:10px;
+}
