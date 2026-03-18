@@ -98,3 +98,21 @@ overflow:auto;
 background:white;
 border-radius:10px;
 }
+.pagination{
+margin-top:10px;
+text-align:center;
+}
+
+.pagination button{
+margin:2px;
+padding:5px 10px;
+border:none;
+background:#4e73df;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+.pagination button.active{
+background:#1e1e2f;
+}
