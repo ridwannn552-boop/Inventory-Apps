@@ -166,6 +166,8 @@ async function loadHistoryFromSheet(useCache = true){
 
     if(rows.length < 2){
       historyFiltered = [];
+      localStorage.setItem("history", JSON.stringify(historyTransaksi));
+      hitungUlangProduk();
       tampilHistory();
       return;
     }
@@ -179,30 +181,20 @@ async function loadHistoryFromSheet(useCache = true){
     const idxJenis = header.indexOf("JENIS");
     const idxQty = header.indexOf("QTY");
 
-    console.log("HEADER HISTORY:", header);
-    console.log("INDEX HISTORY:", {
-      idxTanggal,
-      idxKode,
-      idxReff,
-      idxNama,
-      idxJenis,
-      idxQty
-    });
-
     for(let i = 1; i < rows.length; i++){
       const c = rows[i];
       if(!c || !c.length) continue;
 
-      const tanggal = idxTanggal >= 0 ? (c[idxTanggal] || "").trim() : "";
-      const kode = idxKode >= 0 ? (c[idxKode] || "").trim().toUpperCase() : "";
-      const reff = idxReff >= 0 ? (c[idxReff] || "").trim() : "";
-      const nama = idxNama >= 0 ? (c[idxNama] || "").trim() : "";
-      const jenis = idxJenis >= 0 ? (c[idxJenis] || "").trim().toLowerCase() : "";
+      const tanggal = idxTanggal >= 0 ? String(c[idxTanggal] || "").trim() : "";
+      const kode = idxKode >= 0 ? String(c[idxKode] || "").trim().toUpperCase() : "";
+      const reff = idxReff >= 0 ? String(c[idxReff] || "").trim() : "";
+      const nama = idxNama >= 0 ? String(c[idxNama] || "").trim() : "";
+      const jenis = idxJenis >= 0 ? String(c[idxJenis] || "").trim().toLowerCase() : "";
       const qty = idxQty >= 0 ? parseInt(c[idxQty], 10) || 0 : 0;
 
       if(!kode) continue;
       if(kode === "BARCODE" || kode === "KODE") continue;
-      if(tanggal === "TANGGAL") continue;
+      if(tanggal.toUpperCase() === "TANGGAL") continue;
 
       historyTransaksi.push({
         tanggal,
@@ -230,11 +222,15 @@ async function loadHistoryFromSheet(useCache = true){
 // ==========================
 function refreshMasterData(){
   localStorage.removeItem("produkMaster");
+  produkMaster = [];
+  produk = [];
   loadData(false);
 }
 
 function refreshHistoryData(){
   localStorage.removeItem("history");
+  historyTransaksi = [];
+  historyFiltered = [];
   loadHistoryFromSheet(false);
 }
 
@@ -683,7 +679,6 @@ async function simpanTransaksi(){
       throw new Error("HTTP error " + response.status + " | " + resultText);
     }
 
-    // tambahkan data langsung ke array lokal
     const sekarang = new Date();
     const tanggalFormat =
       String(sekarang.getDate()).padStart(2, "0") + "/" +
@@ -704,7 +699,6 @@ async function simpanTransaksi(){
 
     historyTransaksi.push(dataBaru);
     historyFiltered = [...historyTransaksi].reverse();
-
     localStorage.setItem("history", JSON.stringify(historyTransaksi));
 
     hitungUlangProduk();
