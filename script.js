@@ -30,7 +30,25 @@ document.getElementById("hasilScan").innerText = "Mode: " + mode;
 }
 
 // ==========================
-// LOAD DATA (SESUAI SPREADSHEET KAMU)
+// 🔥 PARSER CSV AMAN
+// ==========================
+function parseCSV(str){
+return str.split("\n").map(row=>{
+let result=[], current="", inside=false;
+
+for(let char of row){
+if(char === '"') inside=!inside;
+else if(char === ',' && !inside){
+result.push(current); current="";
+}else current+=char;
+}
+result.push(current);
+return result;
+});
+}
+
+// ==========================
+// LOAD DATA (FIX TOTAL)
 // ==========================
 async function loadData(){
 
@@ -39,20 +57,17 @@ let url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4
 let res=await fetch(url);
 let text=await res.text();
 
-let rows=text.split("\n");
+let rows=parseCSV(text);
+
 produkMaster=[];
 
 for(let i=1;i<rows.length;i++){
 
-let c=rows[i].replace("\r","").split(",");
-
-// sesuai kolom kamu
-// B = barcode, C = reff, D = nama, E = uom, F = awal
-
+let c=rows[i];
 if(!c[1]) continue;
 
 produkMaster.push({
-kode: c[1].trim().toUpperCase(), // BARCODE (PNT-001)
+kode: c[1].trim().toUpperCase(),
 reff: c[2]?.trim(),
 nama: c[3]?.trim(),
 uom: c[4]?.trim(),
@@ -120,6 +135,37 @@ t.innerHTML+=`
 }
 
 // ==========================
+// 🔍 SEARCH PRODUK (FIX ERROR)
+// ==========================
+function searchProduk(){
+
+let keyword=document.getElementById("searchInput").value.toLowerCase();
+
+let filtered=produk.filter(p =>
+p.kode.toLowerCase().includes(keyword) ||
+p.nama.toLowerCase().includes(keyword)
+);
+
+let t=document.getElementById("dataProduk");
+t.innerHTML="";
+
+filtered.forEach((p,i)=>{
+t.innerHTML+=`
+<tr>
+<td>${i+1}</td>
+<td>${p.kode}</td>
+<td>${p.reff}</td>
+<td>${p.nama}</td>
+<td>${p.uom}</td>
+<td>${p.awal}</td>
+<td>${p.masuk}</td>
+<td>${p.keluar}</td>
+<td>${p.akhir}</td>
+</tr>`;
+});
+}
+
+// ==========================
 // DASHBOARD
 // ==========================
 function updateDashboard(){
@@ -134,7 +180,7 @@ document.getElementById("totalKeluar").innerText = keluar;
 }
 
 // ==========================
-// SCANNER (FIX MATCH PNT-001)
+// SCANNER
 // ==========================
 function startScanner(){
 
@@ -148,17 +194,12 @@ html5QrCode.start(
 
 (code)=>{
 
-// 🔥 NORMALISASI
 let clean = code.trim().toUpperCase();
 
 document.getElementById("hasilScan").innerText = "SCAN: " + clean;
 
-// anti double
 if(clean === lastScan) return;
 lastScan = clean;
-
-// 🔊 optional beep
-// new Audio("https://www.soundjay.com/button/sounds/beep-07.mp3").play();
 
 let item = produkMaster.find(p => p.kode === clean);
 
