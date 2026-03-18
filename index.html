@@ -10,8 +10,6 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- SCANNER -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 </head>
@@ -20,7 +18,6 @@
 
 <div class="container">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
 <h2>MENU</h2>
 <ul>
@@ -31,7 +28,6 @@
 </ul>
 </div>
 
-<!-- CONTENT -->
 <div class="content">
 
 <!-- DASHBOARD -->
@@ -60,9 +56,7 @@
 <div id="produk" class="page">
 <h2>Data Produk</h2>
 
-<div class="search-bar">
 <input type="text" id="searchInput" placeholder="Cari produk..." onkeyup="searchProduk()">
-</div>
 
 <table class="produk-table">
 <thead>
@@ -80,20 +74,15 @@
 </thead>
 <tbody id="dataProduk"></tbody>
 </table>
-
-<div id="pagination"></div>
 </div>
 
 <!-- SCANNER -->
 <div id="scanner" class="page">
 <h2>Scan Barcode</h2>
 
-<div class="scanner-box">
-
 <div id="reader"></div>
 
 <p id="hasilScan"></p>
-
 <p>Kode: <b id="scanBarcode">-</b></p>
 <p>Nama: <b id="scanNama">-</b></p>
 
@@ -101,22 +90,18 @@
 
 <br><br>
 
-<button class="btn-masuk" onclick="setMode('masuk')">Masuk</button>
-<button class="btn-keluar" onclick="setMode('keluar')">Keluar</button>
-<button class="btn-so" onclick="setMode('so')">Stock Opname</button>
+<button onclick="setMode('masuk')">Masuk</button>
+<button onclick="setMode('keluar')">Keluar</button>
+<button onclick="setMode('so')">Stock Opname</button>
 
 <br><br>
 
 <button onclick="simpanTransaksi()">Simpan</button>
-
-</div>
 </div>
 
 <!-- HISTORY -->
 <div id="history" class="page">
 <h2>History Transaksi</h2>
-
-<div class="search-wrapper">
 
 <select id="filterBulan">
 <option value="">Semua Bulan</option>
@@ -135,16 +120,13 @@
 </select>
 
 <select id="filterJenis">
-<option value="">Semua Transaksi</option>
-<option value="masuk">Barang Masuk</option>
-<option value="keluar">Barang Keluar</option>
-<option value="so">Stock Opname</option>
+<option value="">Semua</option>
+<option value="masuk">Masuk</option>
+<option value="keluar">Keluar</option>
+<option value="so">SO</option>
 </select>
 
 <button onclick="filterHistory()">Filter</button>
-<button onclick="downloadExcel()">Download Excel</button>
-
-</div>
 
 <table>
 <thead>
@@ -156,9 +138,9 @@
 <th>Nama</th>
 <th>Jenis</th>
 <th>Qty</th>
+<th>Aksi</th>
 </tr>
 </thead>
-
 <tbody id="dataHistory"></tbody>
 </table>
 
