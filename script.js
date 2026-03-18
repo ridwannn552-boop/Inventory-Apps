@@ -5,12 +5,9 @@ let historyTransaksi = JSON.parse(localStorage.getItem("history")) || [];
 let lastKodeScan = "";
 let modeTransaksi = "masuk";
 
-// 🔥 SCANNER
 let html5QrCode;
 let lastScan = "";
 
-// ==========================
-// NAVIGASI
 // ==========================
 function showPage(id, el) {
 
@@ -37,8 +34,6 @@ modeTransaksi = mode;
 document.getElementById("hasilScan").innerText = "Mode: " + mode;
 }
 
-// ==========================
-// LOAD DATA
 // ==========================
 async function loadData(){
 
@@ -136,7 +131,7 @@ document.getElementById("totalKeluar").innerText=keluar;
 }
 
 // ==========================
-// SCANNER FIX
+// 🔥 SCANNER FINAL FIX HP
 // ==========================
 function startScanner(){
 
@@ -145,23 +140,38 @@ if(html5QrCode) return;
 html5QrCode = new Html5Qrcode("reader");
 
 html5QrCode.start(
-{ facingMode: "environment" },
-{ fps: 10, qrbox: 250 },
+
+{ facingMode: { ideal: "environment" } },
+
+{
+fps: 20,
+qrbox: { width: 320, height: 200 },
+aspectRatio: 1.5,
+formatsToSupport: [
+Html5QrcodeSupportedFormats.CODE_128,
+Html5QrcodeSupportedFormats.EAN_13,
+Html5QrcodeSupportedFormats.CODE_39,
+Html5QrcodeSupportedFormats.QR_CODE
+]
+},
 
 (code)=>{
 
-if(code===lastScan) return;
-lastScan=code;
+document.getElementById("hasilScan").innerText = "SCAN: " + code;
 
-// 🔊 BEEP
+if(code === lastScan) return;
+lastScan = code;
+
 new Audio("https://www.soundjay.com/button/sounds/beep-07.mp3").play();
 
+let clean = code.trim().replace(/\s/g,'');
+
 let item = produkMaster.find(p =>
-p.kode?.toLowerCase().trim() === code.toLowerCase().trim()
+p.kode?.trim().replace(/\s/g,'') === clean
 );
 
 if(!item){
-document.getElementById("hasilScan").innerText="❌ Tidak ditemukan";
+document.getElementById("hasilScan").innerText = "❌ Tidak ditemukan: "+clean;
 return;
 }
 
@@ -171,23 +181,22 @@ document.getElementById("scanBarcode").innerText=item.kode;
 document.getElementById("scanNama").innerText=item.nama;
 document.getElementById("hasilScan").innerText="✅ Ditemukan";
 
-setTimeout(()=>{ lastScan=""; },1500);
+setTimeout(()=>{ lastScan=""; },1000);
 
 },
-(err)=>{}
+(err)=>{ console.log(err); }
+
 );
 
 }
 
 function stopScanner(){
-
 if(html5QrCode){
 html5QrCode.stop().then(()=>{
 html5QrCode.clear();
 html5QrCode=null;
 });
 }
-
 }
 
 // ==========================
@@ -285,6 +294,26 @@ return (!b || h.bulan==b) && (!j || h.jenis==j);
 });
 
 tampilHistory(hasil);
+}
+
+// ==========================
+// 🔥 DOWNLOAD EXCEL
+// ==========================
+function downloadExcel(){
+
+let csv = "Tanggal,Kode,Reff,Nama,Jenis,Qty\n";
+
+historyTransaksi.forEach(h=>{
+csv += `${h.tanggal},${h.kode},${h.reff},${h.nama},${h.jenis},${h.qty}\n`;
+});
+
+let blob = new Blob([csv], { type: 'text/csv' });
+let url = URL.createObjectURL(blob);
+
+let a = document.createElement("a");
+a.href = url;
+a.download = "history.csv";
+a.click();
 }
 
 // ==========================
