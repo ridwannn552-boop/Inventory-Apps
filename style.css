@@ -1,116 +1,32 @@
 /* =========================
-GLOBAL
-========================= */
-body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:#f4f6f9;
-color:#333;
-}
-
-/* =========================
-LAYOUT
-========================= */
-.container{
-display:flex;
-min-height:100vh;
-}
-
-/* =========================
-SIDEBAR
-========================= */
-.sidebar{
-width:220px;
-background:#1e1e2f;
-color:white;
-padding:20px;
-}
-
-.sidebar h2{
-margin-bottom:20px;
-}
-
-.sidebar ul{
-list-style:none;
-padding:0;
-margin:0;
-}
-
-.sidebar ul li{
-padding:12px;
-border-radius:8px;
-cursor:pointer;
-margin-bottom:5px;
-transition:0.2s;
-}
-
-.sidebar ul li:hover
-
-/* =========================
-CONTENT
+FIX FULL WIDTH + TABLE SINKRON
 ========================= */
 .content{
 flex:1;
 padding:20px;
-}
-
-/* =========================
-PAGE
-========================= */
-.page{
-display:none;
-}
-.page.active{
-display:block;
-}
-
-/* =========================
-DASHBOARD
-========================= */
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-
-/* =========================
-INPUT
-========================= */
-#searchInput{
 width:100%;
-max-width:300px;
-padding:8px;
-border-radius:6px;
-border:1px solid #ccc;
-margin-bottom:10px;
+margin:0;
+max-width:none;
 }
 
-/* =========================
-TABLE
-========================= */
 .table-container{
 width:100%;
-height:65vh;
+height:70vh;
 overflow:auto;
 background:white;
 border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.05);
+-webkit-overflow-scrolling: touch;
 }
 
-/* table */
+/* =========================
+TABLE DESKTOP
+========================= */
 table{
 width:100%;
 border-collapse:collapse;
 }
 
-/* header */
 th{
 background:#4e73df;
 color:white;
@@ -119,13 +35,12 @@ top:0;
 z-index:2;
 }
 
-/* cell */
 th, td{
 padding:10px;
 border-bottom:1px solid #eee;
 }
 
-/* angka tengah */
+/* angka rata tengah */
 td:nth-child(6),
 td:nth-child(7),
 td:nth-child(8),
@@ -133,126 +48,38 @@ td:nth-child(9){
 text-align:center;
 }
 
+/* hover */
+tbody tr:hover
+
 /* zebra */
 tbody tr:nth-child(even){
 background:#f9fbff;
 }
 
-/* hover */
-tbody tr:hover
-
 /* =========================
-BUTTON
-========================= */
-button{
-padding:8px 12px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-.btn-masuk{
-background:#1cc88a;
-color:white;
-}
-
-.btn-keluar{
-background:#e74a3b;
-color:white;
-}
-
-.btn-so{
-background:#36b9cc;
-color:white;
-}
-
-/* =========================
-PAGINATION
-========================= */
-.pagination{
-margin-top:10px;
-text-align:center;
-}
-
-.pagination button{
-margin:3px;
-padding:6px 10px;
-background:#4e73df;
-color:white;
-border-radius:6px;
-cursor:pointer;
-}
-
-.pagination button.active{
-background:#1e1e2f;
-}
-
-/* =========================
-SCANNER
-========================= */
-.reader-box{
-width:100%;
-max-width:400px;
-height:300px;
-margin:auto;
-border-radius:10px;
-overflow:hidden;
-border:2px solid #ddd;
-}
-
-/* =========================
-🔥 MOBILE RESPONSIVE
+RESPONSIVE MOBILE (FIX FINAL)
 ========================= */
 @media (max-width:768px){
 
-/* layout jadi vertikal */
+/* layout */
 .container{
 flex-direction:column;
 }
 
-/* sidebar jadi atas */
+/* sidebar */
 .sidebar{
 width:100%;
-}
-
-/* dashboard stack */
-.stats{
-grid-template-columns:1fr;
-}
-
-/* content */
-.content{
-padding:10px;
-}
-
-/* 🔥 TABLE FIX */
-.table-container{
-height:60vh;
+display:flex;
 overflow-x:auto;
-overflow-y:auto;
 }
 
-/* biar bisa scroll kanan */
-table{
-min-width:700px;
-}
-
-/* teks */
-th, td{
-white-space:nowrap;
-font-size:12px;
-padding:6px;
-}
-
-/* input */
-#searchInput{
+/* menu horizontal */
+.sidebar ul{
+display:flex;
 width:100%;
+gap:10px;
+padding:0;
+margin:0;
 }
 
-/* pagination kecil */
-.pagination button{
-padding:4px 6px;
-font-size:10px;
-}
-
-}
+.sideba
