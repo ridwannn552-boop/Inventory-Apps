@@ -41,11 +41,13 @@ function showPage(id, el){
     stopScanner();
   }
 
-  document.querySelector(".sidebar").classList.remove("active");
+  const sidebar = document.querySelector(".sidebar");
+  if(sidebar) sidebar.classList.remove("active");
 }
 
 function toggleMenu(){
-  document.querySelector(".sidebar").classList.toggle("active");
+  const sidebar = document.querySelector(".sidebar");
+  if(sidebar) sidebar.classList.toggle("active");
 }
 
 // ==========================
@@ -79,8 +81,8 @@ function parseCSV(str){
     }else if(char === ',' && !insideQuotes){
       row.push(current);
       current = "";
-    }else if((char === '\n' || char === '\r') && !insideQuotes){
-      if(char === '\r' && next === '\n'){
+    }else if((char === "\n" || char === "\r") && !insideQuotes){
+      if(char === "\r" && next === "\n"){
         i++;
       }
       row.push(current);
@@ -110,6 +112,7 @@ async function loadData(useCache = true){
       if(cache){
         produkMaster = JSON.parse(cache);
         hitungUlangProduk();
+        return;
       }
     }
 
@@ -123,8 +126,11 @@ async function loadData(useCache = true){
       const c = rows[i];
       if(!c[1]) continue;
 
+      const kode = (c[1] || "").trim().toUpperCase();
+      if(!kode) continue;
+
       produkMaster.push({
-        kode: (c[1] || "").trim().toUpperCase(),
+        kode: kode,
         reff: (c[2] || "").trim(),
         nama: (c[3] || "").trim(),
         uom: (c[4] || "").trim(),
@@ -152,6 +158,7 @@ async function loadHistoryFromSheet(useCache = true){
         historyFiltered = [...historyTransaksi].reverse();
         hitungUlangProduk();
         tampilHistory();
+        return;
       }
     }
 
@@ -163,15 +170,33 @@ async function loadHistoryFromSheet(useCache = true){
 
     for(let i = 1; i < rows.length; i++){
       const c = rows[i];
-      if(!c[1]) continue;
+      if(!c.length) continue;
+
+      // Struktur sheet history:
+      // 0 = NO
+      // 1 = TANGGAL
+      // 2 = BARCODE
+      // 3 = REF
+      // 4 = NAMA BARANG
+      // 5 = JENIS
+      // 6 = QTY
+
+      const tanggal = (c[1] || "").trim();
+      const kode = (c[2] || "").trim().toUpperCase();
+      const reff = (c[3] || "").trim();
+      const nama = (c[4] || "").trim();
+      const jenis = (c[5] || "").trim().toLowerCase();
+      const qty = parseInt(c[6], 10) || 0;
+
+      if(!kode || kode === "BARCODE") continue;
 
       historyTransaksi.push({
-        tanggal: (c[0] || "").trim(),
-        kode: (c[1] || "").trim().toUpperCase(),
-        reff: (c[2] || "").trim(),
-        nama: (c[3] || "").trim(),
-        jenis: (c[4] || "").trim().toLowerCase(),
-        qty: parseInt(c[5], 10) || 0
+        tanggal,
+        kode,
+        reff,
+        nama,
+        jenis,
+        qty
       });
     }
 
@@ -253,11 +278,26 @@ function updateDashboard(){
   document.getElementById("totalKeluar").innerText = totalKeluar;
 }
 
+function updateDashboardSearch(){
+  let totalMasuk = 0;
+  let totalKeluar = 0;
+
+  for(let i = 0; i < produk.length; i++){
+    totalMasuk += produk[i].masuk;
+    totalKeluar += produk[i].keluar;
+  }
+
+  document.getElementById("totalProduk").innerText = produk.length;
+  document.getElementById("totalMasuk").innerText = totalMasuk;
+  document.getElementById("totalKeluar").innerText = totalKeluar;
+}
+
 // ==========================
 // SEARCH PRODUK
 // ==========================
 function searchProduk(){
-  const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+  const input = document.getElementById("searchInput");
+  const keyword = input ? input.value.trim().toLowerCase() : "";
 
   if(!keyword){
     hitungUlangProduk();
@@ -267,16 +307,17 @@ function searchProduk(){
   const base = JSON.parse(JSON.stringify(produkMaster));
   const map = {};
 
-  base.forEach(p => {
-    p.masuk = 0;
-    p.keluar = 0;
-    p.akhir = p.awal;
-    map[p.kode] = p;
-  });
+  for(let i = 0; i < base.length; i++){
+    base[i].masuk = 0;
+    base[i].keluar = 0;
+    base[i].akhir = base[i].awal;
+    map[base[i].kode] = base[i];
+  }
 
-  historyTransaksi.forEach(h => {
+  for(let i = 0; i < historyTransaksi.length; i++){
+    const h = historyTransaksi[i];
     const item = map[h.kode];
-    if(!item) return;
+    if(!item) continue;
 
     if(h.jenis === "masuk"){
       item.masuk += h.qty;
@@ -287,7 +328,7 @@ function searchProduk(){
     }else if(h.jenis === "so"){
       item.akhir = h.qty;
     }
-  });
+  }
 
   produk = base.filter(p =>
     p.kode.toLowerCase().includes(keyword) ||
@@ -300,25 +341,12 @@ function searchProduk(){
   updateDashboardSearch();
 }
 
-function updateDashboardSearch(){
-  let totalMasuk = 0;
-  let totalKeluar = 0;
-
-  produk.forEach(p => {
-    totalMasuk += p.masuk;
-    totalKeluar += p.keluar;
-  });
-
-  document.getElementById("totalProduk").innerText = produk.length;
-  document.getElementById("totalMasuk").innerText = totalMasuk;
-  document.getElementById("totalKeluar").innerText = totalKeluar;
-}
-
 // ==========================
 // TAMPIL PRODUK
 // ==========================
 function tampilProduk(){
   const t = document.getElementById("dataProduk");
+  if(!t) return;
 
   const start = (currentPageProduk - 1) * perPage;
   const end = start + perPage;
@@ -356,6 +384,7 @@ function renderPaginationProduk(){
   if(!el) return;
 
   const totalPage = Math.ceil(produk.length / perPage);
+
   if(totalPage <= 1){
     el.innerHTML = "";
     return;
@@ -364,7 +393,7 @@ function renderPaginationProduk(){
   let html = `<button onclick="changePageProduk(${currentPageProduk - 1})">Prev</button>`;
 
   for(let i = 1; i <= totalPage; i++){
-    html += `<button class="${i === currentPageProduk ? 'active' : ''}" onclick="changePageProduk(${i})">${i}</button>`;
+    html += `<button class="${i === currentPageProduk ? "active" : ""}" onclick="changePageProduk(${i})">${i}</button>`;
   }
 
   html += `<button onclick="changePageProduk(${currentPageProduk + 1})">Next</button>`;
@@ -377,16 +406,22 @@ function changePageProduk(page){
 
   currentPageProduk = page;
   tampilProduk();
-  document.querySelector(".content").scrollTo({ top: 0, behavior: "smooth" });
+
+  const content = document.querySelector(".content");
+  if(content) content.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // ==========================
 // FILTER HISTORY
 // ==========================
 function filterHistory(){
-  const bulan = document.getElementById("filterBulan").value;
-  const jenis = document.getElementById("filterJenis").value.trim().toLowerCase();
-  const keyword = document.getElementById("filterKeyword").value.trim().toLowerCase();
+  const bulanEl = document.getElementById("filterBulan");
+  const jenisEl = document.getElementById("filterJenis");
+  const keywordEl = document.getElementById("filterKeyword");
+
+  const bulan = bulanEl ? bulanEl.value : "";
+  const jenis = jenisEl ? jenisEl.value.trim().toLowerCase() : "";
+  const keyword = keywordEl ? keywordEl.value.trim().toLowerCase() : "";
 
   historyFiltered = [...historyTransaksi].reverse().filter(item => {
     let cocokBulan = true;
@@ -421,9 +456,14 @@ function filterHistory(){
 }
 
 function resetFilterHistory(){
-  document.getElementById("filterBulan").value = "";
-  document.getElementById("filterJenis").value = "";
-  document.getElementById("filterKeyword").value = "";
+  const bulanEl = document.getElementById("filterBulan");
+  const jenisEl = document.getElementById("filterJenis");
+  const keywordEl = document.getElementById("filterKeyword");
+
+  if(bulanEl) bulanEl.value = "";
+  if(jenisEl) jenisEl.value = "";
+  if(keywordEl) keywordEl.value = "";
+
   historyFiltered = [...historyTransaksi].reverse();
   currentPageHistory = 1;
   tampilHistory();
@@ -434,7 +474,9 @@ function resetFilterHistory(){
 // ==========================
 function tampilHistory(){
   const t = document.getElementById("dataHistory");
-  const source = historyFiltered.length || historyFiltered.length === 0 ? historyFiltered : [...historyTransaksi].reverse();
+  if(!t) return;
+
+  const source = historyFiltered;
 
   const start = (currentPageHistory - 1) * perPage;
   const end = start + perPage;
@@ -470,6 +512,7 @@ function renderPaginationHistory(total){
   if(!el) return;
 
   const totalPage = Math.ceil(total / perPage);
+
   if(totalPage <= 1){
     el.innerHTML = "";
     return;
@@ -478,7 +521,7 @@ function renderPaginationHistory(total){
   let html = `<button onclick="changePageHistory(${currentPageHistory - 1})">Prev</button>`;
 
   for(let i = 1; i <= totalPage; i++){
-    html += `<button class="${i === currentPageHistory ? 'active' : ''}" onclick="changePageHistory(${i})">${i}</button>`;
+    html += `<button class="${i === currentPageHistory ? "active" : ""}" onclick="changePageHistory(${i})">${i}</button>`;
   }
 
   html += `<button onclick="changePageHistory(${currentPageHistory + 1})">Next</button>`;
@@ -491,22 +534,23 @@ function changePageHistory(page){
 
   currentPageHistory = page;
   tampilHistory();
-  document.querySelector(".content").scrollTo({ top: 0, behavior: "smooth" });
+
+  const content = document.querySelector(".content");
+  if(content) content.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // ==========================
 // DOWNLOAD HISTORY
 // ==========================
 function downloadExcel(){
-  const data = historyFiltered.length || historyFiltered.length === 0
-    ? historyFiltered
-    : [...historyTransaksi].reverse();
+  const data = historyFiltered;
 
   let csv = "Tanggal,Kode,Reff,Nama,Jenis,Qty\n";
 
-  data.forEach(item => {
+  for(let i = 0; i < data.length; i++){
+    const item = data[i];
     csv += `"${safeCsv(item.tanggal)}","${safeCsv(item.kode)}","${safeCsv(item.reff)}","${safeCsv(item.nama)}","${safeCsv(item.jenis)}","${item.qty}"\n`;
-  });
+  }
 
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -517,6 +561,7 @@ function downloadExcel(){
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+
   URL.revokeObjectURL(url);
 }
 
@@ -544,7 +589,9 @@ function startScanner(){
 
       if(!item){
         document.getElementById("hasilScan").innerText = "❌ Tidak ditemukan";
-        setTimeout(() => { lastScan = ""; }, 1000);
+        setTimeout(() => {
+          lastScan = "";
+        }, 1000);
         return;
       }
 
