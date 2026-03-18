@@ -84,3 +84,11 @@ cursor:pointer;
 .btn-masuk{background:green;color:white;}
 .btn-keluar{background:red;color:white;}
 .btn-so{background:blue;color:white;}
+#reader{
+width:100%;
+max-width:400px;
+height:300px;
+border:2px solid #ccc;
+border-radius:10px;
+overflow:hidden;
+}
