@@ -662,6 +662,7 @@ async function simpanTransaksi(){
     };
 
     console.log("KIRIM DATA:", payload);
+    console.log("URL_SCRIPT:", URL_SCRIPT);
 
     const response = await fetch(URL_SCRIPT, {
       method: "POST",
@@ -690,6 +691,33 @@ async function simpanTransaksi(){
       throw new Error(result.message || "Apps Script gagal menyimpan data");
     }
 
+    // update tampilan langsung
+    const sekarang = new Date();
+    const tanggalFormat =
+      String(sekarang.getDate()).padStart(2, "0") + "/" +
+      String(sekarang.getMonth() + 1).padStart(2, "0") + "/" +
+      sekarang.getFullYear() + " " +
+      String(sekarang.getHours()).padStart(2, "0") + ":" +
+      String(sekarang.getMinutes()).padStart(2, "0") + ":" +
+      String(sekarang.getSeconds()).padStart(2, "0");
+
+    const dataBaru = {
+      tanggal: tanggalFormat,
+      kode: item.kode,
+      reff: item.reff,
+      nama: item.nama,
+      jenis: modeTransaksi,
+      qty: qty
+    };
+
+    historyTransaksi.push(dataBaru);
+    historyFiltered = [...historyTransaksi].reverse();
+    localStorage.setItem("history", JSON.stringify(historyTransaksi));
+
+    hitungUlangProduk();
+    tampilHistory();
+
+    // reload lagi dari spreadsheet supaya sinkron
     localStorage.removeItem("history");
     await loadHistoryFromSheet(false);
 
@@ -709,21 +737,6 @@ async function simpanTransaksi(){
     console.error("Gagal simpan:", err);
     alert("Gagal menyimpan transaksi:\n" + err.message);
   }
-}
-// ==========================
-// UTIL
-// ==========================
-function escapeHtml(value){
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function safeCsv(value){
-  return String(value ?? "").replaceAll('"', '""');
 }
 
 // ==========================
