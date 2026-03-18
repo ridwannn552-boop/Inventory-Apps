@@ -1,139 +1,42 @@
 /* =========================
-GLOBAL
-========================= */
-body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:#f4f6f9;
-color:#333;
-}
-
-/* =========================
-LAYOUT
-========================= */
-.container{
-display:flex;
-height:100vh;
-}
-
-/* =========================
-SIDEBAR MODERN
-========================= */
-.sidebar{
-width:220px;
-background:linear-gradient(180deg,#1e1e2f,#2b2b45);
-color:white;
-padding:20px;
-}
-
-.sidebar h2{
-margin-bottom:20px;
-}
-
-.sidebar ul{
-list-style:none;
-padding:0;
-}
-
-.sidebar ul li{
-padding:12px;
-border-radius:8px;
-cursor:pointer;
-margin-bottom:5px;
-transition:0.2s;
-}
-
-.sidebar ul li:hover{
-background:#3a3a55;
-}
-
-.sidebar ul li.active{
-background:#4e73df;
-}
-
-/* =========================
-CONTENT (🔥 FIX FULL WIDTH)
+FIX FULL WIDTH + TABLE SINKRON
 ========================= */
 .content{
 flex:1;
 padding:20px;
-width:calc(100% - 220px); /* 🔥 isi penuh selain sidebar */
-}
-
-/* =========================
-PAGE
-========================= */
-.page{display:none;}
-.page.active{display:block;}
-
-/* =========================
-CARD DASHBOARD
-========================= */
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:12px;
-box-shadow:0 4px 12px rgba(0,0,0,0.08);
-transition:0.2s;
-}
-
-.card:hover{
-transform:translateY(-3px);
-}
-
-/* =========================
-INPUT
-========================= */
-#searchInput{
 width:100%;
-max-width:300px;
-padding:8px;
-border-radius:6px;
-border:1px solid #ccc;
-margin-bottom:10px;
+margin:0;
+max-width:none;
 }
 
-/* =========================
-TABLE MODERN (🔥 FIX LAYOUT)
-========================= */
 .table-container{
+width:100%;
 height:70vh;
 overflow:auto;
 background:white;
 border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.05);
 padding-right:5px;
-width:100%;
 }
 
+/* TABLE RAPi */
 table{
 width:100%;
 border-collapse:collapse;
 table-layout:fixed;
 }
 
-th{
-background:#4e73df;
-color:white;
-position:sticky;
-top:0;
-z-index:2;
-}
-
-th,td{
+th, td{
 padding:10px;
 border-bottom:1px solid #eee;
 }
 
-/* zebra */
-tbody tr:nth-child(even){
-background:#f9fbff;
+/* angka rata tengah */
+td:nth-child(6),
+td:nth-child(7),
+td:nth-child(8),
+td:nth-child(9){
+text-align:center;
 }
 
 /* hover */
@@ -141,85 +44,7 @@ tbody tr:hover{
 background:#eef3ff;
 }
 
-/* text */
-td{
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-}
-
-/* 🔥 PROPORSI KOLOM */
-th:nth-child(1), td:nth-child(1){width:40px;}
-th:nth-child(2), td:nth-child(2){width:90px;}
-th:nth-child(3), td:nth-child(3){width:100px;}
-th:nth-child(5), td:nth-child(5){width:70px;}
-
-th:nth-child(6),
-th:nth-child(7),
-th:nth-child(8),
-th:nth-child(9),
-td:nth-child(6),
-td:nth-child(7),
-td:nth-child(8),
-td:nth-child(9){
-width:60px;
-}
-
-/* =========================
-BUTTON
-========================= */
-button{
-padding:8px 12px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-transition:0.2s;
-}
-
-button:hover{
-opacity:0.9;
-}
-
-.btn-masuk{background:#1cc88a;color:white;}
-.btn-keluar{background:#e74a3b;color:white;}
-.btn-so{background:#36b9cc;color:white;}
-
-/* =========================
-PAGINATION
-========================= */
-.pagination{
-margin-top:15px;
-text-align:center;
-}
-
-.pagination button{
-margin:3px;
-padding:6px 10px;
-border:none;
-background:#4e73df;
-color:white;
-border-radius:6px;
-cursor:pointer;
-transition:0.2s;
-}
-
-.pagination button:hover{
-background:#2e59d9;
-}
-
-.pagination button.active{
-background:#1e1e2f;
-}
-
-/* =========================
-SCANNER
-========================= */
-.reader-box{
-width:100%;
-max-width:400px;
-height:300px;
-margin:auto;
-border-radius:12px;
-overflow:hidden;
-border:2px solid #ddd;
+/* zebra */
+tbody tr:nth-child(even){
+background:#f9fbff;
 }
