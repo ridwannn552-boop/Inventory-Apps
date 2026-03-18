@@ -113,3 +113,48 @@ font-size:10px;
 }
 
 }
+/* =========================
+MOBILE FIX TABLE
+========================= */
+@media (max-width:768px){
+
+/* sidebar jadi atas */
+.container{
+flex-direction:column;
+}
+
+.sidebar{
+width:100%;
+}
+
+/* 🔥 KUNCI UTAMA */
+.table-container{
+overflow-x:auto;
+overflow-y:auto;
+}
+
+/* tabel jangan dipaksa kecil */
+table{
+min-width:700px; /* 🔥 ini penting */
+}
+
+/* teks jangan pecah */
+td, th{
+white-space:nowrap;
+font-size:12px;
+}
+
+/* dashboard jadi stack */
+.stats{
+grid-template-columns:1fr;
+}
+
+/* padding kecil */
+.content{
+padding:10px;
+}
+
+}
+.table-container{
+-webkit-overflow-scrolling: touch;
+}
