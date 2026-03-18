@@ -24,8 +24,6 @@ width:220px;
 background:linear-gradient(180deg,#1e1e2f,#2b2b45);
 color:white;
 padding:20px;
-display:flex;
-flex-direction:column;
 }
 
 .sidebar h2{
@@ -54,14 +52,12 @@ background:#4e73df;
 }
 
 /* =========================
-CONTENT
+CONTENT (🔥 FIX FULL WIDTH)
 ========================= */
 .content{
 flex:1;
 padding:20px;
-max-width:1200px;
-margin:auto;
-width:100%;
+width:calc(100% - 220px); /* 🔥 isi penuh selain sidebar */
 }
 
 /* =========================
@@ -92,7 +88,7 @@ transform:translateY(-3px);
 }
 
 /* =========================
-INPUT MODERN
+INPUT
 ========================= */
 #searchInput{
 width:100%;
@@ -104,7 +100,7 @@ margin-bottom:10px;
 }
 
 /* =========================
-TABLE MODERN
+TABLE MODERN (🔥 FIX LAYOUT)
 ========================= */
 .table-container{
 height:70vh;
@@ -112,7 +108,8 @@ overflow:auto;
 background:white;
 border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.05);
-padding:5px;
+padding-right:5px;
+width:100%;
 }
 
 table{
@@ -139,16 +136,33 @@ tbody tr:nth-child(even){
 background:#f9fbff;
 }
 
-/* hover row */
+/* hover */
 tbody tr:hover{
 background:#eef3ff;
 }
 
-/* text handling */
+/* text */
 td{
 white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis;
+}
+
+/* 🔥 PROPORSI KOLOM */
+th:nth-child(1), td:nth-child(1){width:40px;}
+th:nth-child(2), td:nth-child(2){width:90px;}
+th:nth-child(3), td:nth-child(3){width:100px;}
+th:nth-child(5), td:nth-child(5){width:70px;}
+
+th:nth-child(6),
+th:nth-child(7),
+th:nth-child(8),
+th:nth-child(9),
+td:nth-child(6),
+td:nth-child(7),
+td:nth-child(8),
+td:nth-child(9){
+width:60px;
 }
 
 /* =========================
@@ -171,7 +185,7 @@ opacity:0.9;
 .btn-so{background:#36b9cc;color:white;}
 
 /* =========================
-PAGINATION MODERN
+PAGINATION
 ========================= */
 .pagination{
 margin-top:15px;
