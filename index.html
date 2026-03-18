@@ -139,7 +139,12 @@
             <option value="so">Stock Opname</option>
           </select>
 
-          <input type="text" id="filterKeyword" placeholder="Cari kode / nama..." onkeyup="filterHistory()" />
+          <input
+            type="text"
+            id="filterKeyword"
+            placeholder="Cari barcode / nama / ref..."
+            onkeyup="filterHistory()"
+          />
 
           <button onclick="filterHistory()">Filter</button>
           <button onclick="resetFilterHistory()">Reset</button>
@@ -153,11 +158,11 @@
               <tr>
                 <th>No</th>
                 <th>Tanggal</th>
-                <th>Kode</th>
-                <th>Nama</th>
+                <th>Barcode</th>
+                <th>Ref</th>
+                <th>Nama Barang</th>
                 <th>Jenis</th>
                 <th>Qty</th>
-                <th>Aksi</th>
               </tr>
             </thead>
             <tbody id="dataHistory"></tbody>
