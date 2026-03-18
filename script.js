@@ -188,9 +188,18 @@ if(html5QrCode) return;
 
 html5QrCode = new Html5Qrcode("reader");
 
+// 🔥 paksa pakai kamera belakang HP
+Html5Qrcode.getCameras().then(devices => {
+
+let cameraId = devices.find(d => d.label.toLowerCase().includes("back"))?.id || devices[0].id;
+
 html5QrCode.start(
-{ facingMode:"environment" },
-{ fps:15, qrbox:250 },
+cameraId,
+{
+fps: 15,
+qrbox: { width: 250, height: 150 },
+aspectRatio: 1.5
+},
 
 (code)=>{
 
@@ -198,13 +207,17 @@ let clean = code.trim().toUpperCase();
 
 document.getElementById("hasilScan").innerText = "SCAN: " + clean;
 
+// anti double scan
 if(clean === lastScan) return;
 lastScan = clean;
+
+// 🔊 bunyi (optional)
+new Audio("https://www.soundjay.com/button/sounds/beep-07.mp3").play();
 
 let item = produkMaster.find(p => p.kode === clean);
 
 if(!item){
-document.getElementById("hasilScan").innerText = "❌ Tidak ditemukan: "+clean;
+document.getElementById("hasilScan").innerText = "❌ Tidak ditemukan: " + clean;
 return;
 }
 
@@ -217,18 +230,16 @@ document.getElementById("hasilScan").innerText = "✅ Ditemukan";
 setTimeout(()=>{ lastScan=""; },1000);
 
 },
-(err)=>{}
-);
-}
 
-// ==========================
-function stopScanner(){
-if(html5QrCode){
-html5QrCode.stop().then(()=>{
-html5QrCode.clear();
-html5QrCode=null;
+(err)=>{}
+
+);
+
+}).catch(err=>{
+console.log("Camera error:", err);
+alert("Kamera tidak bisa diakses");
 });
-}
+
 }
 
 // ==========================
