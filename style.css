@@ -40,9 +40,16 @@ padding:12px;
 border-radius:8px;
 cursor:pointer;
 margin-bottom:5px;
+transition:0.2s;
 }
 
-.sidebar ul li:hover
+.sidebar ul li:hover{
+background:#343456;
+}
+
+.sidebar ul li.active{
+background:#4e73df;
+}
 
 /* =========================
 CONTENT
@@ -50,6 +57,7 @@ CONTENT
 .content{
 flex:1;
 padding:25px;
+width:100%;
 }
 
 /* =========================
@@ -84,7 +92,7 @@ TABLE
 ========================= */
 .table-container{
 width:100%;
-max-height:450px;
+height:70vh;
 overflow:auto;
 background:white;
 border-radius:10px;
@@ -103,15 +111,35 @@ background:#4e73df;
 color:white;
 position:sticky;
 top:0;
+z-index:2;
 }
 
 /* cell */
 th, td{
 padding:8px;
 border:1px solid #ddd;
+text-align:left;
 }
 
 /* =========================
 PAGINATION
 ========================= */
-.paginati
+.pagination{
+margin-top:10px;
+display:flex;
+flex-wrap:wrap;
+gap:5px;
+}
+
+.pagination button{
+padding:6px 10px;
+border:none;
+background:#ddd;
+cursor:pointer;
+border-radius:6px;
+}
+
+.pagination button.active{
+background:#4e73df;
+color:white;
+}
