@@ -35,6 +35,8 @@ document.getElementById("hasilScan").innerText = "Mode: " + mode;
 }
 
 // ==========================
+// 🔥 LOAD DATA FIX BARCODE
+// ==========================
 async function loadData(){
 
 let url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?output=csv&t="+Date.now();
@@ -43,21 +45,35 @@ let res = await fetch(url);
 let text = await res.text();
 
 let rows = text.split("\n");
+
+// 🔥 HEADER
+let header = rows[0].replace("\r","").split(",");
+
+// 🔥 DETEKSI KOLOM
+let idxBarcode = header.findIndex(h => h.toLowerCase().includes("barcode"));
+let idxReff = header.findIndex(h => h.toLowerCase().includes("reff"));
+let idxNama = header.findIndex(h => h.toLowerCase().includes("nama"));
+let idxUom = header.findIndex(h => h.toLowerCase().includes("uom"));
+let idxAwal = header.findIndex(h => h.toLowerCase().includes("awal"));
+
 produkMaster = [];
 
 for(let i=1;i<rows.length;i++){
 
 let c = rows[i].replace("\r","").split(",");
-if(!c || !c[1]) continue;
+
+if(!c[idxBarcode]) continue;
 
 produkMaster.push({
-kode:c[1]?.trim(),
-reff:c[2]?.trim(),
-nama:c[3]?.trim(),
-uom:c[4]?.trim(),
-awal:parseInt(c[5])||0
+kode: c[idxBarcode]?.trim().replace(/\s/g,''),
+reff: c[idxReff]?.trim(),
+nama: c[idxNama]?.trim(),
+uom: c[idxUom]?.trim(),
+awal: parseInt(c[idxAwal]) || 0
 });
 }
+
+console.log("DATA PRODUK:", produkMaster);
 
 hitungUlangProduk();
 }
@@ -131,7 +147,7 @@ document.getElementById("totalKeluar").innerText=keluar;
 }
 
 // ==========================
-// 🔥 SCANNER FINAL FIX HP
+// 🔥 SCANNER FIX TOTAL
 // ==========================
 function startScanner(){
 
@@ -157,18 +173,18 @@ Html5QrcodeSupportedFormats.QR_CODE
 
 (code)=>{
 
-document.getElementById("hasilScan").innerText = "SCAN: " + code;
+let clean = code.trim().replace(/\s/g,'');
 
-if(code === lastScan) return;
-lastScan = code;
+console.log("SCAN:", clean);
+
+document.getElementById("hasilScan").innerText = "SCAN: " + clean;
+
+if(clean === lastScan) return;
+lastScan = clean;
 
 new Audio("https://www.soundjay.com/button/sounds/beep-07.mp3").play();
 
-let clean = code.trim().replace(/\s/g,'');
-
-let item = produkMaster.find(p =>
-p.kode?.trim().replace(/\s/g,'') === clean
-);
+let item = produkMaster.find(p => p.kode === clean);
 
 if(!item){
 document.getElementById("hasilScan").innerText = "❌ Tidak ditemukan: "+clean;
@@ -296,8 +312,6 @@ return (!b || h.bulan==b) && (!j || h.jenis==j);
 tampilHistory(hasil);
 }
 
-// ==========================
-// 🔥 DOWNLOAD EXCEL
 // ==========================
 function downloadExcel(){
 
