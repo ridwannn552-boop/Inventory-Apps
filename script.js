@@ -19,6 +19,9 @@ const URL_PRODUK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOql
 
 const audioScan = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
 
+// ==========================
+// NAVIGASI
+// ==========================
 function showPage(id, el){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   const page = document.getElementById(id);
@@ -42,12 +45,18 @@ function toggleMenu(){
   if(sidebar) sidebar.classList.toggle("active");
 }
 
+// ==========================
+// MODE
+// ==========================
 function setMode(mode){
   modeTransaksi = mode;
   const hasil = document.getElementById("hasilScan");
   if(hasil) hasil.innerText = "Mode: " + mode;
 }
 
+// ==========================
+// CSV PARSER
+// ==========================
 function parseCSV(str){
   const rows = [];
   let row = [];
@@ -65,7 +74,7 @@ function parseCSV(str){
       }else{
         insideQuotes = !insideQuotes;
       }
-    }else if(char === ',' && !insideQuotes){
+    }else if(char === "," && !insideQuotes){
       row.push(current);
       current = "";
     }else if((char === "\n" || char === "\r") && !insideQuotes){
@@ -89,6 +98,9 @@ function parseCSV(str){
   return rows;
 }
 
+// ==========================
+// LOAD MASTER
+// ==========================
 async function loadData(useCache = true){
   try{
     if(useCache){
@@ -96,10 +108,11 @@ async function loadData(useCache = true){
       if(cache){
         produkMaster = JSON.parse(cache);
         hitungUlangProduk();
+        return;
       }
     }
 
-    const res = await fetch(URL_PRODUK);
+    const res = await fetch(URL_PRODUK, { cache: "no-store" });
     const text = await res.text();
     const rows = parseCSV(text);
 
@@ -129,6 +142,9 @@ async function loadData(useCache = true){
   }
 }
 
+// ==========================
+// LOAD HISTORY
+// ==========================
 async function loadHistoryFromSheet(useCache = true){
   try{
     if(useCache){
@@ -138,10 +154,11 @@ async function loadHistoryFromSheet(useCache = true){
         historyFiltered = [...historyTransaksi].reverse();
         hitungUlangProduk();
         tampilHistory();
+        return;
       }
     }
 
-    const res = await fetch(URL_HISTORY_CSV);
+    const res = await fetch(URL_HISTORY_CSV, { cache: "no-store" });
     const text = await res.text();
     const rows = parseCSV(text);
 
@@ -150,6 +167,15 @@ async function loadHistoryFromSheet(useCache = true){
     for(let i = 1; i < rows.length; i++){
       const c = rows[i];
       if(!c || !c.length) continue;
+
+      // Struktur history sheet:
+      // 0 = NO
+      // 1 = TANGGAL
+      // 2 = BARCODE
+      // 3 = REF
+      // 4 = NAMA BARANG
+      // 5 = JENIS
+      // 6 = QTY
 
       const tanggal = (c[1] || "").trim();
       const kode = (c[2] || "").trim().toUpperCase();
@@ -181,6 +207,9 @@ async function loadHistoryFromSheet(useCache = true){
   }
 }
 
+// ==========================
+// REFRESH
+// ==========================
 function refreshMasterData(){
   localStorage.removeItem("produkMaster");
   loadData(false);
@@ -191,6 +220,9 @@ function refreshHistoryData(){
   loadHistoryFromSheet(false);
 }
 
+// ==========================
+// HITUNG ULANG STOK
+// ==========================
 function hitungUlangProduk(){
   produk = JSON.parse(JSON.stringify(produkMaster));
   const map = {};
@@ -224,6 +256,9 @@ function hitungUlangProduk(){
   updateDashboard();
 }
 
+// ==========================
+// DASHBOARD
+// ==========================
 function updateDashboard(){
   let totalMasuk = 0;
   let totalKeluar = 0;
@@ -233,11 +268,18 @@ function updateDashboard(){
     totalKeluar += produk[i].keluar;
   }
 
-  document.getElementById("totalProduk").innerText = produk.length;
-  document.getElementById("totalMasuk").innerText = totalMasuk;
-  document.getElementById("totalKeluar").innerText = totalKeluar;
+  const totalProdukEl = document.getElementById("totalProduk");
+  const totalMasukEl = document.getElementById("totalMasuk");
+  const totalKeluarEl = document.getElementById("totalKeluar");
+
+  if(totalProdukEl) totalProdukEl.innerText = produk.length;
+  if(totalMasukEl) totalMasukEl.innerText = totalMasuk;
+  if(totalKeluarEl) totalKeluarEl.innerText = totalKeluar;
 }
 
+// ==========================
+// SEARCH PRODUK
+// ==========================
 function searchProduk(){
   const input = document.getElementById("searchInput");
   const keyword = input ? input.value.trim().toLowerCase() : "";
@@ -281,19 +323,12 @@ function searchProduk(){
 
   currentPageProduk = 1;
   tampilProduk();
-
-  let totalMasuk = 0;
-  let totalKeluar = 0;
-  for(let i = 0; i < produk.length; i++){
-    totalMasuk += produk[i].masuk;
-    totalKeluar += produk[i].keluar;
-  }
-
-  document.getElementById("totalProduk").innerText = produk.length;
-  document.getElementById("totalMasuk").innerText = totalMasuk;
-  document.getElementById("totalKeluar").innerText = totalKeluar;
+  updateDashboard();
 }
 
+// ==========================
+// TAMPIL PRODUK
+// ==========================
 function tampilProduk(){
   const t = document.getElementById("dataProduk");
   if(!t) return;
@@ -339,9 +374,11 @@ function renderPaginationProduk(){
   }
 
   let html = `<button onclick="changePageProduk(${currentPageProduk - 1})">Prev</button>`;
+
   for(let i = 1; i <= totalPage; i++){
     html += `<button class="${i === currentPageProduk ? "active" : ""}" onclick="changePageProduk(${i})">${i}</button>`;
   }
+
   html += `<button onclick="changePageProduk(${currentPageProduk + 1})">Next</button>`;
   el.innerHTML = html;
 }
@@ -357,10 +394,17 @@ function changePageProduk(page){
   if(content) content.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// ==========================
+// FILTER HISTORY
+// ==========================
 function filterHistory(){
-  const bulan = document.getElementById("filterBulan").value;
-  const jenis = document.getElementById("filterJenis").value.trim().toLowerCase();
-  const keyword = document.getElementById("filterKeyword").value.trim().toLowerCase();
+  const bulanEl = document.getElementById("filterBulan");
+  const jenisEl = document.getElementById("filterJenis");
+  const keywordEl = document.getElementById("filterKeyword");
+
+  const bulan = bulanEl ? bulanEl.value : "";
+  const jenis = jenisEl ? jenisEl.value.trim().toLowerCase() : "";
+  const keyword = keywordEl ? keywordEl.value.trim().toLowerCase() : "";
 
   historyFiltered = [...historyTransaksi].reverse().filter(item => {
     let cocokBulan = true;
@@ -395,14 +439,22 @@ function filterHistory(){
 }
 
 function resetFilterHistory(){
-  document.getElementById("filterBulan").value = "";
-  document.getElementById("filterJenis").value = "";
-  document.getElementById("filterKeyword").value = "";
+  const bulanEl = document.getElementById("filterBulan");
+  const jenisEl = document.getElementById("filterJenis");
+  const keywordEl = document.getElementById("filterKeyword");
+
+  if(bulanEl) bulanEl.value = "";
+  if(jenisEl) jenisEl.value = "";
+  if(keywordEl) keywordEl.value = "";
+
   historyFiltered = [...historyTransaksi].reverse();
   currentPageHistory = 1;
   tampilHistory();
 }
 
+// ==========================
+// TAMPIL HISTORY
+// ==========================
 function tampilHistory(){
   const t = document.getElementById("dataHistory");
   if(!t) return;
@@ -447,9 +499,11 @@ function renderPaginationHistory(total){
   }
 
   let html = `<button onclick="changePageHistory(${currentPageHistory - 1})">Prev</button>`;
+
   for(let i = 1; i <= totalPage; i++){
     html += `<button class="${i === currentPageHistory ? "active" : ""}" onclick="changePageHistory(${i})">${i}</button>`;
   }
+
   html += `<button onclick="changePageHistory(${currentPageHistory + 1})">Next</button>`;
   el.innerHTML = html;
 }
@@ -465,6 +519,9 @@ function changePageHistory(page){
   if(content) content.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// ==========================
+// DOWNLOAD CSV
+// ==========================
 function downloadExcel(){
   const data = historyFiltered;
   let csv = "Tanggal,Barcode,Ref,Nama Barang,Jenis,Qty\n";
@@ -483,9 +540,13 @@ function downloadExcel(){
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+
   URL.revokeObjectURL(url);
 }
 
+// ==========================
+// SCANNER
+// ==========================
 function startScanner(){
   if(html5QrCode) return;
 
@@ -506,7 +567,8 @@ function startScanner(){
       const item = produkMaster.find(p => p.kode === clean);
 
       if(!item){
-        document.getElementById("hasilScan").innerText = "❌ Tidak ditemukan";
+        const hasil = document.getElementById("hasilScan");
+        if(hasil) hasil.innerText = "❌ Tidak ditemukan";
         setTimeout(() => {
           lastScan = "";
         }, 1000);
@@ -517,10 +579,16 @@ function startScanner(){
       audioScan.play().catch(() => {});
 
       lastKodeScan = item.kode;
-      document.getElementById("scanBarcode").innerText = item.kode;
-      document.getElementById("scanNama").innerText = item.nama;
-      document.getElementById("qty").value = 1;
-      document.getElementById("hasilScan").innerText = "✅ Barcode terbaca";
+
+      const barcodeEl = document.getElementById("scanBarcode");
+      const namaEl = document.getElementById("scanNama");
+      const qtyEl = document.getElementById("qty");
+      const hasilEl = document.getElementById("hasilScan");
+
+      if(barcodeEl) barcodeEl.innerText = item.kode;
+      if(namaEl) namaEl.innerText = item.nama;
+      if(qtyEl) qtyEl.value = 1;
+      if(hasilEl) hasilEl.innerText = "✅ Barcode terbaca";
 
       setTimeout(() => {
         lastScan = "";
@@ -529,7 +597,8 @@ function startScanner(){
     () => {}
   ).catch(err => {
     console.error("Scanner error:", err);
-    document.getElementById("hasilScan").innerText = "Kamera tidak bisa dibuka";
+    const hasil = document.getElementById("hasilScan");
+    if(hasil) hasil.innerText = "Kamera tidak bisa dibuka";
   });
 }
 
@@ -546,9 +615,13 @@ function stopScanner(){
   }
 }
 
+// ==========================
+// SIMPAN TRANSAKSI
+// ==========================
 async function simpanTransaksi(){
   try{
-    const qty = parseInt(document.getElementById("qty").value, 10);
+    const qtyEl = document.getElementById("qty");
+    const qty = parseInt(qtyEl ? qtyEl.value : "", 10);
 
     if(!lastKodeScan){
       alert("Scan dulu!");
@@ -578,6 +651,7 @@ async function simpanTransaksi(){
 
     const response = await fetch(URL_SCRIPT, {
       method: "POST",
+      redirect: "follow",
       headers: {
         "Content-Type": "text/plain;charset=utf-8"
       },
@@ -588,25 +662,33 @@ async function simpanTransaksi(){
     console.log("RESPON APPS SCRIPT:", resultText);
 
     if(!response.ok){
-      throw new Error("HTTP error " + response.status);
+      throw new Error("HTTP error " + response.status + " | " + resultText);
     }
 
     localStorage.removeItem("history");
     await loadHistoryFromSheet(false);
 
     lastKodeScan = "";
-    document.getElementById("scanBarcode").innerText = "-";
-    document.getElementById("scanNama").innerText = "-";
-    document.getElementById("qty").value = "";
-    document.getElementById("hasilScan").innerText = "Arahkan barcode ke kamera";
+
+    const barcodeEl = document.getElementById("scanBarcode");
+    const namaEl = document.getElementById("scanNama");
+    const hasilEl = document.getElementById("hasilScan");
+
+    if(barcodeEl) barcodeEl.innerText = "-";
+    if(namaEl) namaEl.innerText = "-";
+    if(qtyEl) qtyEl.value = "";
+    if(hasilEl) hasilEl.innerText = "Arahkan barcode ke kamera";
 
     alert("Transaksi berhasil disimpan");
   }catch(err){
     console.error("Gagal simpan:", err);
-    alert("Gagal menyimpan transaksi. Buka F12 > Console.");
+    alert("Gagal menyimpan transaksi:\n" + err.message);
   }
 }
 
+// ==========================
+// UTIL
+// ==========================
 function escapeHtml(value){
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -620,6 +702,9 @@ function safeCsv(value){
   return String(value ?? "").replaceAll('"', '""');
 }
 
+// ==========================
+// INIT
+// ==========================
 window.onload = async () => {
   historyFiltered = [];
   await loadData(true);
