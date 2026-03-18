@@ -666,10 +666,11 @@ async function simpanTransaksi(){
     };
 
     console.log("KIRIM DATA:", payload);
+    console.log("URL_SCRIPT:", URL_SCRIPT);
 
     const response = await fetch(URL_SCRIPT, {
       method: "POST",
-      redirect: "follow",
+      mode: "cors",
       headers: {
         "Content-Type": "text/plain;charset=utf-8"
       },
@@ -700,7 +701,7 @@ async function simpanTransaksi(){
     alert("Transaksi berhasil disimpan");
   }catch(err){
     console.error("Gagal simpan:", err);
-    alert("Gagal menyimpan transaksi:\n" + err.message);
+    alert("Gagal menyimpan transaksi:\n" + err.message + "\n\nCek deploy Google Apps Script.");
   }
 }
 
