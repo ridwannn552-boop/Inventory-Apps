@@ -7,10 +7,9 @@
 
 <link rel="stylesheet" href="style.css">
 
-<!-- ❌ HAPUS CHART (tidak dipakai, bikin berat) -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+<!-- 🔥 SCANNER (biar tidak blocking load) -->
+<script src="https://unpkg.com/html5-qrcode" defer></script>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 
 <body>
@@ -50,7 +49,6 @@
 <p id="totalKeluar">0</p>
 </div>
 </div>
-
 </div>
 
 <!-- PRODUK -->
@@ -59,6 +57,8 @@
 
 <input type="text" placeholder="Cari..." id="searchInput" onkeyup="searchProduk()">
 
+<!-- 🔥 WRAPPER BIAR TIDAK BERAT -->
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -77,12 +77,12 @@
 <tbody id="dataProduk"></tbody>
 </table>
 </div>
+</div>
 
 <!-- SCANNER -->
 <div id="scanner" class="page">
 <h2>Scan Barcode</h2>
 
-<!-- 🔥 FIX WAJIB -->
 <div id="reader" class="reader-box"></div>
 
 <p id="hasilScan">Arahkan barcode ke kamera</p>
@@ -135,6 +135,8 @@
 <button onclick="downloadExcel()">Download Excel</button>
 </div>
 
+<!-- 🔥 WRAPPER -->
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -150,13 +152,15 @@
 
 <tbody id="dataHistory"></tbody>
 </table>
-
 </div>
 
 </div>
+
+</div>
 </div>
 
-<script src="script.js"></script>
+<!-- 🔥 SCRIPT PALING AKHIR -->
+<script src="script.js" defer></script>
 
 </body>
 </html>
