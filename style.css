@@ -5,6 +5,7 @@ body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
 background:#eef1f5;
+color:#2c3e50;
 }
 
 /* =========================
@@ -12,34 +13,37 @@ LAYOUT
 ========================= */
 .container{
 display:flex;
-min-height:100vh;
+height:100vh;
+overflow:hidden;
 }
 
 /* =========================
 SIDEBAR
 ========================= */
 .sidebar{
-width:220px;
+width:230px;
 background:#1e1e2f;
 color:white;
 padding:20px;
+flex-shrink:0;
+display:flex;
+flex-direction:column;
 }
 
 .sidebar h2{
-margin-bottom:20px;
+margin-bottom:25px;
 }
 
 .sidebar ul{
 list-style:none;
 padding:0;
-margin:0;
 }
 
 .sidebar ul li{
 padding:12px;
 border-radius:8px;
 cursor:pointer;
-margin-bottom:5px;
+margin-bottom:8px;
 transition:0.2s;
 }
 
@@ -57,6 +61,7 @@ CONTENT
 .content{
 flex:1;
 padding:25px;
+overflow:auto;
 }
 
 /* =========================
@@ -64,10 +69,16 @@ PAGE
 ========================= */
 .page{
 display:none;
+animation:fade 0.2s ease;
 }
 
 .page.active{
 display:block;
+}
+
+@keyframes fade{
+from{opacity:0; transform:translateY(5px);}
+to{opacity:1; transform:translateY(0);}
 }
 
 /* =========================
@@ -75,6 +86,7 @@ DASHBOARD
 ========================= */
 #dashboard{
 max-width:1000px;
+margin:auto;
 }
 
 .stats{
@@ -102,12 +114,29 @@ transform:translateY(-3px);
 .card h3{
 font-size:14px;
 color:#777;
-margin-bottom:8px;
+margin-bottom:5px;
 }
 
 .card p{
 font-size:26px;
 font-weight:bold;
+}
+
+/* =========================
+FILTER + SEARCH (RAPI SATU BARIS)
+========================= */
+#produk input,
+#history select,
+#history button{
+margin-right:5px;
+margin-bottom:10px;
+}
+
+#history > div{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+gap:8px;
 }
 
 /* =========================
@@ -119,6 +148,7 @@ height:65vh;
 overflow:auto;
 background:white;
 border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
 margin-top:10px;
 }
 
@@ -138,37 +168,13 @@ z-index:2;
 
 th, td{
 padding:10px;
-border:1px solid #ddd;
-text-align:left;
+border-bottom:1px solid #eee;
 white-space:nowrap;
 }
 
 tr:hover{
 background:#f5f7ff;
 }
-
-/* =========================
-INPUT
-========================= */
-input, select{
-padding:8px;
-border-radius:6px;
-border:1px solid #ccc;
-}
-
-/* =========================
-BUTTON
-========================= */
-button{
-padding:8px 12px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-.btn-masuk{ background:#1cc88a; color:white; }
-.btn-keluar{ background:#e74a3b; color:white; }
-.btn-so{ background:#f6c23e; color:black; }
 
 /* =========================
 PAGINATION
@@ -182,8 +188,8 @@ gap:5px;
 
 .pagination button{
 padding:6px 10px;
-border:none;
 background:#ddd;
+border:none;
 border-radius:6px;
 cursor:pointer;
 }
@@ -193,7 +199,45 @@ background:#4e73df;
 color:white;
 }
 
-#scanner p{
-margin:6px 0;
-font-size:14px;
+/* =========================
+INPUT & BUTTON
+========================= */
+input, select{
+padding:8px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+padding:8px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.btn-masuk{ background:#1cc88a; color:white; }
+.btn-keluar{ background:#e74a3b; color:white; }
+.btn-so{ background:#f6c23e; color:black; }
+
+/* =========================
+SCANNER (FIX CENTER)
+========================= */
+#scanner{
+max-width:500px;
+margin:auto;
+text-align:center;
+}
+
+.reader-box{
+width:100%;
+border-radius:12px;
+overflow:hidden;
+margin-bottom:10px;
+}
+
+/* =========================
+JUDUL HALAMAN
+========================= */
+h2{
+margin-bottom:15px;
 }
