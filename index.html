@@ -80,9 +80,9 @@
 <div id="scanner" class="page">
 <h2>Scan Barcode</h2>
 
-<div id="reader"></div>
+<div id="reader" style="width:100%; max-width:400px;"></div>
 
-<p id="hasilScan"></p>
+<p id="hasilScan">Arahkan barcode ke kamera</p>
 <p>Kode: <b id="scanBarcode">-</b></p>
 <p>Nama: <b id="scanNama">-</b></p>
 
@@ -127,6 +127,7 @@
 </select>
 
 <button onclick="filterHistory()">Filter</button>
+<button onclick="downloadExcel()">Download Excel</button>
 
 <table>
 <thead>
