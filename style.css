@@ -91,3 +91,22 @@ margin-bottom:5px;
 }
 
 }
+#menuToggle{
+display:none;
+position:fixed;
+top:10px;
+left:10px;
+z-index:1100;
+background:#4e73df;
+color:white;
+border:none;
+padding:10px;
+border-radius:6px;
+}
+
+/* tampil di mobile */
+@media (max-width:768px){
+#menuToggle{
+display:block;
+}
+}
