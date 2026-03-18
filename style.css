@@ -4,7 +4,8 @@ GLOBAL
 body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
-background:#eef1f5;
+background:#f4f6f9;
+color:#333;
 }
 
 /* =========================
@@ -15,30 +16,51 @@ display:flex;
 height:100vh;
 }
 
+/* =========================
+SIDEBAR MODERN
+========================= */
 .sidebar{
 width:220px;
-background:#1e1e2f;
+background:linear-gradient(180deg,#1e1e2f,#2b2b45);
 color:white;
 padding:20px;
-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+.sidebar h2{
+margin-bottom:20px;
+}
+
+.sidebar ul{
+list-style:none;
+padding:0;
 }
 
 .sidebar ul li{
 padding:12px;
 border-radius:8px;
 cursor:pointer;
+margin-bottom:5px;
+transition:0.2s;
 }
 
 .sidebar ul li:hover{
-background:#333;
+background:#3a3a55;
 }
 
-/* 🔥 FIX CENTER CONTENT */
+.sidebar ul li.active{
+background:#4e73df;
+}
+
+/* =========================
+CONTENT
+========================= */
 .content{
 flex:1;
 padding:20px;
-max-width:1100px;
-margin:0 auto;
+max-width:1200px;
+margin:auto;
 width:100%;
 }
 
@@ -49,7 +71,7 @@ PAGE
 .page.active{display:block;}
 
 /* =========================
-DASHBOARD
+CARD DASHBOARD
 ========================= */
 .stats{
 display:grid;
@@ -61,79 +83,72 @@ gap:15px;
 background:white;
 padding:20px;
 border-radius:12px;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+transition:0.2s;
+}
+
+.card:hover{
+transform:translateY(-3px);
 }
 
 /* =========================
-TABLE
+INPUT MODERN
+========================= */
+#searchInput{
+width:100%;
+max-width:300px;
+padding:8px;
+border-radius:6px;
+border:1px solid #ccc;
+margin-bottom:10px;
+}
+
+/* =========================
+TABLE MODERN
 ========================= */
 .table-container{
-height:75vh; /* 🔥 tinggi pas */
+height:70vh;
 overflow:auto;
 background:white;
-border-radius:10px;
-scroll-behavior:smooth;
-width:100%;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
+padding:5px;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-margin-top:10px;
+table-layout:fixed;
 }
 
 th{
 background:#4e73df;
 color:white;
-}
-
-/* HEADER STICKY */
-thead th{
 position:sticky;
 top:0;
 z-index:2;
-background:#4e73df;
 }
 
 th,td{
-padding:8px;
-border:1px solid #ddd;
+padding:10px;
+border-bottom:1px solid #eee;
 }
 
-/* ZEBRA */
+/* zebra */
 tbody tr:nth-child(even){
-background:#f9f9f9;
+background:#f9fbff;
 }
 
-/* =========================
-INPUT
-========================= */
-#searchInput{
-width:100%;
-max-width:300px;
-margin-bottom:10px;
+/* hover row */
+tbody tr:hover{
+background:#eef3ff;
 }
 
-/* =========================
-SCANNER
-========================= */
-.reader-box{
-width:100%;
-max-width:400px;
-height:300px;
-margin:auto;
-border-radius:10px;
+/* text handling */
+td{
+white-space:nowrap;
 overflow:hidden;
-border:2px solid #ddd;
-}
-
-#reader{
-width:100%;
-max-width:400px;
-height:300px;
-border:2px solid #ccc;
-border-radius:10px;
-overflow:hidden;
+text-overflow:ellipsis;
 }
 
 /* =========================
@@ -144,17 +159,22 @@ padding:8px 12px;
 border:none;
 border-radius:6px;
 cursor:pointer;
+transition:0.2s;
 }
 
-.btn-masuk{background:green;color:white;}
-.btn-keluar{background:red;color:white;}
-.btn-so{background:blue;color:white;}
+button:hover{
+opacity:0.9;
+}
+
+.btn-masuk{background:#1cc88a;color:white;}
+.btn-keluar{background:#e74a3b;color:white;}
+.btn-so{background:#36b9cc;color:white;}
 
 /* =========================
-PAGINATION
+PAGINATION MODERN
 ========================= */
 .pagination{
-margin-top:10px;
+margin-top:15px;
 text-align:center;
 }
 
@@ -164,7 +184,7 @@ padding:6px 10px;
 border:none;
 background:#4e73df;
 color:white;
-border-radius:5px;
+border-radius:6px;
 cursor:pointer;
 transition:0.2s;
 }
@@ -175,4 +195,17 @@ background:#2e59d9;
 
 .pagination button.active{
 background:#1e1e2f;
+}
+
+/* =========================
+SCANNER
+========================= */
+.reader-box{
+width:100%;
+max-width:400px;
+height:300px;
+margin:auto;
+border-radius:12px;
+overflow:hidden;
+border:2px solid #ddd;
 }
