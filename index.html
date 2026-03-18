@@ -7,7 +7,6 @@
 
 <link rel="stylesheet" href="style.css">
 
-<!-- 🔥 SCANNER (biar tidak blocking load) -->
 <script src="https://unpkg.com/html5-qrcode" defer></script>
 
 </head>
@@ -57,7 +56,6 @@
 
 <input type="text" placeholder="Cari..." id="searchInput" onkeyup="searchProduk()">
 
-<!-- 🔥 WRAPPER BIAR TIDAK BERAT -->
 <div class="table-container">
 <table>
 <thead>
@@ -77,6 +75,10 @@
 <tbody id="dataProduk"></tbody>
 </table>
 </div>
+
+<!-- 🔥 PAGINATION PRODUK -->
+<div id="paginationProduk" class="pagination"></div>
+
 </div>
 
 <!-- SCANNER -->
@@ -135,7 +137,6 @@
 <button onclick="downloadExcel()">Download Excel</button>
 </div>
 
-<!-- 🔥 WRAPPER -->
 <div class="table-container">
 <table>
 <thead>
@@ -154,12 +155,14 @@
 </table>
 </div>
 
+<!-- 🔥 PAGINATION HISTORY -->
+<div id="paginationHistory" class="pagination"></div>
+
 </div>
 
 </div>
 </div>
 
-<!-- 🔥 SCRIPT PALING AKHIR -->
 <script src="script.js" defer></script>
 
 </body>
