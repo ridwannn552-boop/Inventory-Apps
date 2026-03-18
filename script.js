@@ -164,27 +164,45 @@ async function loadHistoryFromSheet(useCache = true){
 
     historyTransaksi = [];
 
+    if(rows.length < 2){
+      historyFiltered = [];
+      tampilHistory();
+      return;
+    }
+
+    const header = rows[0].map(h => String(h || "").trim().toUpperCase());
+
+    const idxTanggal = header.indexOf("TANGGAL");
+    const idxKode = header.indexOf("BARCODE") !== -1 ? header.indexOf("BARCODE") : header.indexOf("KODE");
+    const idxReff = header.indexOf("REF") !== -1 ? header.indexOf("REF") : header.indexOf("REFF");
+    const idxNama = header.indexOf("NAMA BARANG") !== -1 ? header.indexOf("NAMA BARANG") : header.indexOf("NAMA");
+    const idxJenis = header.indexOf("JENIS");
+    const idxQty = header.indexOf("QTY");
+
+    console.log("HEADER HISTORY:", header);
+    console.log("INDEX HISTORY:", {
+      idxTanggal,
+      idxKode,
+      idxReff,
+      idxNama,
+      idxJenis,
+      idxQty
+    });
+
     for(let i = 1; i < rows.length; i++){
       const c = rows[i];
       if(!c || !c.length) continue;
 
-      // Struktur history sheet:
-      // 0 = NO
-      // 1 = TANGGAL
-      // 2 = BARCODE
-      // 3 = REF
-      // 4 = NAMA BARANG
-      // 5 = JENIS
-      // 6 = QTY
+      const tanggal = idxTanggal >= 0 ? (c[idxTanggal] || "").trim() : "";
+      const kode = idxKode >= 0 ? (c[idxKode] || "").trim().toUpperCase() : "";
+      const reff = idxReff >= 0 ? (c[idxReff] || "").trim() : "";
+      const nama = idxNama >= 0 ? (c[idxNama] || "").trim() : "";
+      const jenis = idxJenis >= 0 ? (c[idxJenis] || "").trim().toLowerCase() : "";
+      const qty = idxQty >= 0 ? parseInt(c[idxQty], 10) || 0 : 0;
 
-      const tanggal = (c[1] || "").trim();
-      const kode = (c[2] || "").trim().toUpperCase();
-      const reff = (c[3] || "").trim();
-      const nama = (c[4] || "").trim();
-      const jenis = (c[5] || "").trim().toLowerCase();
-      const qty = parseInt(c[6], 10) || 0;
-
-      if(!kode || kode === "BARCODE") continue;
+      if(!kode) continue;
+      if(kode === "BARCODE" || kode === "KODE") continue;
+      if(tanggal === "TANGGAL") continue;
 
       historyTransaksi.push({
         tanggal,
@@ -206,7 +224,6 @@ async function loadHistoryFromSheet(useCache = true){
     alert("Gagal memuat data history.");
   }
 }
-
 // ==========================
 // REFRESH
 // ==========================
