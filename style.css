@@ -5,6 +5,7 @@ body{
 margin:0;
 font-family:'Segoe UI',sans-serif;
 background:#eef1f5;
+overflow:hidden;
 }
 
 /* =========================
@@ -12,7 +13,7 @@ LAYOUT
 ========================= */
 .container{
 display:flex;
-min-height:100vh;
+height:100vh;
 }
 
 /* =========================
@@ -23,6 +24,7 @@ width:220px;
 background:#1e1e2f;
 color:white;
 padding:20px;
+flex-shrink:0;
 }
 
 .sidebar h2{
@@ -56,8 +58,8 @@ CONTENT
 ========================= */
 .content{
 flex:1;
-padding:25px;
-width:100%;
+padding:20px;
+overflow:auto;
 }
 
 /* =========================
@@ -76,7 +78,7 @@ DASHBOARD
 ========================= */
 .stats{
 display:grid;
-grid-template-columns:repeat(3,1fr);
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:15px;
 }
 
@@ -84,7 +86,7 @@ gap:15px;
 background:white;
 padding:20px;
 border-radius:12px;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
 /* =========================
@@ -92,10 +94,11 @@ TABLE
 ========================= */
 .table-container{
 width:100%;
-height:70vh;
+height:65vh;
 overflow:auto;
 background:white;
-border-radius:10px;
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.05);
 margin-top:10px;
 }
 
@@ -103,6 +106,7 @@ margin-top:10px;
 table{
 width:100%;
 border-collapse:collapse;
+min-width:900px; /* 🔥 biar kolom tidak gepeng */
 }
 
 /* header */
@@ -116,10 +120,34 @@ z-index:2;
 
 /* cell */
 th, td{
-padding:8px;
+padding:10px;
 border:1px solid #ddd;
 text-align:left;
+white-space:nowrap;
 }
+
+/* =========================
+INPUT
+========================= */
+input, select{
+padding:8px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+/* =========================
+BUTTON
+========================= */
+button{
+padding:8px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.btn-masuk{ background:#1cc88a; color:white; }
+.btn-keluar{ background:#e74a3b; color:white; }
+.btn-so{ background:#f6c23e; color:black; }
 
 /* =========================
 PAGINATION
@@ -133,13 +161,26 @@ gap:5px;
 
 .pagination button{
 padding:6px 10px;
-border:none;
 background:#ddd;
-cursor:pointer;
 border-radius:6px;
 }
 
 .pagination button.active{
 background:#4e73df;
 color:white;
+}
+
+/* =========================
+SCANNER
+========================= */
+.reader-box{
+width:100%;
+max-width:400px;
+margin:auto;
+border-radius:10px;
+overflow:hidden;
+}
+
+#scanner p{
+margin:5px 0;
 }
