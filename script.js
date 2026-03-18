@@ -1,6 +1,6 @@
 let produk = [];
 let produkMaster = [];
-let historyTransaksi = JSON.parse(localStorage.getItem("history")) || [];
+let historyTransaksi = [];
 
 let lastKodeScan = "";
 let modeTransaksi = "masuk";
@@ -8,8 +8,10 @@ let modeTransaksi = "masuk";
 let html5QrCode;
 let lastScan = "";
 
-// ==========================
-// NAVIGASI
+// 🔥 GANTI INI
+const URL_SCRIPT = "PASTE_URL_APPS_SCRIPT_KAMU";
+const URL_HISTORY_CSV = "PASTE_URL_HISTORY_CSV_KAMU";
+
 // ==========================
 function showPage(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -18,11 +20,9 @@ document.getElementById(id).classList.add("active");
 if(id==="scanner") startScanner();
 else stopScanner();
 
-if(id==="history") tampilHistory();
+if(id==="history") loadHistoryFromSheet();
 }
 
-// ==========================
-// MODE
 // ==========================
 function setMode(mode){
 modeTransaksi = mode;
@@ -30,7 +30,7 @@ document.getElementById("hasilScan").innerText = "Mode: " + mode;
 }
 
 // ==========================
-// PARSER CSV AMAN
+// CSV PARSER
 // ==========================
 function parseCSV(str){
 return str.split("\n").map(row=>{
@@ -48,11 +48,11 @@ return result;
 }
 
 // ==========================
-// LOAD DATA
+// LOAD PRODUK
 // ==========================
 async function loadData(){
 
-let url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?output=csv&t="+Date.now();
+let url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?output=csv";
 
 let res=await fetch(url);
 let text=await res.text();
@@ -75,6 +75,36 @@ awal: parseInt(c[5]) || 0
 }
 
 hitungUlangProduk();
+}
+
+// ==========================
+// LOAD HISTORY DARI SHEET
+// ==========================
+async function loadHistoryFromSheet(){
+
+let res = await fetch(URL_HISTORY_CSV);
+let text = await res.text();
+
+let rows = parseCSV(text);
+
+historyTransaksi=[];
+
+for(let i=1;i<rows.length;i++){
+let c = rows[i];
+if(!c[1]) continue;
+
+historyTransaksi.push({
+tanggal:c[0],
+kode:c[1],
+reff:c[2],
+nama:c[3],
+jenis:c[4],
+qty:parseInt(c[5])||0
+});
+}
+
+hitungUlangProduk();
+tampilHistory();
 }
 
 // ==========================
@@ -110,10 +140,7 @@ updateDashboard();
 }
 
 // ==========================
-// TAMPIL PRODUK
-// ==========================
 function tampilProduk(){
-
 let t=document.getElementById("dataProduk");
 t.innerHTML="";
 
@@ -134,41 +161,7 @@ t.innerHTML+=`
 }
 
 // ==========================
-// SEARCH
-// ==========================
-function searchProduk(){
-
-let keyword=document.getElementById("searchInput").value.toLowerCase();
-
-let filtered=produk.filter(p =>
-p.kode.toLowerCase().includes(keyword) ||
-p.nama.toLowerCase().includes(keyword)
-);
-
-let t=document.getElementById("dataProduk");
-t.innerHTML="";
-
-filtered.forEach((p,i)=>{
-t.innerHTML+=`
-<tr>
-<td>${i+1}</td>
-<td>${p.kode}</td>
-<td>${p.reff}</td>
-<td>${p.nama}</td>
-<td>${p.uom}</td>
-<td>${p.awal}</td>
-<td>${p.masuk}</td>
-<td>${p.keluar}</td>
-<td>${p.akhir}</td>
-</tr>`;
-});
-}
-
-// ==========================
-// DASHBOARD
-// ==========================
 function updateDashboard(){
-
 document.getElementById("totalProduk").innerText = produk.length;
 
 let masuk = produk.reduce((a,b)=>a+b.masuk,0);
@@ -179,122 +172,95 @@ document.getElementById("totalKeluar").innerText = keluar;
 }
 
 // ==========================
-// SCANNER (UPGRADE UX)
+// SCANNER
 // ==========================
 function startScanner(){
 
 if(html5QrCode) return;
 
-html5QrCode = new Html5QrcodeScanner(
-"reader",
-{
-fps: 10,
-qrbox: { width: 250, height: 120 },
-aspectRatio: 1.5,
-rememberLastUsedCamera: true,
-showTorchButtonIfSupported: true
-},
-false
-);
+html5QrCode = new Html5QrcodeScanner("reader",{
+fps:10,
+qrbox:{width:250,height:120}
+},false);
 
 html5QrCode.render((code)=>{
 
 let clean = code.trim().toUpperCase();
 
-// anti double
-if(clean === lastScan) return;
-lastScan = clean;
+if(clean===lastScan) return;
+lastScan=clean;
 
-// 🔥 FEEDBACK VISUAL
 let hasil = document.getElementById("hasilScan");
-hasil.innerText = "✅ TERBACA: " + clean;
-hasil.style.color = "green";
+hasil.innerText="✅ "+clean;
+hasil.style.color="green";
 
-// 🔊 BEEP
-new Audio("https://www.soundjay.com/button/sounds/beep-07.mp3").play();
-
-let item = produkMaster.find(p => p.kode === clean);
+let item = produkMaster.find(p=>p.kode===clean);
 
 if(!item){
-hasil.innerText = "❌ Tidak ditemukan";
-hasil.style.color = "red";
+hasil.innerText="❌ Tidak ditemukan";
+hasil.style.color="red";
 return;
 }
 
-lastKodeScan = item.kode;
+lastKodeScan=item.kode;
 
-document.getElementById("scanBarcode").innerText = item.kode;
-document.getElementById("scanNama").innerText = item.nama;
+document.getElementById("scanBarcode").innerText=item.kode;
+document.getElementById("scanNama").innerText=item.nama;
 
-// 🔥 AUTO ISI QTY
-document.getElementById("qty").value = 1;
-document.getElementById("qty").focus();
+document.getElementById("qty").value=1;
 
-setTimeout(()=>{ lastScan=""; },1000);
+setTimeout(()=>{lastScan="";},1000);
 
 });
 }
 
-// ==========================
-// STOP SCANNER
 // ==========================
 function stopScanner(){
 if(html5QrCode){
 html5QrCode.clear();
-html5QrCode = null;
+html5QrCode=null;
 }
 }
 
 // ==========================
-// SIMPAN (FIX TOTAL)
+// SIMPAN KE GOOGLE SHEET
 // ==========================
-function simpanTransaksi(){
+async function simpanTransaksi(){
 
-let qty = parseInt(document.getElementById("qty").value);
+let qty=parseInt(document.getElementById("qty").value);
 
 if(!lastKodeScan){
-alert("Scan dulu barang!");
+alert("Scan dulu!");
 return;
 }
 
-if(!qty || qty <= 0){
-alert("Qty tidak valid!");
-return;
-}
+let item=produkMaster.find(p=>p.kode===lastKodeScan);
 
-let item = produkMaster.find(p=>p.kode===lastKodeScan);
-
-historyTransaksi.push({
-id:Date.now(),
-tanggal:new Date().toLocaleString(),
-bulan:new Date().getMonth()+1,
-jenis:modeTransaksi,
+let data={
 kode:item.kode,
 reff:item.reff,
 nama:item.nama,
+jenis:modeTransaksi,
 qty:qty
+};
+
+await fetch(URL_SCRIPT,{
+method:"POST",
+body:JSON.stringify(data)
 });
 
-localStorage.setItem("history",JSON.stringify(historyTransaksi));
+// 🔥 reload dari cloud
+await loadHistoryFromSheet();
 
-// update
-hitungUlangProduk();
-tampilHistory();
+// reset
+lastKodeScan="";
+document.getElementById("scanBarcode").innerText="-";
+document.getElementById("scanNama").innerText="-";
+document.getElementById("qty").value="";
 
-// 🔥 RESET OTOMATIS
-lastKodeScan = "";
-lastScan = "";
-
-document.getElementById("scanBarcode").innerText = "-";
-document.getElementById("scanNama").innerText = "-";
-document.getElementById("qty").value = "";
-
-document.getElementById("hasilScan").innerText = "✔ Tersimpan, scan lagi...";
-document.getElementById("hasilScan").style.color = "blue";
+document.getElementById("hasilScan").innerText="✔ Tersimpan (SYNC)";
 }
 
-// ==========================
-// HISTORY
 // ==========================
 function tampilHistory(){
 
@@ -317,25 +283,7 @@ t.innerHTML+=`
 }
 
 // ==========================
-// DOWNLOAD
-// ==========================
-function downloadExcel(){
-
-let csv="Tanggal,Kode,Reff,Nama,Jenis,Qty\n";
-
-historyTransaksi.forEach(h=>{
-csv+=`${h.tanggal},${h.kode},${h.reff},${h.nama},${h.jenis},${h.qty}\n`;
-});
-
-let blob=new Blob([csv]);
-let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="history.csv";
-a.click();
-}
-
-// ==========================
 window.onload=()=>{
 loadData();
-tampilHistory();
+loadHistoryFromSheet();
 };
