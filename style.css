@@ -48,3 +48,68 @@ background:#eef3ff;
 tbody tr:nth-child(even){
 background:#f9fbff;
 }
+/* =========================
+RESPONSIVE MOBILE
+========================= */
+@media (max-width:768px){
+
+/* layout jadi atas bawah */
+.container{
+flex-direction:column;
+}
+
+/* sidebar jadi atas */
+.sidebar{
+width:100%;
+display:flex;
+flex-direction:row;
+overflow:auto;
+}
+
+/* menu jadi horizontal */
+.sidebar ul{
+display:flex;
+gap:10px;
+}
+
+.sidebar ul li{
+flex:1;
+text-align:center;
+font-size:12px;
+padding:10px;
+}
+
+/* content full */
+.content{
+width:100%;
+padding:10px;
+}
+
+/* card dashboard stack */
+.stats{
+grid-template-columns:1fr;
+}
+
+/* table kecil */
+.table-container{
+height:60vh;
+}
+
+/* font tabel kecil */
+th, td{
+font-size:12px;
+padding:6px;
+}
+
+/* input full */
+#searchInput{
+width:100%;
+}
+
+/* pagination kecil */
+.pagination button{
+padding:4px 6px;
+font-size:10px;
+}
+
+}
