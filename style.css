@@ -1,14 +1,94 @@
 /* =========================
-FIX FULL WIDTH + TABLE SINKRON
+GLOBAL
 ========================= */
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f4f6f9;
+color:#333;
+}
+
+/* =========================
+LAYOUT
+========================= */
+.container{
+display:flex;
+height:100vh;
+}
+
+.sidebar{
+width:220px;
+background:linear-gradient(180deg,#1e1e2f,#2b2b45);
+color:white;
+padding:20px;
+}
+
+.sidebar h2{
+margin-bottom:20px;
+}
+
+.sidebar ul{
+list-style:none;
+padding:0;
+}
+
+.sidebar ul li{
+padding:12px;
+border-radius:8px;
+cursor:pointer;
+margin-bottom:5px;
+transition:0.2s;
+}
+
+.sidebar ul li:hover
+
+.sidebar ul li.active{
+background:#4e73df;
+}
+
 .content{
 flex:1;
 padding:20px;
 width:100%;
-margin:0;
-max-width:none;
 }
 
+/* =========================
+PAGE
+========================= */
+.page{display:none;}
+.page.active{display:block;}
+
+/* =========================
+DASHBOARD
+========================= */
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* =========================
+INPUT
+========================= */
+#searchInput{
+width:100%;
+max-width:300px;
+padding:8px;
+border-radius:6px;
+border:1px solid #ccc;
+margin-bottom:10px;
+}
+
+/* =========================
+TABLE
+========================= */
 .table-container{
 width:100%;
 height:70vh;
@@ -16,14 +96,19 @@ overflow:auto;
 background:white;
 border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,0.05);
-padding-right:5px;
 }
 
-/* TABLE RAPi */
 table{
 width:100%;
 border-collapse:collapse;
-table-layout:fixed;
+}
+
+th{
+background:#4e73df;
+color:white;
+position:sticky;
+top:0;
+z-index:2;
 }
 
 th, td{
@@ -31,7 +116,7 @@ padding:10px;
 border-bottom:1px solid #eee;
 }
 
-/* angka rata tengah */
+/* angka tengah */
 td:nth-child(6),
 td:nth-child(7),
 td:nth-child(8),
@@ -39,21 +124,67 @@ td:nth-child(9){
 text-align:center;
 }
 
-/* hover */
-tbody tr:hover{
-background:#eef3ff;
-}
-
 /* zebra */
 tbody tr:nth-child(even){
 background:#f9fbff;
 }
+
+/* hover */
+tbody tr:hover
+
 /* =========================
-RESPONSIVE MOBILE
+BUTTON
+========================= */
+button{
+padding:8px 12px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.btn-masuk{background:#1cc88a;color:white;}
+.btn-keluar{background:#e74a3b;color:white;}
+.btn-so{background:#36b9cc;color:white;}
+
+/* =========================
+PAGINATION
+========================= */
+.pagination{
+margin-top:15px;
+text-align:center;
+}
+
+.pagination button{
+margin:3px;
+padding:6px 10px;
+background:#4e73df;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+.pagination button.active{
+background:#1e1e2f;
+}
+
+/* =========================
+SCANNER
+========================= */
+.reader-box{
+width:100%;
+max-width:400px;
+height:300px;
+margin:auto;
+border-radius:12px;
+overflow:hidden;
+border:2px solid #ddd;
+}
+
+/* =========================
+🔥 RESPONSIVE MOBILE FIX
 ========================= */
 @media (max-width:768px){
 
-/* layout jadi atas bawah */
 .container{
 flex-direction:column;
 }
@@ -62,14 +193,12 @@ flex-direction:column;
 .sidebar{
 width:100%;
 display:flex;
-flex-direction:row;
-overflow:auto;
+overflow-x:auto;
 }
 
-/* menu jadi horizontal */
 .sidebar ul{
 display:flex;
-gap:10px;
+width:100%;
 }
 
 .sidebar ul li{
@@ -79,29 +208,36 @@ font-size:12px;
 padding:10px;
 }
 
-/* content full */
+/* content */
 .content{
-width:100%;
 padding:10px;
 }
 
-/* card dashboard stack */
+/* dashboard */
 .stats{
 grid-template-columns:1fr;
 }
 
-/* table kecil */
+/* 🔥 TABLE FIX */
 .table-container{
 height:60vh;
+overflow-x:auto;
+overflow-y:auto;
+-webkit-overflow-scrolling: touch;
 }
 
-/* font tabel kecil */
+table{
+min-width:700px; /* biar bisa scroll */
+}
+
+/* teks */
 th, td{
+white-space:nowrap;
 font-size:12px;
 padding:6px;
 }
 
-/* input full */
+/* input */
 #searchInput{
 width:100%;
 }
@@ -113,46 +249,7 @@ font-size:10px;
 }
 
 }
-/* =========================
-MOBILE FIX TABLE
-========================= */
-@media (max-width:768px){
 
-/* sidebar jadi atas */
-.container{
-flex-direction:column;
-}
-
-.sidebar{
-width:100%;
-}
-
-/* 🔥 KUNCI UTAMA */
-.table-container{
-overflow-x:auto;
-overflow-y:auto;
-}
-
-/* tabel jangan dipaksa kecil */
-table{
-min-width:700px; /* 🔥 ini penting */
-}
-
-/* teks jangan pecah */
-td, th{
-white-space:nowrap;
-font-size:12px;
-}
-
-/* dashboard jadi stack */
-.stats{
-grid-template-columns:1fr;
-}
-
-/* padding kecil */
-.content{
-padding:10px;
-}
 
 }
 .table-container{
