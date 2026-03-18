@@ -1,107 +1,342 @@
+/* =========================
+GLOBAL
+========================= */
+*{
+  box-sizing:border-box;
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  height:100%;
+  font-family:'Segoe UI',sans-serif;
+  background:#eef1f5;
+  color:#2c3e50;
+}
+
 body{
-margin:0;
-font-family:'Segoe UI';
-background:#eef1f5;
+  overflow:hidden;
 }
 
+/* =========================
+LAYOUT
+========================= */
 .container{
-display:flex;
-height:100vh;
+  display:flex;
+  height:100vh;
+  overflow:hidden;
 }
 
+/* =========================
+SIDEBAR
+========================= */
 .sidebar{
-width:230px;
-background:#1e1e2f;
-color:white;
-padding:20px;
+  width:230px;
+  background:#1e1e2f;
+  color:white;
+  padding:20px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  transition:0.3s ease;
+  z-index:1000;
 }
 
-.sidebar ul{list-style:none;padding:0;}
-.sidebar li{padding:12px;cursor:pointer;border-radius:8px;}
-.sidebar li:hover{background:#343456;}
+.sidebar h2{
+  margin:0 0 25px 0;
+}
 
+.sidebar ul{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.sidebar ul li{
+  padding:12px;
+  border-radius:8px;
+  cursor:pointer;
+  margin-bottom:8px;
+  transition:0.2s;
+}
+
+.sidebar ul li:hover{
+  background:#343456;
+}
+
+.sidebar ul li.active{
+  background:#4e73df;
+}
+
+/* =========================
+CONTENT
+========================= */
 .content{
-flex:1;
-padding:20px;
-overflow:auto;
+  flex:1;
+  padding:25px;
+  overflow:auto;
+  height:100vh;
 }
 
-.page{display:none;}
-.page.active{display:block;}
+/* =========================
+PAGE
+========================= */
+.page{
+  display:none;
+  animation:fade 0.2s ease;
+}
+
+.page.active{
+  display:block;
+}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(5px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* =========================
+HEADINGS
+========================= */
+h2{
+  margin:0 0 15px 0;
+}
+
+/* =========================
+DASHBOARD
+========================= */
+#dashboard{
+  max-width:1000px;
+}
 
 .stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:15px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
 }
 
 .card{
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  background:white;
+  padding:25px;
+  border-radius:14px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  min-height:110px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  transition:0.2s;
 }
 
+.card:hover{
+  transform:translateY(-3px);
+}
+
+.card h3{
+  font-size:14px;
+  color:#777;
+  margin:0 0 8px 0;
+}
+
+.card p{
+  font-size:26px;
+  font-weight:bold;
+  margin:0;
+}
+
+/* =========================
+TOOLBAR
+========================= */
+.toolbar,
+.filter-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+/* =========================
+INPUT & BUTTON
+========================= */
+input, select{
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  outline:none;
+  background:white;
+}
+
+input:focus, select:focus{
+  border-color:#4e73df;
+}
+
+button{
+  padding:10px 14px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#dcdfe6;
+  transition:0.2s;
+}
+
+button:hover{
+  opacity:0.95;
+}
+
+.btn-masuk{ background:#1cc88a; color:white; }
+.btn-keluar{ background:#e74a3b; color:white; }
+.btn-so{ background:#f6c23e; color:black; }
+.btn-simpan{ background:#4e73df; color:white; width:100%; }
+
+/* =========================
+TABLE
+========================= */
 .table-container{
-background:white;
-border-radius:10px;
-overflow:auto;
-margin-top:10px;
+  width:100%;
+  height:65vh;
+  overflow:auto;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05);
+  margin-top:10px;
 }
 
 table{
-width:100%;
-border-collapse:collapse;
+  width:100%;
+  border-collapse:collapse;
+  min-width:900px;
 }
 
 th{
-background:#4e73df;
-color:white;
-position:sticky;
-top:0;
+  background:#4e73df;
+  color:white;
+  position:sticky;
+  top:0;
+  z-index:2;
 }
 
-th,td{
-padding:8px;
-border-bottom:1px solid #ddd;
+th, td{
+  padding:10px;
+  border-bottom:1px solid #eee;
+  white-space:nowrap;
+  text-align:left;
+}
+
+tr:hover{
+  background:#f5f7ff;
+}
+
+/* =========================
+PAGINATION
+========================= */
+.pagination{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
 }
 
 .pagination button{
-margin:2px;
-padding:6px;
+  padding:6px 10px;
+  background:#ddd;
+}
+
+.pagination button.active{
+  background:#4e73df;
+  color:white;
+}
+
+/* =========================
+SCANNER
+========================= */
+#scanner{
+  max-width:560px;
+}
+
+.scanner-card{
+  background:white;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.08);
 }
 
 .reader-box{
-width:100%;
-max-width:400px;
-margin:auto;
+  width:100%;
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:10px;
+  background:#fafafa;
 }
 
-/* MOBILE */
+.scan-actions{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:12px 0;
+}
+
+/* =========================
+MENU TOGGLE
+========================= */
 #menuToggle{
-display:none;
-position:fixed;
-top:10px;
-left:10px;
-background:#4e73df;
-color:white;
-padding:10px;
-border:none;
-border-radius:6px;
+  display:none;
+  position:fixed;
+  top:10px;
+  left:10px;
+  z-index:1100;
+  background:#4e73df;
+  color:white;
+  border:none;
+  padding:10px 12px;
+  border-radius:8px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
 }
 
-@media(max-width:768px){
+/* =========================
+MOBILE
+========================= */
+@media (max-width:768px){
+  #menuToggle{
+    display:block;
+  }
 
-#menuToggle{display:block;}
+  .sidebar{
+    position:fixed;
+    left:-260px;
+    top:0;
+    height:100%;
+  }
 
-.sidebar{
-position:fixed;
-left:-250px;
-top:0;
-height:100%;
-}
+  .sidebar.active{
+    left:0;
+  }
 
-.sidebar.active{left:0;}
+  .content{
+    padding:60px 15px 15px 15px;
+  }
 
-.stats{grid-template-columns:1fr;}
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .scan-actions{
+    grid-template-columns:1fr;
+  }
+
+  button{
+    width:100%;
+  }
+
+  table{
+    font-size:12px;
+  }
+
+  .filter-bar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  #scanner{
+    max-width:100%;
+  }
 }
