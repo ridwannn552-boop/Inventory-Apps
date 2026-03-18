@@ -130,7 +130,7 @@ tampilHistory();
 }
 
 // ==========================
-// HITUNG (ANTI FREEZE)
+// HITUNG
 // ==========================
 function hitungUlangProduk(){
 
@@ -162,11 +162,30 @@ item.akhir -= h.qty;
 }
 }
 
-// 🔥 RESET PAGE
 currentPageProduk = 1;
 
 tampilProduk();
-updateDashboard();
+updateDashboard(); // 🔥 FIX
+}
+
+// ==========================
+// DASHBOARD
+// ==========================
+function updateDashboard(){
+
+let totalProduk = produk.length;
+
+let totalMasuk = 0;
+let totalKeluar = 0;
+
+for(let i=0;i<produk.length;i++){
+totalMasuk += produk[i].masuk;
+totalKeluar += produk[i].keluar;
+}
+
+document.getElementById("totalProduk").innerText = totalProduk;
+document.getElementById("totalMasuk").innerText = totalMasuk;
+document.getElementById("totalKeluar").innerText = totalKeluar;
 }
 
 // ==========================
@@ -205,20 +224,19 @@ t.innerHTML = html;
 renderPaginationProduk();
 }
 
+// ==========================
 function renderPaginationProduk(){
 
 let el = document.getElementById("paginationProduk");
 if(!el) return;
 
 let totalPage = Math.ceil(produk.length / perPage);
+if(totalPage <= 1){
+el.innerHTML="";
+return;
+}
 
-el.innerHTML = "";
-
-if(totalPage <= 1) return;
-
-let html = "";
-
-html += `<button onclick="changePageProduk(${currentPageProduk-1})">Prev</button>`;
+let html = `<button onclick="changePageProduk(${currentPageProduk-1})">Prev</button>`;
 
 for(let i=1;i<=totalPage;i++){
 html += `<button class="${i===currentPageProduk?'active':''}" onclick="changePageProduk(${i})">${i}</button>`;
@@ -229,21 +247,18 @@ html += `<button onclick="changePageProduk(${currentPageProduk+1})">Next</button
 el.innerHTML = html;
 }
 
+// ==========================
 function changePageProduk(p){
-
 let total = Math.ceil(produk.length / perPage);
-
 if(p < 1 || p > total) return;
 
 currentPageProduk = p;
-
 tampilProduk();
-
 window.scrollTo({top:0, behavior:"smooth"});
 }
 
 // ==========================
-// HISTORY PAGINATION
+// HISTORY
 // ==========================
 function tampilHistory(){
 
@@ -279,20 +294,19 @@ t.innerHTML = html;
 renderPaginationHistory(dataAll.length);
 }
 
+// ==========================
 function renderPaginationHistory(total){
 
 let el = document.getElementById("paginationHistory");
 if(!el) return;
 
 let totalPage = Math.ceil(total / perPage);
+if(totalPage <= 1){
+el.innerHTML="";
+return;
+}
 
-el.innerHTML = "";
-
-if(totalPage <= 1) return;
-
-let html = "";
-
-html += `<button onclick="changePageHistory(${currentPageHistory-1})">Prev</button>`;
+let html = `<button onclick="changePageHistory(${currentPageHistory-1})">Prev</button>`;
 
 for(let i=1;i<=totalPage;i++){
 html += `<button class="${i===currentPageHistory?'active':''}" onclick="changePageHistory(${i})">${i}</button>`;
@@ -303,47 +317,35 @@ html += `<button onclick="changePageHistory(${currentPageHistory+1})">Next</butt
 el.innerHTML = html;
 }
 
+// ==========================
 function changePageHistory(p){
-
 let total = Math.ceil(historyTransaksi.length / perPage);
-
 if(p < 1 || p > total) return;
 
 currentPageHistory = p;
-
 tampilHistory();
-
 window.scrollTo({top:0, behavior:"smooth"});
 }
 
 // ==========================
-// SCANNER
-// ==========================
 function startScanner(){
-
 if(html5QrCode) return;
 
-html5QrCode = new Html5QrcodeScanner("reader",{
-fps:5,
-qrbox:{width:200,height:100}
-},false);
+html5QrCode = new Html5QrcodeScanner("reader",{fps:5,qrbox:{width:200,height:100}},false);
 
 html5QrCode.render((code)=>{
-
 let clean = code.trim().toUpperCase();
 if(clean===lastScan) return;
 
 lastScan=clean;
 
 let item = produkMaster.find(p=>p.kode===clean);
-
 if(!item){
 document.getElementById("hasilScan").innerText="❌ Tidak ditemukan";
 return;
 }
 
 lastKodeScan=item.kode;
-
 document.getElementById("scanBarcode").innerText=item.kode;
 document.getElementById("scanNama").innerText=item.nama;
 document.getElementById("qty").value=1;
