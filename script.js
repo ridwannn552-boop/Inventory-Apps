@@ -10,7 +10,7 @@ let lastScan = "";
 
 // 🔥 GANTI INI
 const URL_SCRIPT = "PASTE_URL_APPS_SCRIPT_KAMU";
-const URL_HISTORY_CSV = "PASTE_URL_HISTORY_CSV_KAMU";
+const URL_HISTORY_CSV = "https://docs.google.com/spreadsheets/.../pub?gid=657187893&output=csv";
 
 // ==========================
 function showPage(id){
