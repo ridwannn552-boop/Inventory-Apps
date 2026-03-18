@@ -399,3 +399,6 @@ window.onload=()=>{
 loadData();
 loadHistoryFromSheet();
 };
+function toggleMenu(){
+document.querySelector(".sidebar").classList.toggle("active");
+}
