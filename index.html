@@ -6,16 +6,15 @@
 <title>Inventory System</title>
 
 <link rel="stylesheet" href="style.css">
-
 <script src="https://unpkg.com/html5-qrcode" defer></script>
-
 </head>
 
 <body>
 
+<button id="menuToggle" onclick="toggleMenu()">☰</button>
+
 <div class="container">
 
-<!-- SIDEBAR -->
 <div class="sidebar">
 <h2>INVENTORY</h2>
 <ul>
@@ -33,20 +32,9 @@
 <h2>Dashboard</h2>
 
 <div class="stats">
-<div class="card">
-<h3>Total Produk</h3>
-<p id="totalProduk">0</p>
-</div>
-
-<div class="card">
-<h3>Total Masuk</h3>
-<p id="totalMasuk">0</p>
-</div>
-
-<div class="card">
-<h3>Total Keluar</h3>
-<p id="totalKeluar">0</p>
-</div>
+<div class="card"><h3>Total Produk</h3><p id="totalProduk">0</p></div>
+<div class="card"><h3>Total Masuk</h3><p id="totalMasuk">0</p></div>
+<div class="card"><h3>Total Keluar</h3><p id="totalKeluar">0</p></div>
 </div>
 </div>
 
@@ -60,25 +48,15 @@
 <table>
 <thead>
 <tr>
-<th>No</th>
-<th>Kode</th>
-<th>Reff</th>
-<th>Nama</th>
-<th>UOM</th>
-<th>Awal</th>
-<th>Masuk</th>
-<th>Keluar</th>
-<th>Akhir</th>
+<th>No</th><th>Kode</th><th>Reff</th><th>Nama</th><th>UOM</th>
+<th>Awal</th><th>Masuk</th><th>Keluar</th><th>Akhir</th>
 </tr>
 </thead>
-
 <tbody id="dataProduk"></tbody>
 </table>
 </div>
 
-<!-- 🔥 PAGINATION PRODUK -->
 <div id="paginationProduk" class="pagination"></div>
-
 </div>
 
 <!-- SCANNER -->
@@ -88,19 +66,14 @@
 <div id="reader" class="reader-box"></div>
 
 <p id="hasilScan">Arahkan barcode ke kamera</p>
-
 <p>Kode: <b id="scanBarcode">-</b></p>
 <p>Nama: <b id="scanNama">-</b></p>
 
 <input type="number" id="qty" placeholder="Input Qty">
 
-<br><br>
-
 <button class="btn-masuk" onclick="setMode('masuk')">Masuk</button>
 <button class="btn-keluar" onclick="setMode('keluar')">Keluar</button>
 <button class="btn-so" onclick="setMode('so')">Stock Opname</button>
-
-<br><br>
 
 <button onclick="simpanTransaksi()">Simpan</button>
 </div>
@@ -109,7 +82,7 @@
 <div id="history" class="page">
 <h2>History Transaksi</h2>
 
-<div style="margin-bottom:10px;">
+<div class="filter-bar">
 <select id="filterBulan">
 <option value="">Semua Bulan</option>
 <option value="1">Jan</option>
@@ -127,43 +100,32 @@
 </select>
 
 <select id="filterJenis">
-<option value="">Semua Transaksi</option>
-<option value="masuk">Barang Masuk</option>
-<option value="keluar">Barang Keluar</option>
-<option value="so">Stock Opname</option>
+<option value="">Semua</option>
+<option value="masuk">Masuk</option>
+<option value="keluar">Keluar</option>
+<option value="so">SO</option>
 </select>
 
 <button onclick="filterHistory()">Filter</button>
-<button onclick="downloadExcel()">Download Excel</button>
 </div>
 
 <div class="table-container">
 <table>
 <thead>
 <tr>
-<th>No</th>
-<th>Tanggal</th>
-<th>Kode</th>
-<th>Nama</th>
-<th>Jenis</th>
-<th>Qty</th>
-<th>Aksi</th>
+<th>No</th><th>Tanggal</th><th>Kode</th><th>Nama</th><th>Jenis</th><th>Qty</th>
 </tr>
 </thead>
-
 <tbody id="dataHistory"></tbody>
 </table>
 </div>
 
-<!-- 🔥 PAGINATION HISTORY -->
 <div id="paginationHistory" class="pagination"></div>
-
 </div>
 
 </div>
 </div>
 
-<script src="script.js" defer></script>
-
+<script src="script.js"></script>
 </body>
 </html>
