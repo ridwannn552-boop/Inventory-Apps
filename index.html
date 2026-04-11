@@ -13,6 +13,8 @@
     #reader{
       width:100%;
       min-height:260px;
+      border-radius:10px;
+      background:#fafafa;
     }
 
     .btn-simpan{
@@ -20,6 +22,11 @@
       bottom:0;
       width:100%;
       z-index:10;
+      background:#4e73df;
+      color:white;
+      padding:12px;
+      font-weight:bold;
+      border-radius:10px;
     }
 
     #statusInfo{
@@ -27,6 +34,15 @@
       margin-top:10px;
       font-weight:bold;
       color:green;
+    }
+
+    input{
+      width:100%;
+      margin-top:10px;
+    }
+
+    .scanner-card{
+      padding-bottom:20px;
     }
   </style>
 </head>
@@ -58,11 +74,11 @@
   <p id="infoUser" style="font-size:12px; margin-bottom:10px;"></p>
 
   <ul>
-    <li class="active" onclick="showPage('dashboard', this)">Dashboard</li>
-    <li onclick="showPage('produk', this)">Data Produk</li>
-    <li onclick="showPage('scanner', this)">Scan</li>
-    <li onclick="showPage('pengajuan', this)">Pengajuan</li>
-    <li onclick="showPage('history', this)">History</li>
+    <li class="active" onclick="showPage('dashboard')">Dashboard</li>
+    <li onclick="showPage('produk')">Data Produk</li>
+    <li onclick="showPage('scanner')">Scan</li>
+    <li onclick="showPage('pengajuan')">Pengajuan</li>
+    <li onclick="showPage('history')">History</li>
   </ul>
 
   <button onclick="logout()">Logout</button>
@@ -74,9 +90,18 @@
 <section id="dashboard" class="page active">
   <h2>Dashboard</h2>
   <div class="stats">
-    <div class="card"><h3>Total Produk</h3><p id="totalProduk">0</p></div>
-    <div class="card"><h3>Total Masuk</h3><p id="totalMasuk">0</p></div>
-    <div class="card"><h3>Total Keluar</h3><p id="totalKeluar">0</p></div>
+    <div class="card">
+      <h3>Total Produk</h3>
+      <p id="totalProduk">0</p>
+    </div>
+    <div class="card">
+      <h3>Total Masuk</h3>
+      <p id="totalMasuk">0</p>
+    </div>
+    <div class="card">
+      <h3>Total Keluar</h3>
+      <p id="totalKeluar">0</p>
+    </div>
   </div>
 </section>
 
@@ -120,7 +145,7 @@
     <p>Kode: <b id="scanBarcode">-</b></p>
     <p>Nama: <b id="scanNama">-</b></p>
 
-    <input type="number" id="qty" placeholder="Qty" />
+    <input type="number" id="qty" placeholder="Input Qty" min="1" />
 
     <div class="scan-actions">
       <button onclick="setMode('masuk')">Masuk</button>
@@ -130,9 +155,35 @@
 
     <button class="btn-simpan" onclick="simpanTransaksi()">Simpan</button>
 
-    <!-- FEEDBACK -->
     <p id="statusInfo"></p>
 
+  </div>
+</section>
+
+<!-- PENGAJUAN -->
+<section id="pengajuan" class="page">
+  <h2>Pengajuan Barang</h2>
+
+  <div class="toolbar">
+    <input type="text" id="pengajuanKode" placeholder="Kode Barang" />
+    <input type="number" id="pengajuanQty" placeholder="Qty" />
+    <button onclick="kirimPengajuan()">Ajukan</button>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>User</th>
+          <th>Kode</th>
+          <th>Qty</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="dataPengajuan"></tbody>
+    </table>
   </div>
 </section>
 
@@ -140,23 +191,27 @@
 <section id="history" class="page">
   <h2>History</h2>
 
-  <button onclick="downloadMingguan()">Mingguan</button>
-  <button onclick="downloadBulanan()">Bulanan</button>
+  <div class="filter-bar">
+    <button onclick="downloadMingguan()">Mingguan</button>
+    <button onclick="downloadBulanan()">Bulanan</button>
+  </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>Tanggal</th>
-        <th>User</th>
-        <th>Kode</th>
-        <th>Nama</th>
-        <th>Jenis</th>
-        <th>Qty</th>
-      </tr>
-    </thead>
-    <tbody id="dataHistory"></tbody>
-  </table>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Tanggal</th>
+          <th>User</th>
+          <th>Kode</th>
+          <th>Nama</th>
+          <th>Jenis</th>
+          <th>Qty</th>
+        </tr>
+      </thead>
+      <tbody id="dataHistory"></tbody>
+    </table>
+  </div>
 </section>
 
 </main>
