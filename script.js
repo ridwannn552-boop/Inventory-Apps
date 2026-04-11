@@ -1,5 +1,5 @@
 // ==========================
-// DATA USER (LOGIN NIK)
+// DATA USER
 // ==========================
 const USERS = [
   { nik: "1001", password: "admin123", role: "admin", nama: "ADMIN", dept: "ALL" },
@@ -57,7 +57,6 @@ function toggleMenu(){
   document.querySelector(".sidebar").classList.toggle("active");
 }
 
-// ==========================
 function setupRole(){
   document.getElementById("infoUser").innerText =
     currentUser.nama + " (" + currentUser.dept + ")";
@@ -73,7 +72,7 @@ function showPage(id){
 }
 
 // ==========================
-// LOAD MASTER
+// LOAD DATA
 // ==========================
 async function loadData(){
   const res = await fetch(URL_PRODUK);
@@ -94,30 +93,15 @@ async function loadData(){
 }
 
 // ==========================
-// MODE DROPDOWN + WARNA
+// MODE
 // ==========================
 function changeMode(){
   const val = document.getElementById("modeSelect").value;
   modeTransaksi = val;
-
-  const select = document.getElementById("modeSelect");
-
-  if(val === "masuk"){
-    select.style.background = "#1cc88a";
-    select.style.color = "white";
-  }
-  else if(val === "keluar"){
-    select.style.background = "#e74a3b";
-    select.style.color = "white";
-  }
-  else{
-    select.style.background = "#f6c23e";
-    select.style.color = "black";
-  }
 }
 
 // ==========================
-// SCANNER FINAL + BEEP
+// SCANNER
 // ==========================
 function startScanner(){
   if(html5QrCode) return;
@@ -130,7 +114,6 @@ function startScanner(){
     (text)=>{
       const clean = text.trim().toUpperCase();
 
-      // 🔥 BEEP
       document.getElementById("beepSound").play();
 
       if(clean.startsWith("RAK")){
@@ -155,7 +138,7 @@ function startScanner(){
       document.getElementById("hasilScan").innerText="✅ Siap input";
     }
   ).catch(err=>{
-    alert("Kamera tidak bisa diakses!");
+    alert("Kamera error!");
   });
 }
 
@@ -166,7 +149,7 @@ function stopScanner(){
 }
 
 // ==========================
-// SIMPAN FINAL + RESET MODE
+// 🔥 FIX SIMPAN TOTAL
 // ==========================
 async function simpanTransaksi(){
   try{
@@ -183,7 +166,6 @@ async function simpanTransaksi(){
     }
 
     const payload = {
-      type:"transaksi",
       tanggal:new Date().toISOString(),
       user:currentUser.nik,
       nama_user: currentUser.nama,
@@ -194,59 +176,30 @@ async function simpanTransaksi(){
       rak:currentRak
     };
 
-    const res = await fetch(URL_SCRIPT,{
+    console.log("KIRIM:", payload);
+
+    await fetch(URL_SCRIPT,{
       method:"POST",
+      mode:"no-cors", // 🔥 ini kunci fix
       headers:{ "Content-Type":"application/json"},
       body:JSON.stringify(payload)
     });
 
-    const text = await res.text();
-    console.log("RESPON:", text);
+    document.getElementById("statusInfo").innerText = "✅ Data terkirim (cek spreadsheet)";
+    document.getElementById("statusInfo").style.color = "green";
 
-    // FEEDBACK
-    const status = document.getElementById("statusInfo");
-    status.innerText = "✅ Data berhasil disimpan";
-    status.style.color = "green";
-
-    // RESET FORM
+    // reset
     lastKodeScan="";
     document.getElementById("scanBarcode").innerText="-";
     document.getElementById("scanNama").innerText="-";
     document.getElementById("qty").value="";
 
-    // RESET MODE
-    document.getElementById("modeSelect").value="masuk";
-    changeMode();
-
-    loadHistoryRealtime();
-
   }catch(err){
-    console.error(err);
-    document.getElementById("statusInfo").innerText="❌ Gagal simpan";
+    console.error("ERROR:", err);
+
+    document.getElementById("statusInfo").innerText = "❌ Gagal kirim data";
+    document.getElementById("statusInfo").style.color = "red";
   }
-}
-
-// ==========================
-async function loadHistoryRealtime(){
-  const res = await fetch(URL_SCRIPT);
-  const json = await res.json();
-
-  historyTransaksi = json.data || [];
-
-  let html="";
-  historyTransaksi.forEach((h,i)=>{
-    html+=`
-    <tr>
-      <td>${i+1}</td>
-      <td>${h.tanggal}</td>
-      <td>${h.user}</td>
-      <td>${h.kode}</td>
-      <td>${h.jenis}</td>
-      <td>${h.qty}</td>
-    </tr>`;
-  });
-
-  document.getElementById("dataHistory").innerHTML = html;
 }
 
 // ==========================
@@ -263,8 +216,5 @@ window.onload = async ()=>{
   }
 
   await loadData();
-  loadHistoryRealtime();
-
-  // set default mode
   setTimeout(()=> changeMode(),500);
 };
