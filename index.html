@@ -36,7 +36,7 @@
       color:green;
     }
 
-    input{
+    input, select{
       width:100%;
       margin-top:10px;
     }
@@ -48,6 +48,11 @@
 </head>
 
 <body>
+
+<!-- 🔊 SOUND -->
+<audio id="beepSound">
+  <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
+</audio>
 
 <!-- LOGIN -->
 <div id="loginPage" style="padding:40px;text-align:center;">
@@ -147,11 +152,12 @@
 
     <input type="number" id="qty" placeholder="Input Qty" min="1" />
 
-    <div class="scan-actions">
-      <button onclick="setMode('masuk')">Masuk</button>
-      <button onclick="setMode('keluar')">Keluar</button>
-      <button onclick="setMode('so')">Stock Opname</button>
-    </div>
+    <!-- 🔥 DROPDOWN MODE (PENGGANTI TOMBOL) -->
+    <select id="modeSelect" onchange="changeMode()">
+      <option value="masuk">Masuk</option>
+      <option value="keluar">Keluar</option>
+      <option value="so">Stock Opname</option>
+    </select>
 
     <button class="btn-simpan" onclick="simpanTransaksi()">Simpan</button>
 
