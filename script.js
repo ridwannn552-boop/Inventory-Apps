@@ -10,8 +10,6 @@ const USERS = [
 ];
 
 // ==========================
-// GLOBAL
-// ==========================
 let produk = [];
 let produkMaster = [];
 let historyTransaksi = [];
@@ -20,13 +18,11 @@ let dataPengajuan = [];
 
 let currentUser = null;
 let currentRak = "";
-
 let lastKodeScan = "";
 let modeTransaksi = "masuk";
 
 let html5QrCode = null;
 
-// URL
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzEHh3in4BFoFyREjL2vzzqWGK8GEHl1kjndJ0P7b-Oawwt3we1_K4VNM3-0d-cGiVI/exec";
 const URL_PRODUK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&output=csv";
 
@@ -51,11 +47,7 @@ function loginUser(){
   document.getElementById("app").style.display = "block";
 
   setupRole();
-
-  // 🔥 AUTO MASUK SCANNER
-  setTimeout(()=>{
-    showPage("scanner");
-  },500);
+  setTimeout(()=> showPage("scanner"),500);
 }
 
 function logout(){
@@ -64,14 +56,10 @@ function logout(){
 }
 
 // ==========================
-// MENU MOBILE FIX
-// ==========================
 function toggleMenu(){
   document.querySelector(".sidebar").classList.toggle("active");
 }
 
-// ==========================
-// ROLE
 // ==========================
 function setupRole(){
   const isAdmin = currentUser.role === "admin";
@@ -86,17 +74,12 @@ function setupRole(){
     }
   });
 
-  // tampil nama user
-  const info = document.getElementById("infoUser");
-  if(info){
-    info.innerText = currentUser.nama + " (" + currentUser.dept + ")";
-  }
+  document.getElementById("infoUser").innerText =
+    currentUser.nama + " (" + currentUser.dept + ")";
 }
 
 // ==========================
-// NAVIGASI
-// ==========================
-function showPage(id, el){
+function showPage(id){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 
@@ -104,8 +87,6 @@ function showPage(id, el){
   else stopScanner();
 }
 
-// ==========================
-// LOAD DATA
 // ==========================
 async function loadData(){
   const res = await fetch(URL_PRODUK);
@@ -119,51 +100,18 @@ async function loadData(){
     if(!c[1]) continue;
 
     produkMaster.push({
-      kode: c[1],
+      kode: c[1].trim().toUpperCase(), // FIX BARCODE
       nama: c[3],
       awal: parseInt(c[5])||0
     });
   }
-
-  hitungUlangProduk();
 }
 
 // ==========================
-// REALTIME
-// ==========================
-async function loadHistoryRealtime(){
-  const res = await fetch(URL_SCRIPT);
-  const json = await res.json();
-
-  historyTransaksi = json.data || [];
-
-  if(currentUser.role !== "admin"){
-    historyTransaksi = historyTransaksi.filter(h => h.user === currentUser.nik);
-  }
-
-  historyFiltered = [...historyTransaksi].reverse();
-
-  hitungUlangProduk();
-  tampilHistory();
-}
-
-// ==========================
-// AUTO SYNC
-// ==========================
-setInterval(()=>{
-  if(currentUser){
-    loadHistoryRealtime();
-    loadPengajuan();
-  }
-},3000);
-
-// ==========================
-// SCANNER FIX TOTAL
+// SCANNER FINAL
 // ==========================
 function startScanner(){
   if(html5QrCode) return;
-
-  console.log("START SCANNER");
 
   html5QrCode = new Html5Qrcode("reader");
 
@@ -171,74 +119,116 @@ function startScanner(){
     { facingMode:"environment"},
     { fps:10 },
     (text)=>{
-      console.log("SCAN:", text);
-
       const clean = text.trim().toUpperCase();
 
       if(clean.startsWith("RAK")){
         currentRak = clean;
-        document.getElementById("hasilScan").innerText="Rak: "+clean;
+        document.getElementById("hasilScan").innerText="📍 "+clean;
         return;
       }
 
       const item = produkMaster.find(p=>p.kode===clean);
-      if(!item) return;
+
+      if(!item){
+        document.getElementById("hasilScan").innerText="❌ Tidak ditemukan";
+        return;
+      }
 
       lastKodeScan = item.kode;
 
       document.getElementById("scanBarcode").innerText=item.kode;
       document.getElementById("scanNama").innerText=item.nama;
       document.getElementById("qty").value=1;
-    },
-    (err)=>{
-      console.log("SCAN ERROR:", err);
+
+      document.getElementById("hasilScan").innerText="✅ Siap input";
     }
   ).catch(err=>{
-    console.error("GAGAL CAMERA:", err);
     alert("Kamera tidak bisa diakses!");
   });
 }
 
 function stopScanner(){
   if(html5QrCode){
-    html5QrCode.stop().then(()=>{
-      html5QrCode=null;
-    });
+    html5QrCode.stop().then(()=> html5QrCode=null);
   }
 }
 
 // ==========================
-// SIMPAN
+// SIMPAN FINAL (ANTI GAGAL)
 // ==========================
 async function simpanTransaksi(){
-  const qty = parseInt(document.getElementById("qty").value);
+  try{
+    const qty = parseInt(document.getElementById("qty").value);
 
-  const item = produkMaster.find(p=>p.kode===lastKodeScan);
-  if(!item) return alert("Scan dulu");
+    if(!lastKodeScan){
+      alert("Scan dulu!");
+      return;
+    }
 
-  await fetch(URL_SCRIPT,{
-    method:"POST",
-    headers:{ "Content-Type":"application/json"},
-    body:JSON.stringify({
+    if(!qty || qty <= 0){
+      alert("Qty tidak valid!");
+      return;
+    }
+
+    const payload = {
       type:"transaksi",
       tanggal:new Date().toISOString(),
       user:currentUser.nik,
       nama_user: currentUser.nama,
       dept: currentUser.dept,
-      kode:item.kode,
-      nama:item.nama,
+      kode:lastKodeScan,
       jenis:modeTransaksi,
       qty:qty,
       rak:currentRak
-    })
-  });
+    };
 
-  alert("Tersimpan");
-  loadHistoryRealtime();
+    const res = await fetch(URL_SCRIPT,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+
+    const text = await res.text();
+    console.log("RESPON:", text);
+
+    document.getElementById("statusInfo").innerText = "✅ Data tersimpan";
+
+    lastKodeScan="";
+    document.getElementById("scanBarcode").innerText="-";
+    document.getElementById("scanNama").innerText="-";
+    document.getElementById("qty").value="";
+
+    loadHistoryRealtime();
+
+  }catch(err){
+    console.error(err);
+    alert("❌ Gagal simpan");
+  }
 }
 
 // ==========================
-// INIT
+async function loadHistoryRealtime(){
+  const res = await fetch(URL_SCRIPT);
+  const json = await res.json();
+
+  historyTransaksi = json.data || [];
+
+  let html="";
+  historyTransaksi.forEach((h,i)=>{
+    html+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${h.tanggal}</td>
+      <td>${h.user}</td>
+      <td>${h.kode}</td>
+      <td>${h.jenis}</td>
+      <td>${h.qty}</td>
+    </tr>`;
+  });
+
+  document.getElementById("dataHistory").innerHTML = html;
+}
+
 // ==========================
 window.onload = async ()=>{
   const saved=localStorage.getItem("userLogin");
@@ -249,14 +239,9 @@ window.onload = async ()=>{
     document.getElementById("app").style.display="block";
 
     setupRole();
-
-    // 🔥 AUTO START SCAN
-    setTimeout(()=>{
-      showPage("scanner");
-    },800);
+    setTimeout(()=> showPage("scanner"),800);
   }
 
   await loadData();
-  await loadHistoryRealtime();
-  loadPengajuan();
+  loadHistoryRealtime();
 };
