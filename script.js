@@ -1,343 +1,122 @@
+// ==========================
+// GLOBAL
+// ==========================
 let produk = [];
 let produkMaster = [];
 let historyTransaksi = [];
 let historyFiltered = [];
+let dataPengajuan = [];
+
+let currentUser = "";
+let currentRak = "";
 
 let lastKodeScan = "";
 let modeTransaksi = "masuk";
 
 let html5QrCode = null;
-let lastScan = "";
-
-let currentPageProduk = 1;
-let currentPageHistory = 1;
-const perPage = 40;
 
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzEHh3in4BFoFyREjL2vzzqWGK8GEHl1kjndJ0P7b-Oawwt3we1_K4VNM3-0d-cGiVI/exec";
-const URL_HISTORY_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=657187893&output=csv";
 const URL_PRODUK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&output=csv";
 
-const audioScan = new Audio("https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg");
+// ==========================
+// LOGIN
+// ==========================
+function loginUser(){
+  const nama = document.getElementById("loginNama").value.trim();
+  if(!nama) return alert("Isi nama!");
+
+  currentUser = nama;
+  localStorage.setItem("userLogin", nama);
+
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("app").style.display = "block";
+}
+
+function logout(){
+  localStorage.removeItem("userLogin");
+  location.reload();
+}
 
 // ==========================
 // NAVIGASI
 // ==========================
 function showPage(id, el){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  const page = document.getElementById(id);
-  if(page) page.classList.add("active");
+  document.getElementById(id).classList.add("active");
 
   document.querySelectorAll(".sidebar li").forEach(li => li.classList.remove("active"));
   if(el) el.classList.add("active");
 
-  if(id === "scanner"){
-    startScanner();
-  }else{
-    stopScanner();
-  }
-
-  const sidebar = document.querySelector(".sidebar");
-  if(sidebar) sidebar.classList.remove("active");
-}
-
-function toggleMenu(){
-  const sidebar = document.querySelector(".sidebar");
-  if(sidebar) sidebar.classList.toggle("active");
-}
-
-// ==========================
-// MODE
-// ==========================
-function setMode(mode){
-  modeTransaksi = mode;
-  const hasil = document.getElementById("hasilScan");
-  if(hasil) hasil.innerText = "Mode: " + mode;
-}
-
-// ==========================
-// CSV PARSER
-// ==========================
-function parseCSV(str){
-  const rows = [];
-  let row = [];
-  let current = "";
-  let insideQuotes = false;
-
-  for(let i = 0; i < str.length; i++){
-    const char = str[i];
-    const next = str[i + 1];
-
-    if(char === '"'){
-      if(insideQuotes && next === '"'){
-        current += '"';
-        i++;
-      }else{
-        insideQuotes = !insideQuotes;
-      }
-    }else if(char === "," && !insideQuotes){
-      row.push(current);
-      current = "";
-    }else if((char === "\n" || char === "\r") && !insideQuotes){
-      if(char === "\r" && next === "\n"){
-        i++;
-      }
-      row.push(current);
-      rows.push(row);
-      row = [];
-      current = "";
-    }else{
-      current += char;
-    }
-  }
-
-  if(current.length > 0 || row.length > 0){
-    row.push(current);
-    rows.push(row);
-  }
-
-  return rows;
+  if(id === "scanner") startScanner();
+  else stopScanner();
 }
 
 // ==========================
 // LOAD MASTER
 // ==========================
-async function loadData(useCache = true){
-  try{
-    if(useCache){
-      const cache = localStorage.getItem("produkMaster");
-      if(cache){
-        produkMaster = JSON.parse(cache);
-        hitungUlangProduk();
-        return;
-      }
-    }
+async function loadData(){
+  const res = await fetch(URL_PRODUK);
+  const text = await res.text();
+  const rows = text.split("\n");
 
-    const res = await fetch(URL_PRODUK, { cache: "no-store" });
-    const text = await res.text();
-    const rows = parseCSV(text);
-
-    produkMaster = [];
-
-    for(let i = 1; i < rows.length; i++){
-      const c = rows[i];
-      if(!c || !c[1]) continue;
-
-      const kode = (c[1] || "").trim().toUpperCase();
-      if(!kode || kode === "KODE") continue;
-
-      produkMaster.push({
-        kode: kode,
-        reff: (c[2] || "").trim(),
-        nama: (c[3] || "").trim(),
-        uom: (c[4] || "").trim(),
-        awal: parseInt(c[5], 10) || 0
-      });
-    }
-
-    localStorage.setItem("produkMaster", JSON.stringify(produkMaster));
-    hitungUlangProduk();
-  }catch(err){
-    console.error("Gagal load master:", err);
-    alert("Gagal memuat data master.");
-  }
-}
-
-// ==========================
-// LOAD HISTORY
-// ==========================
-async function loadHistoryFromSheet(useCache = true){
-  try{
-    if(useCache){
-      const cache = localStorage.getItem("history");
-      if(cache){
-        historyTransaksi = JSON.parse(cache);
-        historyFiltered = [...historyTransaksi].reverse();
-        hitungUlangProduk();
-        tampilHistory();
-        return;
-      }
-    }
-
-    const res = await fetch(URL_HISTORY_CSV, { cache: "no-store" });
-    const text = await res.text();
-    const rows = parseCSV(text);
-
-    historyTransaksi = [];
-
-    if(rows.length < 2){
-      historyFiltered = [];
-      localStorage.setItem("history", JSON.stringify(historyTransaksi));
-      hitungUlangProduk();
-      tampilHistory();
-      return;
-    }
-
-    const header = rows[0].map(h => String(h || "").trim().toUpperCase());
-
-    const idxTanggal = header.indexOf("TANGGAL");
-    const idxKode = header.indexOf("BARCODE") !== -1 ? header.indexOf("BARCODE") : header.indexOf("KODE");
-    const idxReff = header.indexOf("REF") !== -1 ? header.indexOf("REF") : header.indexOf("REFF");
-    const idxNama = header.indexOf("NAMA BARANG") !== -1 ? header.indexOf("NAMA BARANG") : header.indexOf("NAMA");
-    const idxJenis = header.indexOf("JENIS");
-    const idxQty = header.indexOf("QTY");
-
-    for(let i = 1; i < rows.length; i++){
-      const c = rows[i];
-      if(!c || !c.length) continue;
-
-      const tanggal = idxTanggal >= 0 ? String(c[idxTanggal] || "").trim() : "";
-      const kode = idxKode >= 0 ? String(c[idxKode] || "").trim().toUpperCase() : "";
-      const reff = idxReff >= 0 ? String(c[idxReff] || "").trim() : "";
-      const nama = idxNama >= 0 ? String(c[idxNama] || "").trim() : "";
-      const jenis = idxJenis >= 0 ? String(c[idxJenis] || "").trim().toLowerCase() : "";
-      const qty = idxQty >= 0 ? parseInt(c[idxQty], 10) || 0 : 0;
-
-      if(!kode) continue;
-      if(kode === "BARCODE" || kode === "KODE") continue;
-      if(tanggal.toUpperCase() === "TANGGAL") continue;
-
-      historyTransaksi.push({
-        tanggal,
-        kode,
-        reff,
-        nama,
-        jenis,
-        qty
-      });
-    }
-
-    localStorage.setItem("history", JSON.stringify(historyTransaksi));
-    historyFiltered = [...historyTransaksi].reverse();
-
-    hitungUlangProduk();
-    tampilHistory();
-  }catch(err){
-    console.error("Gagal load history:", err);
-    alert("Gagal memuat data history.");
-  }
-}
-
-// ==========================
-// REFRESH
-// ==========================
-function refreshMasterData(){
-  localStorage.removeItem("produkMaster");
   produkMaster = [];
-  produk = [];
-  loadData(false);
-}
 
-function refreshHistoryData(){
-  localStorage.removeItem("history");
-  historyTransaksi = [];
-  historyFiltered = [];
-  loadHistoryFromSheet(false);
+  for(let i=1;i<rows.length;i++){
+    const c = rows[i].split(",");
+    if(!c[1]) continue;
+
+    produkMaster.push({
+      kode: c[1],
+      nama: c[3],
+      awal: parseInt(c[5])||0
+    });
+  }
+
+  hitungUlangProduk();
 }
 
 // ==========================
-// HITUNG ULANG STOK
+// REALTIME LOAD
+// ==========================
+async function loadHistoryRealtime(){
+  const res = await fetch(URL_SCRIPT);
+  const json = await res.json();
+
+  historyTransaksi = json.data || [];
+  historyFiltered = [...historyTransaksi].reverse();
+
+  hitungUlangProduk();
+  tampilHistory();
+}
+
+// ==========================
+// AUTO SYNC
+// ==========================
+setInterval(()=>{
+  loadHistoryRealtime();
+  loadPengajuan();
+},3000);
+
+// ==========================
+// HITUNG STOK
 // ==========================
 function hitungUlangProduk(){
   produk = JSON.parse(JSON.stringify(produkMaster));
-  const map = {};
 
-  for(let i = 0; i < produk.length; i++){
-    const p = produk[i];
-    p.masuk = 0;
-    p.keluar = 0;
-    p.akhir = p.awal;
-    map[p.kode] = p;
-  }
+  produk.forEach(p=>{
+    p.masuk=0; p.keluar=0; p.akhir=p.awal;
+  });
 
-  for(let i = 0; i < historyTransaksi.length; i++){
-    const h = historyTransaksi[i];
-    const item = map[h.kode];
-    if(!item) continue;
+  historyTransaksi.forEach(h=>{
+    const item = produk.find(p=>p.kode===h.kode);
+    if(!item) return;
 
-    if(h.jenis === "masuk"){
-      item.masuk += h.qty;
-      item.akhir += h.qty;
-    }else if(h.jenis === "keluar"){
-      item.keluar += h.qty;
-      item.akhir -= h.qty;
-    }else if(h.jenis === "so"){
-      item.akhir = h.qty;
-    }
-  }
+    if(h.jenis==="masuk"){ item.masuk+=h.qty; item.akhir+=h.qty;}
+    if(h.jenis==="keluar"){ item.keluar+=h.qty; item.akhir-=h.qty;}
+    if(h.jenis==="so"){ item.akhir=h.qty;}
+  });
 
-  currentPageProduk = 1;
   tampilProduk();
-  updateDashboard();
-}
-
-// ==========================
-// DASHBOARD
-// ==========================
-function updateDashboard(){
-  let totalMasuk = 0;
-  let totalKeluar = 0;
-
-  for(let i = 0; i < produk.length; i++){
-    totalMasuk += produk[i].masuk;
-    totalKeluar += produk[i].keluar;
-  }
-
-  const totalProdukEl = document.getElementById("totalProduk");
-  const totalMasukEl = document.getElementById("totalMasuk");
-  const totalKeluarEl = document.getElementById("totalKeluar");
-
-  if(totalProdukEl) totalProdukEl.innerText = produk.length;
-  if(totalMasukEl) totalMasukEl.innerText = totalMasuk;
-  if(totalKeluarEl) totalKeluarEl.innerText = totalKeluar;
-}
-
-// ==========================
-// SEARCH PRODUK
-// ==========================
-function searchProduk(){
-  const input = document.getElementById("searchInput");
-  const keyword = input ? input.value.trim().toLowerCase() : "";
-
-  if(!keyword){
-    hitungUlangProduk();
-    return;
-  }
-
-  const base = JSON.parse(JSON.stringify(produkMaster));
-  const map = {};
-
-  for(let i = 0; i < base.length; i++){
-    base[i].masuk = 0;
-    base[i].keluar = 0;
-    base[i].akhir = base[i].awal;
-    map[base[i].kode] = base[i];
-  }
-
-  for(let i = 0; i < historyTransaksi.length; i++){
-    const h = historyTransaksi[i];
-    const item = map[h.kode];
-    if(!item) continue;
-
-    if(h.jenis === "masuk"){
-      item.masuk += h.qty;
-      item.akhir += h.qty;
-    }else if(h.jenis === "keluar"){
-      item.keluar += h.qty;
-      item.akhir -= h.qty;
-    }else if(h.jenis === "so"){
-      item.akhir = h.qty;
-    }
-  }
-
-  produk = base.filter(p =>
-    p.kode.toLowerCase().includes(keyword) ||
-    p.nama.toLowerCase().includes(keyword) ||
-    p.reff.toLowerCase().includes(keyword)
-  );
-
-  currentPageProduk = 1;
-  tampilProduk();
-  updateDashboard();
 }
 
 // ==========================
@@ -345,217 +124,24 @@ function searchProduk(){
 // ==========================
 function tampilProduk(){
   const t = document.getElementById("dataProduk");
-  if(!t) return;
+  let html="";
 
-  const start = (currentPageProduk - 1) * perPage;
-  const data = produk.slice(start, start + perPage);
+  produk.forEach((p,i)=>{
+    const warna = p.akhir < 5 ? "style='color:red;font-weight:bold'" : "";
 
-  let html = "";
-
-  for(let i = 0; i < data.length; i++){
-    const p = data[i];
-    html += `
-      <tr>
-        <td>${start + i + 1}</td>
-        <td>${escapeHtml(p.kode)}</td>
-        <td>${escapeHtml(p.reff)}</td>
-        <td>${escapeHtml(p.nama)}</td>
-        <td>${escapeHtml(p.uom)}</td>
-        <td>${p.awal}</td>
-        <td>${p.masuk}</td>
-        <td>${p.keluar}</td>
-        <td>${p.akhir}</td>
-      </tr>
-    `;
-  }
-
-  if(!html){
-    html = `<tr><td colspan="9" style="text-align:center;">Data tidak ditemukan</td></tr>`;
-  }
-
-  t.innerHTML = html;
-  renderPaginationProduk();
-}
-
-function renderPaginationProduk(){
-  const el = document.getElementById("paginationProduk");
-  if(!el) return;
-
-  const totalPage = Math.ceil(produk.length / perPage);
-  if(totalPage <= 1){
-    el.innerHTML = "";
-    return;
-  }
-
-  let html = `<button onclick="changePageProduk(${currentPageProduk - 1})">Prev</button>`;
-
-  for(let i = 1; i <= totalPage; i++){
-    html += `<button class="${i === currentPageProduk ? "active" : ""}" onclick="changePageProduk(${i})">${i}</button>`;
-  }
-
-  html += `<button onclick="changePageProduk(${currentPageProduk + 1})">Next</button>`;
-  el.innerHTML = html;
-}
-
-function changePageProduk(page){
-  const total = Math.ceil(produk.length / perPage);
-  if(page < 1 || page > total) return;
-
-  currentPageProduk = page;
-  tampilProduk();
-
-  const content = document.querySelector(".content");
-  if(content) content.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// ==========================
-// FILTER HISTORY
-// ==========================
-function filterHistory(){
-  const bulanEl = document.getElementById("filterBulan");
-  const jenisEl = document.getElementById("filterJenis");
-  const keywordEl = document.getElementById("filterKeyword");
-
-  const bulan = bulanEl ? bulanEl.value : "";
-  const jenis = jenisEl ? jenisEl.value.trim().toLowerCase() : "";
-  const keyword = keywordEl ? keywordEl.value.trim().toLowerCase() : "";
-
-  historyFiltered = [...historyTransaksi].reverse().filter(item => {
-    let cocokBulan = true;
-    let cocokJenis = true;
-    let cocokKeyword = true;
-
-    if(bulan){
-      const tanggal = item.tanggal || "";
-      const match = tanggal.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-      if(match){
-        const bulanData = String(parseInt(match[2], 10));
-        cocokBulan = bulanData === bulan;
-      }
-    }
-
-    if(jenis){
-      cocokJenis = item.jenis === jenis;
-    }
-
-    if(keyword){
-      cocokKeyword =
-        item.kode.toLowerCase().includes(keyword) ||
-        item.nama.toLowerCase().includes(keyword) ||
-        item.reff.toLowerCase().includes(keyword);
-    }
-
-    return cocokBulan && cocokJenis && cocokKeyword;
+    html+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${p.kode}</td>
+      <td>${p.nama}</td>
+      <td>${p.awal}</td>
+      <td>${p.masuk}</td>
+      <td>${p.keluar}</td>
+      <td ${warna}>${p.akhir}</td>
+    </tr>`;
   });
 
-  currentPageHistory = 1;
-  tampilHistory();
-}
-
-function resetFilterHistory(){
-  const bulanEl = document.getElementById("filterBulan");
-  const jenisEl = document.getElementById("filterJenis");
-  const keywordEl = document.getElementById("filterKeyword");
-
-  if(bulanEl) bulanEl.value = "";
-  if(jenisEl) jenisEl.value = "";
-  if(keywordEl) keywordEl.value = "";
-
-  historyFiltered = [...historyTransaksi].reverse();
-  currentPageHistory = 1;
-  tampilHistory();
-}
-
-// ==========================
-// TAMPIL HISTORY
-// ==========================
-function tampilHistory(){
-  const t = document.getElementById("dataHistory");
-  if(!t) return;
-
-  const source = historyFiltered;
-  const start = (currentPageHistory - 1) * perPage;
-  const data = source.slice(start, start + perPage);
-
-  let html = "";
-
-  for(let i = 0; i < data.length; i++){
-    const h = data[i];
-    html += `
-      <tr>
-        <td>${start + i + 1}</td>
-        <td>${escapeHtml(h.tanggal)}</td>
-        <td>${escapeHtml(h.kode)}</td>
-        <td>${escapeHtml(h.reff)}</td>
-        <td>${escapeHtml(h.nama)}</td>
-        <td>${escapeHtml(h.jenis)}</td>
-        <td>${h.qty}</td>
-      </tr>
-    `;
-  }
-
-  if(!html){
-    html = `<tr><td colspan="7" style="text-align:center;">History tidak ditemukan</td></tr>`;
-  }
-
-  t.innerHTML = html;
-  renderPaginationHistory(source.length);
-}
-
-function renderPaginationHistory(total){
-  const el = document.getElementById("paginationHistory");
-  if(!el) return;
-
-  const totalPage = Math.ceil(total / perPage);
-  if(totalPage <= 1){
-    el.innerHTML = "";
-    return;
-  }
-
-  let html = `<button onclick="changePageHistory(${currentPageHistory - 1})">Prev</button>`;
-
-  for(let i = 1; i <= totalPage; i++){
-    html += `<button class="${i === currentPageHistory ? "active" : ""}" onclick="changePageHistory(${i})">${i}</button>`;
-  }
-
-  html += `<button onclick="changePageHistory(${currentPageHistory + 1})">Next</button>`;
-  el.innerHTML = html;
-}
-
-function changePageHistory(page){
-  const total = Math.ceil(historyFiltered.length / perPage);
-  if(page < 1 || page > total) return;
-
-  currentPageHistory = page;
-  tampilHistory();
-
-  const content = document.querySelector(".content");
-  if(content) content.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// ==========================
-// DOWNLOAD CSV
-// ==========================
-function downloadExcel(){
-  const data = historyFiltered;
-  let csv = "Tanggal,Barcode,Ref,Nama Barang,Jenis,Qty\n";
-
-  for(let i = 0; i < data.length; i++){
-    const item = data[i];
-    csv += `"${safeCsv(item.tanggal)}","${safeCsv(item.kode)}","${safeCsv(item.reff)}","${safeCsv(item.nama)}","${safeCsv(item.jenis)}","${item.qty}"\n`;
-  }
-
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "history_transaksi.csv";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  URL.revokeObjectURL(url);
+  t.innerHTML=html;
 }
 
 // ==========================
@@ -564,68 +150,36 @@ function downloadExcel(){
 function startScanner(){
   if(html5QrCode) return;
 
-  const reader = document.getElementById("reader");
-  if(!reader) return;
-
   html5QrCode = new Html5Qrcode("reader");
 
   html5QrCode.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    (decodedText) => {
-      const clean = decodedText.trim().toUpperCase();
+    { facingMode:"environment"},
+    { fps:10 },
+    (text)=>{
+      const clean = text.trim().toUpperCase();
 
-      if(clean === lastScan) return;
-      lastScan = clean;
-
-      const item = produkMaster.find(p => p.kode === clean);
-
-      if(!item){
-        const hasil = document.getElementById("hasilScan");
-        if(hasil) hasil.innerText = "❌ Tidak ditemukan";
-        setTimeout(() => {
-          lastScan = "";
-        }, 1000);
+      if(clean.startsWith("RAK")){
+        currentRak = clean;
+        document.getElementById("hasilScan").innerText="Rak: "+clean;
         return;
       }
 
-      audioScan.currentTime = 0;
-      audioScan.play().catch(() => {});
+      const item = produkMaster.find(p=>p.kode===clean);
+      if(!item) return;
 
       lastKodeScan = item.kode;
 
-      const barcodeEl = document.getElementById("scanBarcode");
-      const namaEl = document.getElementById("scanNama");
-      const qtyEl = document.getElementById("qty");
-      const hasilEl = document.getElementById("hasilScan");
-
-      if(barcodeEl) barcodeEl.innerText = item.kode;
-      if(namaEl) namaEl.innerText = item.nama;
-      if(qtyEl) qtyEl.value = 1;
-      if(hasilEl) hasilEl.innerText = "✅ Barcode terbaca";
-
-      setTimeout(() => {
-        lastScan = "";
-      }, 1000);
-    },
-    () => {}
-  ).catch(err => {
-    console.error("Scanner error:", err);
-    const hasil = document.getElementById("hasilScan");
-    if(hasil) hasil.innerText = "Kamera tidak bisa dibuka";
-  });
+      document.getElementById("scanBarcode").innerText=item.kode;
+      document.getElementById("scanNama").innerText=item.nama;
+      document.getElementById("qty").value=1;
+    }
+  );
 }
 
 function stopScanner(){
   if(html5QrCode){
-    html5QrCode.stop()
-      .then(() => {
-        html5QrCode.clear();
-        html5QrCode = null;
-      })
-      .catch(() => {
-        html5QrCode = null;
-      });
+    html5QrCode.stop();
+    html5QrCode=null;
   }
 }
 
@@ -633,117 +187,189 @@ function stopScanner(){
 // SIMPAN TRANSAKSI
 // ==========================
 async function simpanTransaksi(){
-  try{
-    const qtyEl = document.getElementById("qty");
-    const qty = parseInt(qtyEl ? qtyEl.value : "", 10);
+  const qty = parseInt(document.getElementById("qty").value);
 
-    if(!lastKodeScan){
-      alert("Scan dulu!");
-      return;
-    }
+  const item = produkMaster.find(p=>p.kode===lastKodeScan);
+  if(!item) return alert("Scan dulu");
 
-    if(!qty || qty <= 0){
-      alert("Qty tidak valid!");
-      return;
-    }
+  await fetch(URL_SCRIPT,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json"},
+    body:JSON.stringify({
+      type:"transaksi",
+      tanggal:new Date().toISOString(),
+      user:currentUser,
+      kode:item.kode,
+      nama:item.nama,
+      jenis:modeTransaksi,
+      qty:qty,
+      rak:currentRak
+    })
+  });
 
-    const item = produkMaster.find(p => p.kode === lastKodeScan);
-    if(!item){
-      alert("Data produk tidak ditemukan.");
-      return;
-    }
+  loadHistoryRealtime();
+  alert("Tersimpan");
+}
 
-    const payload = {
-      kode: item.kode,
-      reff: item.reff,
-      nama: item.nama,
-      jenis: modeTransaksi,
-      qty: qty
-    };
+// ==========================
+// MODE
+// ==========================
+function setMode(mode){
+  modeTransaksi=mode;
+}
 
-    console.log("KIRIM DATA:", payload);
-    console.log("URL_SCRIPT:", URL_SCRIPT);
+// ==========================
+// HISTORY
+// ==========================
+function tampilHistory(){
+  const t = document.getElementById("dataHistory");
+  let html="";
 
-    const response = await fetch(URL_SCRIPT, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify(payload)
-    });
+  historyFiltered.forEach((h,i)=>{
+    html+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${h.tanggal}</td>
+      <td>${h.user||"-"}</td>
+      <td>${h.kode}</td>
+      <td>${h.nama}</td>
+      <td>${h.jenis}</td>
+      <td>${h.qty}</td>
+    </tr>`;
+  });
 
-    const resultText = await response.text();
-    console.log("RESPON APPS SCRIPT RAW:", resultText);
+  t.innerHTML=html;
+}
 
-    if(!response.ok){
-      throw new Error("HTTP error " + response.status + " | " + resultText);
-    }
+// ==========================
+// PENGAJUAN
+// ==========================
+async function kirimPengajuan(){
+  const kode=document.getElementById("pengajuanKode").value;
+  const qty=parseInt(document.getElementById("pengajuanQty").value);
 
-    let result;
-    try{
-      result = JSON.parse(resultText);
-    }catch(parseErr){
-      throw new Error("Respon Apps Script bukan JSON valid: " + resultText);
-    }
+  await fetch(URL_SCRIPT,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json"},
+    body:JSON.stringify({
+      type:"pengajuan",
+      tanggal:new Date().toISOString(),
+      user:currentUser,
+      kode:kode,
+      qty:qty,
+      status:"pending"
+    })
+  });
 
-    if(!result.success){
-      throw new Error(result.message || "Apps Script gagal menyimpan data");
-    }
+  loadPengajuan();
+}
 
-    // update tampilan langsung
-    const sekarang = new Date();
-    const tanggalFormat =
-      String(sekarang.getDate()).padStart(2, "0") + "/" +
-      String(sekarang.getMonth() + 1).padStart(2, "0") + "/" +
-      sekarang.getFullYear() + " " +
-      String(sekarang.getHours()).padStart(2, "0") + ":" +
-      String(sekarang.getMinutes()).padStart(2, "0") + ":" +
-      String(sekarang.getSeconds()).padStart(2, "0");
+async function loadPengajuan(){
+  const res = await fetch(URL_SCRIPT+"?type=pengajuan");
+  const json = await res.json();
 
-    const dataBaru = {
-      tanggal: tanggalFormat,
-      kode: item.kode,
-      reff: item.reff,
-      nama: item.nama,
-      jenis: modeTransaksi,
-      qty: qty
-    };
+  dataPengajuan = json.data||[];
+  tampilPengajuan();
+}
 
-    historyTransaksi.push(dataBaru);
-    historyFiltered = [...historyTransaksi].reverse();
-    localStorage.setItem("history", JSON.stringify(historyTransaksi));
+function tampilPengajuan(){
+  const t = document.getElementById("dataPengajuan");
+  let html="";
 
-    hitungUlangProduk();
-    tampilHistory();
+  dataPengajuan.forEach((p,i)=>{
+    html+=`
+    <tr>
+      <td>${i+1}</td>
+      <td>${p.user}</td>
+      <td>${p.kode}</td>
+      <td>${p.qty}</td>
+      <td>${p.status}</td>
+      <td>
+        <button onclick="approvePengajuan(${i})">✔</button>
+        <button onclick="rejectPengajuan(${i})">✖</button>
+      </td>
+    </tr>`;
+  });
 
-    // reload lagi dari spreadsheet supaya sinkron
-    localStorage.removeItem("history");
-    await loadHistoryFromSheet(false);
+  t.innerHTML=html;
+}
 
-    lastKodeScan = "";
+async function approvePengajuan(i){
+  const p=dataPengajuan[i];
 
-    const barcodeEl = document.getElementById("scanBarcode");
-    const namaEl = document.getElementById("scanNama");
-    const hasilEl = document.getElementById("hasilScan");
+  await fetch(URL_SCRIPT,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json"},
+    body:JSON.stringify({ type:"approve", ...p })
+  });
 
-    if(barcodeEl) barcodeEl.innerText = "-";
-    if(namaEl) namaEl.innerText = "-";
-    if(qtyEl) qtyEl.value = "";
-    if(hasilEl) hasilEl.innerText = "Arahkan barcode ke kamera";
+  loadPengajuan();
+  loadHistoryRealtime();
+}
 
-    alert("Transaksi berhasil disimpan");
-  }catch(err){
-    console.error("Gagal simpan:", err);
-    alert("Gagal menyimpan transaksi:\n" + err.message);
-  }
+async function rejectPengajuan(i){
+  const p=dataPengajuan[i];
+
+  await fetch(URL_SCRIPT,{
+    method:"POST",
+    headers:{ "Content-Type":"application/json"},
+    body:JSON.stringify({ type:"reject", ...p })
+  });
+
+  loadPengajuan();
+}
+
+// ==========================
+// DOWNLOAD
+// ==========================
+function downloadMingguan(){
+  const last7=new Date();
+  last7.setDate(last7.getDate()-7);
+
+  const data=historyTransaksi.filter(x=>new Date(x.tanggal)>=last7);
+  exportCSV(data,"mingguan.csv");
+}
+
+function downloadBulanan(){
+  const now=new Date();
+
+  const data=historyTransaksi.filter(x=>{
+    const t=new Date(x.tanggal);
+    return t.getMonth()==now.getMonth();
+  });
+
+  exportCSV(data,"bulanan.csv");
+}
+
+function exportCSV(data,name){
+  let csv="Tanggal,User,Kode,Nama,Jenis,Qty\n";
+
+  data.forEach(d=>{
+    csv+=`${d.tanggal},${d.user},${d.kode},${d.nama},${d.jenis},${d.qty}\n`;
+  });
+
+  const blob=new Blob([csv]);
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=name;
+  a.click();
 }
 
 // ==========================
 // INIT
 // ==========================
-window.onload = async () => {
-  historyFiltered = [];
-  await loadData(true);
-  await loadHistoryFromSheet(true);
+window.onload = async ()=>{
+  const saved=localStorage.getItem("userLogin");
+
+  if(saved){
+    currentUser=saved;
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("app").style.display="block";
+  }
+
+  await loadData();
+  await loadHistoryRealtime();
+  loadPengajuan();
 };
