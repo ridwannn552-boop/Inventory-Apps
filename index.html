@@ -11,11 +11,15 @@
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN (UPDATED NIK + PASSWORD) -->
 <div id="loginPage" style="padding:40px;text-align:center;">
   <h2>Login Inventory</h2>
-  <input type="text" id="loginNama" placeholder="Nama Leader" />
+
+  <input type="text" id="nik" placeholder="Masukkan NIK" />
   <br><br>
+  <input type="password" id="password" placeholder="Password" />
+  <br><br>
+
   <button onclick="loginUser()">Masuk</button>
 </div>
 
@@ -25,8 +29,13 @@
 
 <div class="container">
 
+<!-- SIDEBAR -->
 <aside class="sidebar">
   <h2>INVENTORY</h2>
+
+  <!-- INFO USER -->
+  <p id="infoUser" style="font-size:12px; margin-bottom:10px;"></p>
+
   <ul>
     <li class="active" onclick="showPage('dashboard', this)">Dashboard</li>
     <li onclick="showPage('produk', this)">Data Produk</li>
@@ -65,7 +74,7 @@
 
   <div class="toolbar">
     <input type="text" placeholder="Cari..." id="searchInput" onkeyup="searchProduk()" />
-    <button onclick="refreshMasterData()">Refresh Master</button>
+    <button onclick="loadData()">Refresh Master</button>
   </div>
 
   <div class="table-container">
@@ -74,9 +83,7 @@
         <tr>
           <th>No</th>
           <th>Kode</th>
-          <th>Reff</th>
           <th>Nama</th>
-          <th>UOM</th>
           <th>Awal</th>
           <th>Masuk</th>
           <th>Keluar</th>
@@ -86,8 +93,6 @@
       <tbody id="dataProduk"></tbody>
     </table>
   </div>
-
-  <div id="paginationProduk" class="pagination"></div>
 </section>
 
 <!-- SCANNER -->
@@ -129,7 +134,7 @@
       <thead>
         <tr>
           <th>No</th>
-          <th>User</th>
+          <th>User (NIK)</th>
           <th>Kode</th>
           <th>Qty</th>
           <th>Status</th>
@@ -156,7 +161,7 @@
         <tr>
           <th>No</th>
           <th>Tanggal</th>
-          <th>User</th>
+          <th>User (NIK)</th>
           <th>Kode</th>
           <th>Nama</th>
           <th>Jenis</th>
@@ -166,8 +171,6 @@
       <tbody id="dataHistory"></tbody>
     </table>
   </div>
-
-  <div id="paginationHistory" class="pagination"></div>
 </section>
 
 </main>
