@@ -1,4 +1,16 @@
 // ==========================
+// DATA USER (LOGIN NIK)
+// ==========================
+const USERS = [
+  { nik: "1001", password: "admin123", role: "admin", nama: "ADMIN", dept: "ALL" },
+
+  { nik: "2001", password: "123", role: "leader", nama: "Leader Metal", dept: "METAL" },
+  { nik: "2002", password: "123", role: "leader", nama: "Leader Plastik", dept: "PLASTIK" },
+  { nik: "2003", password: "123", role: "leader", nama: "Leader Buffing", dept: "BUFFING" },
+  { nik: "2004", password: "123", role: "leader", nama: "Leader Muffler", dept: "MUFFLER" }
+];
+
+// ==========================
 // GLOBAL
 // ==========================
 let produk = [];
@@ -7,7 +19,7 @@ let historyTransaksi = [];
 let historyFiltered = [];
 let dataPengajuan = [];
 
-let currentUser = "";
+let currentUser = null;
 let currentRak = "";
 
 let lastKodeScan = "";
@@ -19,22 +31,50 @@ const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbzEHh3in4BFoFyREjL2v
 const URL_PRODUK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOqlghX6Om6VHO4cLyearbJSFaB804y8BJcfZUUGzecK0RpQRwnofRhGDNjHuh4SWaqkCYZ/pub?gid=0&output=csv";
 
 // ==========================
-// LOGIN
+// LOGIN (NIK)
 // ==========================
 function loginUser(){
-  const nama = document.getElementById("loginNama").value.trim();
-  if(!nama) return alert("Ridwan");
+  const nik = document.getElementById("nik").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  currentUser = nama;
-  localStorage.setItem("userLogin", nama);
+  const user = USERS.find(u => u.nik === nik && u.password === password);
+
+  if(!user){
+    alert("NIK / Password salah!");
+    return;
+  }
+
+  currentUser = user;
+  localStorage.setItem("userLogin", JSON.stringify(user));
 
   document.getElementById("loginPage").style.display = "none";
   document.getElementById("app").style.display = "block";
+
+  setupRole();
 }
 
 function logout(){
   localStorage.removeItem("userLogin");
   location.reload();
+}
+
+// ==========================
+// ROLE CONTROL
+// ==========================
+function setupRole(){
+  if(!currentUser) return;
+
+  const isAdmin = currentUser.role === "admin";
+
+  document.querySelectorAll(".sidebar li").forEach(li=>{
+    const text = li.innerText.toLowerCase();
+
+    if(!isAdmin){
+      if(!text.includes("dashboard") && !text.includes("pengajuan") && !text.includes("history")){
+        li.style.display = "none";
+      }
+    }
+  });
 }
 
 // ==========================
@@ -83,6 +123,12 @@ async function loadHistoryRealtime(){
   const json = await res.json();
 
   historyTransaksi = json.data || [];
+
+  // 🔥 FILTER LEADER
+  if(currentUser && currentUser.role !== "admin"){
+    historyTransaksi = historyTransaksi.filter(h => h.user === currentUser.nik);
+  }
+
   historyFiltered = [...historyTransaksi].reverse();
 
   hitungUlangProduk();
@@ -93,8 +139,10 @@ async function loadHistoryRealtime(){
 // AUTO SYNC
 // ==========================
 setInterval(()=>{
-  loadHistoryRealtime();
-  loadPengajuan();
+  if(currentUser){
+    loadHistoryRealtime();
+    loadPengajuan();
+  }
 },3000);
 
 // ==========================
@@ -198,7 +246,9 @@ async function simpanTransaksi(){
     body:JSON.stringify({
       type:"transaksi",
       tanggal:new Date().toISOString(),
-      user:currentUser,
+      user:currentUser.nik,
+      nama_user: currentUser.nama,
+      dept: currentUser.dept,
       kode:item.kode,
       nama:item.nama,
       jenis:modeTransaksi,
@@ -254,7 +304,9 @@ async function kirimPengajuan(){
     body:JSON.stringify({
       type:"pengajuan",
       tanggal:new Date().toISOString(),
-      user:currentUser,
+      user:currentUser.nik,
+      nama_user: currentUser.nama,
+      dept: currentUser.dept,
       kode:kode,
       qty:qty,
       status:"pending"
@@ -269,9 +321,18 @@ async function loadPengajuan(){
   const json = await res.json();
 
   dataPengajuan = json.data||[];
+
+  // 🔥 FILTER LEADER
+  if(currentUser && currentUser.role !== "admin"){
+    dataPengajuan = dataPengajuan.filter(p => p.user === currentUser.nik);
+  }
+
   tampilPengajuan();
 }
 
+// ==========================
+// TAMPIL PENGAJUAN
+// ==========================
 function tampilPengajuan(){
   const t = document.getElementById("dataPengajuan");
   let html="";
@@ -285,8 +346,10 @@ function tampilPengajuan(){
       <td>${p.qty}</td>
       <td>${p.status}</td>
       <td>
-        <button onclick="approvePengajuan(${i})">✔</button>
-        <button onclick="rejectPengajuan(${i})">✖</button>
+        ${currentUser.role === "admin" ? `
+          <button onclick="approvePengajuan(${i})">✔</button>
+          <button onclick="rejectPengajuan(${i})">✖</button>
+        ` : "-"}
       </td>
     </tr>`;
   });
@@ -294,6 +357,9 @@ function tampilPengajuan(){
   t.innerHTML=html;
 }
 
+// ==========================
+// APPROVE / REJECT
+// ==========================
 async function approvePengajuan(i){
   const p=dataPengajuan[i];
 
@@ -342,10 +408,10 @@ function downloadBulanan(){
 }
 
 function exportCSV(data,name){
-  let csv="Tanggal,User,Kode,Nama,Jenis,Qty\n";
+  let csv="Tanggal,NIK,Nama,Kode,Jenis,Qty\n";
 
   data.forEach(d=>{
-    csv+=`${d.tanggal},${d.user},${d.kode},${d.nama},${d.jenis},${d.qty}\n`;
+    csv+=`${d.tanggal},${d.user},${d.nama},${d.kode},${d.jenis},${d.qty}\n`;
   });
 
   const blob=new Blob([csv]);
@@ -364,9 +430,11 @@ window.onload = async ()=>{
   const saved=localStorage.getItem("userLogin");
 
   if(saved){
-    currentUser=saved;
+    currentUser=JSON.parse(saved);
     document.getElementById("loginPage").style.display="none";
     document.getElementById("app").style.display="block";
+
+    setupRole();
   }
 
   await loadData();
