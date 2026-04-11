@@ -4,10 +4,10 @@
 const USERS = [
   { nik: "1001", password: "admin123", role: "admin", nama: "ADMIN", dept: "ALL" },
 
-  { nik: "2001", password: "123", role: "leader", nama: "Leader Metal", dept: "METAL" },
-  { nik: "2002", password: "123", role: "leader", nama: "Leader Plastik", dept: "PLASTIK" },
-  { nik: "2003", password: "123", role: "leader", nama: "Leader Buffing", dept: "BUFFING" },
-  { nik: "2004", password: "123", role: "leader", nama: "Leader Muffler", dept: "MUFFLER" }
+  { nik: "2001", password: "123", role: "leader", nama: "Agus Riyadi", dept: "METAL" },
+  { nik: "2002", password: "123", role: "leader", nama: "Maryanto", dept: "PLASTIK" },
+  { nik: "2003", password: "123", role: "leader", nama: "Aprianto H", dept: "BUFFING" },
+  { nik: "2004", password: "123", role: "leader", nama: "Nazmudin", dept: "MUFFLER" }
 ];
 
 // ==========================
