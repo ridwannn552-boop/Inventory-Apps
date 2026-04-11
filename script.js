@@ -23,7 +23,7 @@ const URL_PRODUK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQlrUlVGMOql
 // ==========================
 function loginUser(){
   const nama = document.getElementById("loginNama").value.trim();
-  if(!nama) return alert("Isi nama!");
+  if(!nama) return alert("Ridwan");
 
   currentUser = nama;
   localStorage.setItem("userLogin", nama);
