@@ -10,11 +10,8 @@ const USERS = [
 ];
 
 // ==========================
-let produk = [];
 let produkMaster = [];
 let historyTransaksi = [];
-let historyFiltered = [];
-let dataPengajuan = [];
 
 let currentUser = null;
 let currentRak = "";
@@ -62,18 +59,6 @@ function toggleMenu(){
 
 // ==========================
 function setupRole(){
-  const isAdmin = currentUser.role === "admin";
-
-  document.querySelectorAll(".sidebar li").forEach(li=>{
-    const text = li.innerText.toLowerCase();
-
-    if(!isAdmin){
-      if(!text.includes("dashboard") && !text.includes("pengajuan") && !text.includes("history")){
-        li.style.display = "none";
-      }
-    }
-  });
-
   document.getElementById("infoUser").innerText =
     currentUser.nama + " (" + currentUser.dept + ")";
 }
@@ -88,6 +73,8 @@ function showPage(id){
 }
 
 // ==========================
+// LOAD MASTER
+// ==========================
 async function loadData(){
   const res = await fetch(URL_PRODUK);
   const text = await res.text();
@@ -100,15 +87,37 @@ async function loadData(){
     if(!c[1]) continue;
 
     produkMaster.push({
-      kode: c[1].trim().toUpperCase(), // FIX BARCODE
-      nama: c[3],
-      awal: parseInt(c[5])||0
+      kode: c[1].trim().toUpperCase(),
+      nama: c[3]
     });
   }
 }
 
 // ==========================
-// SCANNER FINAL
+// MODE DROPDOWN + WARNA
+// ==========================
+function changeMode(){
+  const val = document.getElementById("modeSelect").value;
+  modeTransaksi = val;
+
+  const select = document.getElementById("modeSelect");
+
+  if(val === "masuk"){
+    select.style.background = "#1cc88a";
+    select.style.color = "white";
+  }
+  else if(val === "keluar"){
+    select.style.background = "#e74a3b";
+    select.style.color = "white";
+  }
+  else{
+    select.style.background = "#f6c23e";
+    select.style.color = "black";
+  }
+}
+
+// ==========================
+// SCANNER FINAL + BEEP
 // ==========================
 function startScanner(){
   if(html5QrCode) return;
@@ -120,6 +129,9 @@ function startScanner(){
     { fps:10 },
     (text)=>{
       const clean = text.trim().toUpperCase();
+
+      // 🔥 BEEP
+      document.getElementById("beepSound").play();
 
       if(clean.startsWith("RAK")){
         currentRak = clean;
@@ -154,7 +166,7 @@ function stopScanner(){
 }
 
 // ==========================
-// SIMPAN FINAL (ANTI GAGAL)
+// SIMPAN FINAL + RESET MODE
 // ==========================
 async function simpanTransaksi(){
   try{
@@ -191,18 +203,26 @@ async function simpanTransaksi(){
     const text = await res.text();
     console.log("RESPON:", text);
 
-    document.getElementById("statusInfo").innerText = "✅ Data tersimpan";
+    // FEEDBACK
+    const status = document.getElementById("statusInfo");
+    status.innerText = "✅ Data berhasil disimpan";
+    status.style.color = "green";
 
+    // RESET FORM
     lastKodeScan="";
     document.getElementById("scanBarcode").innerText="-";
     document.getElementById("scanNama").innerText="-";
     document.getElementById("qty").value="";
 
+    // RESET MODE
+    document.getElementById("modeSelect").value="masuk";
+    changeMode();
+
     loadHistoryRealtime();
 
   }catch(err){
     console.error(err);
-    alert("❌ Gagal simpan");
+    document.getElementById("statusInfo").innerText="❌ Gagal simpan";
   }
 }
 
@@ -244,4 +264,7 @@ window.onload = async ()=>{
 
   await loadData();
   loadHistoryRealtime();
+
+  // set default mode
+  setTimeout(()=> changeMode(),500);
 };
