@@ -8,10 +8,32 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://unpkg.com/html5-qrcode" defer></script>
   <script src="script.js" defer></script>
+
+  <style>
+    #reader{
+      width:100%;
+      min-height:260px;
+    }
+
+    .btn-simpan{
+      position:sticky;
+      bottom:0;
+      width:100%;
+      z-index:10;
+    }
+
+    #statusInfo{
+      text-align:center;
+      margin-top:10px;
+      font-weight:bold;
+      color:green;
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- LOGIN (UPDATED NIK + PASSWORD) -->
+<!-- LOGIN -->
 <div id="loginPage" style="padding:40px;text-align:center;">
   <h2>Login Inventory</h2>
 
@@ -33,7 +55,6 @@
 <aside class="sidebar">
   <h2>INVENTORY</h2>
 
-  <!-- INFO USER -->
   <p id="infoUser" style="font-size:12px; margin-bottom:10px;"></p>
 
   <ul>
@@ -53,18 +74,9 @@
 <section id="dashboard" class="page active">
   <h2>Dashboard</h2>
   <div class="stats">
-    <div class="card">
-      <h3>Total Produk</h3>
-      <p id="totalProduk">0</p>
-    </div>
-    <div class="card">
-      <h3>Total Masuk</h3>
-      <p id="totalMasuk">0</p>
-    </div>
-    <div class="card">
-      <h3>Total Keluar</h3>
-      <p id="totalKeluar">0</p>
-    </div>
+    <div class="card"><h3>Total Produk</h3><p id="totalProduk">0</p></div>
+    <div class="card"><h3>Total Masuk</h3><p id="totalMasuk">0</p></div>
+    <div class="card"><h3>Total Keluar</h3><p id="totalKeluar">0</p></div>
   </div>
 </section>
 
@@ -73,8 +85,8 @@
   <h2>Data Produk</h2>
 
   <div class="toolbar">
-    <input type="text" placeholder="Cari..." id="searchInput" onkeyup="searchProduk()" />
-    <button onclick="loadData()">Refresh Master</button>
+    <input type="text" id="searchInput" placeholder="Cari..." />
+    <button onclick="loadData()">Refresh</button>
   </div>
 
   <div class="table-container">
@@ -100,77 +112,51 @@
   <h2>Scan Barcode</h2>
 
   <div class="scanner-card">
-    <div id="reader" class="reader-box"></div>
 
-    <p id="hasilScan">Arahkan barcode ke kamera</p>
+    <div id="reader"></div>
+
+    <p id="hasilScan">Arahkan barcode</p>
 
     <p>Kode: <b id="scanBarcode">-</b></p>
     <p>Nama: <b id="scanNama">-</b></p>
 
-    <input type="number" id="qty" placeholder="Input Qty" min="1" />
+    <input type="number" id="qty" placeholder="Qty" />
 
     <div class="scan-actions">
-      <button class="btn-masuk" onclick="setMode('masuk')">Masuk</button>
-      <button class="btn-keluar" onclick="setMode('keluar')">Keluar</button>
-      <button class="btn-so" onclick="setMode('so')">Stock Opname</button>
+      <button onclick="setMode('masuk')">Masuk</button>
+      <button onclick="setMode('keluar')">Keluar</button>
+      <button onclick="setMode('so')">Stock Opname</button>
     </div>
 
     <button class="btn-simpan" onclick="simpanTransaksi()">Simpan</button>
-  </div>
-</section>
 
-<!-- PENGAJUAN -->
-<section id="pengajuan" class="page">
-  <h2>Pengajuan Barang</h2>
+    <!-- FEEDBACK -->
+    <p id="statusInfo"></p>
 
-  <div class="toolbar">
-    <input type="text" id="pengajuanKode" placeholder="Kode Barang" />
-    <input type="number" id="pengajuanQty" placeholder="Qty" />
-    <button onclick="kirimPengajuan()">Ajukan</button>
-  </div>
-
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>User (NIK)</th>
-          <th>Kode</th>
-          <th>Qty</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="dataPengajuan"></tbody>
-    </table>
   </div>
 </section>
 
 <!-- HISTORY -->
 <section id="history" class="page">
-  <h2>History Transaksi</h2>
+  <h2>History</h2>
 
-  <div class="filter-bar">
-    <button onclick="downloadMingguan()">Download Mingguan</button>
-    <button onclick="downloadBulanan()">Download Bulanan</button>
-  </div>
+  <button onclick="downloadMingguan()">Mingguan</button>
+  <button onclick="downloadBulanan()">Bulanan</button>
 
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Tanggal</th>
-          <th>User (NIK)</th>
-          <th>Kode</th>
-          <th>Nama</th>
-          <th>Jenis</th>
-          <th>Qty</th>
-        </tr>
-      </thead>
-      <tbody id="dataHistory"></tbody>
-    </table>
-  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Tanggal</th>
+        <th>User</th>
+        <th>Kode</th>
+        <th>Nama</th>
+        <th>Jenis</th>
+        <th>Qty</th>
+      </tr>
+    </thead>
+    <tbody id="dataHistory"></tbody>
+  </table>
 </section>
 
 </main>
